@@ -175,6 +175,56 @@ if (!isset($_SESSION['User'])) {
                                 </div>
 
                                 <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Nombre de place<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 p-0">
+                                        <div id="divimm1">
+                                            <input type="number" id="up_voiturenbreplace" placeholder="5" class="form-control p-0 border-0">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Nombre de valise<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 border-bottom p-0">
+                                        <select type="text" name="type" id="up_voiturenbrevalise"
+                                            class="form-control p-0 border-0" required>
+                                            <option value="" disabled selected>Selectionner le nombre de valise</option>
+                                            <option value="1">1G + 1P</option>
+                                            <option value="2">1G + 2P</option>
+                                            <option value="3">2G + 1P</option>
+                                            <option value="4">2G + 2P</option>
+                                            <option value="5">3G + 1P</option>
+                                            <option value="6">3G + 2P</option>
+                                            <option value="7">3G + 3P</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Puissance (CV)<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 p-0">
+                                        <div id="divimm1">
+                                            <input type="number" id="up_voiturepuissance" placeholder="4" class="form-control p-0 border-0">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Air conditionné<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 p-0">
+                                        <div>
+                                            <input type="checkbox" id="up_voitureavecclim" name="up_voitureclim" value="1">
+                                            <label for="up_voitureavecclim">OUI</label>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="up_voituresansclim" name="up_voitureclim" value="0">
+                                            <label for="up_voituresansclim">NON</label>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Carte grise<span class="text-danger">*</span></label>
                                     <div class="col-md-12 border-bottom p-0">
                                         <input type="file" id="up_voiturecartegrise" class="form-control p-0 border-0">
@@ -184,28 +234,6 @@ if (!isset($_SESSION['User'])) {
                                     <label class="col-md-12 p-0">Assurance<span class="text-danger">*</span></label>
                                     <div class="col-md-12 border-bottom p-0">
                                         <input type="file" id="up_voitureassurance" class="form-control p-0 border-0">
-                                    </div>
-                                </div>
-
-                                <?php
-                                include_once('Gestion_location/inc/connect_db.php');
-                                $query = "SELECT * FROM agence WHERE id_agence != '0' AND action_agence = '1' ORDER BY nom_agence ASC";
-                                $result = mysqli_query($conn, $query);
-                                ?>
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Agence<span class="text-danger">*</span></label>
-                                    <div class="col-md-12 border-bottom p-0">
-                                        <select name="type" id="up_voitureagence"
-                                            class="form-control p-0 border-0" required>
-                                            <option value="0" disabled selected>Selectionner l'agence</option>
-                                            <?php
-                                            if ($result->num_rows > 0) {
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo '<option value="' . $row['id_agence'] . '">' . $row['nom_agence'] . '</option>';
-                                                }
-                                            }
-                                            ?>
-                                        </select>
                                     </div>
                                 </div>
                             </form>
@@ -336,6 +364,56 @@ if (!isset($_SESSION['User'])) {
                                             <option value="Manuelle">Manuelle</option>
                                             <option value="Automatique">Automatique</option>
                                         </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Nombre de place<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 p-0">
+                                        <div id="divimm1">
+                                            <input type="number" id="voiturenbreplace" placeholder="5" class="form-control p-0 border-0">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Nombre de valise<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 border-bottom p-0">
+                                        <select type="text" name="type" id="voiturenbrevalise"
+                                            class="form-control p-0 border-0" required>
+                                            <option value="" disabled selected>Selectionner le nombre de valise</option>
+                                            <option value="1">1G + 1P</option>
+                                            <option value="2">1G + 2P</option>
+                                            <option value="3">2G + 1P</option>
+                                            <option value="4">2G + 2P</option>
+                                            <option value="5">3G + 1P</option>
+                                            <option value="6">3G + 2P</option>
+                                            <option value="7">3G + 3P</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Puissance (CV)<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 p-0">
+                                        <div id="divimm1">
+                                            <input type="number" id="voiturepuissance" placeholder="4" class="form-control p-0 border-0">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Air conditionné<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 p-0">
+                                        <div>
+                                            <input type="checkbox" id="voitureavecclim" name="voitureclim" value="1">
+                                            <label for="voitureavecclim">OUI</label>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="voituresansclim" name="voitureclim" value="0">
+                                            <label for="voituresansclim">NON</label>
+                                        </div>
+
                                     </div>
                                 </div>
 

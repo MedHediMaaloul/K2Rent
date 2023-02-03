@@ -1021,6 +1021,10 @@ function display_voiture_record()
             <th class="border-top-0">Marque/Modèle</th>
             <th class="border-top-0">Type de carburant</th>
             <th class="border-top-0">Boite de vitesse</th>
+            <th class="border-top-0">Puissance</th>
+            <th class="border-top-0">Nombre de place</th>
+            <th class="border-top-0">Nombre de valise</th>
+            <th class="border-top-0">Air conditionné</th>
             <th class="border-top-0">Agence</th>
             <th class="border-top-0">Carte grise</th>
             <th class="border-top-0">Assurance</th>
@@ -1032,18 +1036,29 @@ function display_voiture_record()
         FROM voiture as V 
         LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
         LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
+        LEFT JOIN valise_voiture AS VV on V.valise_voiture = VV.id_valisevoiture
         LEFT JOIN agence AS A on V.id_agence = A.id_agence
         WHERE action_voiture = '1'
         ORDER BY id_voiture ASC";
     $result = mysqli_query($conn, $query);
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
+        $class = "etatactif";
+        $climatisation = "OUI";
+        if ($row['climatisation_voiture'] == '0') {
+            $class = "etatinactif";
+            $climatisation = "NON";
+        } 
         $value .= '<tr>
             <td>' . $i . '</td>
             <td>' . $row['pimm_voiture'] . '</td>
             <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
             <td>' . $row['label_carburant'] . '</td>
             <td>' . $row['boitevitesse_voiture'] . '</td>
+            <td>' . $row['puissance_voiture'] . ' CV' .'</td>
+            <td>' . $row['nbreplace_voiture'] . ' places' .'</td>
+            <td>' . $row['label_valise'] . '</td>
+            <td style="height: 70px;"><center><div class="'.$class.'">' . $climatisation . '</div></center></td>
             <td>' . $row['nom_agence'] . '</td>
             <td><a href="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '"></a></td>
             <td><a href="uploadfile/voiture/assurance/' . $row["assurance_voiture"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/assurance/' . $row["assurance_voiture"] . '"></a></td>
@@ -1145,12 +1160,16 @@ function InsertVoiture()
     $voiturepimm = $_POST['voiturepimm1']." TU ".$_POST['voiturepimm2'];
     $Namefile = md5($voiturepimm);
     $voitureMarqueModel = $_POST['voitureMarqueModel'];
-    $voitureagence = $_POST['voitureagence'];
     $voituretypecarburant = $_POST['voituretypecarburant'];
     $voitureboitevitesse = $_POST['voitureboitevitesse'];
+    $voiturenbreplace = $_POST['voiturenbreplace'];
+    $voiturenbrevalise = $_POST['voiturenbrevalise'];
+    $voiturepuissance = $_POST['voiturepuissance'];
+    $voitureclimatisation = $_POST['voitureclimatisation'];
     $voiturecartegrise = isset($_FILES['voiturecartegrise']) ? $_FILES['voiturecartegrise'] : "";
     $voitureassurance = isset($_FILES['voitureassurance']) ? $_FILES['voitureassurance'] : "";
-
+    $voitureagence = $_POST['voitureagence'];
+    // upload file cartegrise
     $emplacement_cartegrise = "uploadfile/voiture/cartegrise/";
     $file_cartegrise = $emplacement_cartegrise . basename($_FILES["voiturecartegrise"]["name"]);
     $uploadOk_cartegrise = 1;
@@ -1167,7 +1186,7 @@ function InsertVoiture()
         echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
       }
     }
-
+    // upload file assurance
     $emplacement_assurance = "uploadfile/voiture/assurance/";
     $file_assurance = $emplacement_assurance . basename($_FILES["voitureassurance"]["name"]);
     $uploadOk_assurance = 1;
@@ -1184,15 +1203,17 @@ function InsertVoiture()
         echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
       }
     }
-    
+    // vérification si le pimm existe
     $sql_e = "SELECT * FROM voiture WHERE pimm_voiture = '$voiturepimm' AND action_voiture = '1'";
     $res_e = mysqli_query($conn, $sql_e);
     if (mysqli_num_rows($res_e) > 0) {
         echo '<div class="text-echec">Désolé ... Immatriculation est déjà pris!</div>';
     } else {
         $date = date('Y-m-d H:i:s');
-        $query = "INSERT INTO voiture(pimm_voiture,id_marquemodel,id_agence,id_typecarburant,boitevitesse_voiture,cartegrise_voiture,assurance_voiture,date_created_voiture,date_updated_voiture) 
-            VALUES ('$voiturepimm','$voitureMarqueModel','$voitureagence','$voituretypecarburant','$voitureboitevitesse','$voiturecartegrise','$voitureassurance','$date','$date') ";
+        $query = "INSERT INTO voiture(pimm_voiture,id_marquemodel,id_agence,id_typecarburant,boitevitesse_voiture,nbreplace_voiture,valise_voiture,puissance_voiture,climatisation_voiture,
+                    cartegrise_voiture,assurance_voiture,date_created_voiture,date_updated_voiture) 
+                VALUES ('$voiturepimm','$voitureMarqueModel','$voitureagence','$voituretypecarburant','$voitureboitevitesse','$voiturenbreplace','$voiturenbrevalise','$voiturepuissance','$voitureclimatisation',
+                    '$voiturecartegrise','$voitureassurance','$date','$date') ";
 
         $result = mysqli_query($conn, $query);
         if ($result) {
@@ -1225,6 +1246,10 @@ function get_voiture_record()
         $voiture_data[4] = $row['id_carburantvoiture'];
         $voiture_data[5] = $row['boitevitesse_voiture'];
         $voiture_data[6] = $row['id_agence'];
+        $voiture_data[7] = $row['nbreplace_voiture'];
+        $voiture_data[8] = $row['valise_voiture'];
+        $voiture_data[9] = $row['puissance_voiture'];
+        $voiture_data[10] = $row['climatisation_voiture'];
     }
     echo json_encode($voiture_data);
 }
@@ -1239,7 +1264,10 @@ function update_voiture_value()
     $up_voitureMarqueModel = $_POST["up_voitureMarqueModel"];
     $up_voituretypecarburant = $_POST["up_voituretypecarburant"];
     $up_voitureboitevitesse = $_POST["up_voitureboitevitesse"];
-    $up_voitureagence = $_POST["up_voitureagence"];
+    $up_voiturenbreplace = $_POST['up_voiturenbreplace'];
+    $up_voiturenbrevalise = $_POST['up_voiturenbrevalise'];
+    $up_voiturepuissance = $_POST['up_voiturepuissance'];
+    $up_voitureclimatisation = $_POST['up_voitureclimatisation'];
     $up_voiturecartegrise = isset($_FILES['up_voiturecartegrise']) ? $_FILES['up_voiturecartegrise'] : "";
     $up_voitureassurance = isset($_FILES['up_voitureassurance']) ? $_FILES['up_voitureassurance'] : "";
 
@@ -1303,9 +1331,12 @@ function update_voiture_value()
                         SET 
                             pimm_voiture = '$up_voiturepimm',
                             id_marquemodel = '$up_voitureMarqueModel',
-                            id_agence = '$up_voitureagence',
                             id_typecarburant = '$up_voituretypecarburant',
                             boitevitesse_voiture = '$up_voitureboitevitesse',
+                            nbreplace_voiture = '$up_voiturenbreplace',
+                            valise_voiture = '$up_voiturenbrevalise',
+                            puissance_voiture = '$up_voiturepuissance',
+                            climatisation_voiture = '$up_voitureclimatisation',
                             cartegrise_voiture = '$up_voiturecartegrise',
                             assurance_voiture = '$up_voitureassurance',
                             date_updated_voiture = '$date'
@@ -1352,6 +1383,7 @@ function display_marquevoiture_record()
             <th class="border-top-0">#</th>
             <th class="border-top-0">Marque</th>
             <th class="border-top-0">Modèle</th>
+            <th class="border-top-0">Prix Location (DT/Jour)</th>
             <th class="border-top-0">Actions</th>      
         </tr>
     </thead>
@@ -1367,6 +1399,7 @@ function display_marquevoiture_record()
             <td>' . $i . '</td>
             <td>' . $row['marque'] . '</td>
             <td>' . $row['model'] . '</td>
+            <td>' . $row['prix_marquevoiture'] . '</td>
             <td>
                 <div class="btn-group" role="group">
                     <button type="button" title="Modifier la marque voiture" class="btn" style="font-size: 2px;" id="btn-edit-marquevoiture" data-id=' . $row['id_marquevoiture'] . '>
@@ -1392,6 +1425,7 @@ function searchMarqueVoiture()
             <th class="border-top-0">#</th>
             <th class="border-top-0">Marque</th>
             <th class="border-top-0">Modèle</th>
+            <th class="border-top-0">Prix Location (DT/Jour)</th>
             <th class="border-top-0">Actions</th>      
         </tr>
     </thead>
@@ -1401,7 +1435,7 @@ function searchMarqueVoiture()
         $query = ($query = "SELECT * 
         FROM marque_voiture 
         WHERE action_marquevoiture = '1'
-        AND (marque LIKE ('%" . $search . "%') OR model LIKE ('%" . $search . "%'))
+        AND (marque LIKE ('%" . $search . "%') OR model LIKE ('%" . $search . "%') OR prix_marquevoiture LIKE ('%" . $search . "%'))
             ORDER BY id_marquevoiture ASC");
         $result = mysqli_query($conn, $query);
         $i = 1;
@@ -1411,6 +1445,7 @@ function searchMarqueVoiture()
                     <td>' . $i . '</td>
                     <td>' . $row['marque'] . '</td>
                     <td>' . $row['model'] . '</td>
+                    <td>' . $row['prix_marquevoiture'] . '</td>
                     <td>
                         <div class="btn-group" role="group">
                             <button type="button" title="Modifier la marque voiture" class="btn" style="font-size: 2px;" id="btn-edit-marquevoiture" data-id=' . $row['id_marquevoiture'] . '>
@@ -1448,6 +1483,7 @@ function InsertMarqueVoiture()
 
     $voituremarque = $_POST['voituremarque'];
     $voituremodel = $_POST['voituremodel'];
+    $voitureprix = $_POST['voitureprix'];
     
     $sql_e = "SELECT * FROM marque_voiture WHERE marque = '$voituremarque' AND model = '$voituremodel' AND action_marquevoiture = '1'";
     $res_e = mysqli_query($conn, $sql_e);
@@ -1455,8 +1491,8 @@ function InsertMarqueVoiture()
         echo '<div class="text-echec">Désolé ... la marque est déjà pris!</div>';
     } else {
         $date = date('Y-m-d H:i:s');
-        $query = "INSERT INTO marque_voiture(marque,model,date_created_marque,date_updated_marque) 
-            VALUES ('$voituremarque','$voituremodel','$date','$date') ";
+        $query = "INSERT INTO marque_voiture(marque,model,prix_marquevoiture,date_created_marque,date_updated_marque) 
+            VALUES ('$voituremarque','$voituremodel','$voitureprix','$date','$date') ";
 
         $result = mysqli_query($conn, $query);
         if ($result) {
@@ -1481,6 +1517,7 @@ function get_marquevoiture_record()
         $marquevoiture_data[0] = $row['id_marquevoiture'];
         $marquevoiture_data[1] = $row['marque'];
         $marquevoiture_data[2] = $row['model'];
+        $marquevoiture_data[3] = $row['prix_marquevoiture'];
     }
     echo json_encode($marquevoiture_data);
 }
@@ -1492,8 +1529,14 @@ function update_marquevoiture_value()
     $up_marquevoitureid = $_POST["up_marquevoitureid"];
     $up_voituremarque = $_POST["up_voituremarque"];
     $up_voituremodel = $_POST["up_voituremodel"];
+    $up_voitureprix = $_POST["up_voitureprix"];
 
-    $sql_e = "SELECT * FROM marque_voiture WHERE marque = '$up_voituremarque' AND model = '$up_voituremodel' AND action_marquevoiture = '1'";
+    $sql_e = "SELECT * 
+                FROM marque_voiture 
+                WHERE marque = '$up_voituremarque' 
+                AND model = '$up_voituremodel' 
+                AND action_marquevoiture = '1'
+                AND id_marquevoiture != '$up_marquevoitureid'";
     $res_e = mysqli_query($conn, $sql_e);
     if (mysqli_num_rows($res_e) > 0) {
         echo '<div class="text-echec" role="alert">Désolé ... la marque est déjà pris!</div>';
@@ -1501,12 +1544,12 @@ function update_marquevoiture_value()
     } else {
         $date = date('Y-m-d H:i:s');
         $update_query = "UPDATE marque_voiture 
-                        SET 
-                            marque = '$up_voituremarque',
-                            model = '$up_voituremodel',
-                            date_updated_marque = '$date'
-                        WHERE id_marquevoiture = $up_marquevoitureid";
-
+                            SET 
+                                marque = '$up_voituremarque',
+                                model = '$up_voituremodel',
+                                prix_marquevoiture = '$up_voitureprix',
+                                date_updated_marque = '$date'
+                            WHERE id_marquevoiture = $up_marquevoitureid";
         $update_result = mysqli_query($conn, $update_query);
         if (!$update_result) {
             echo "<div class='text-echec'>Vous avez rencontré un problème lors de la mise à jour du marque voiture !</div>";
@@ -1714,6 +1757,7 @@ function display_contrat_record()
             <th class="border-top-0">#</th>
             <th class="border-top-0">Date Début</th>
             <th class="border-top-0">Date Fin</th>
+            <th class="border-top-0">Prix Contrat</th>
             <th class="border-top-0">Pimm Voiture</th>
             <th class="border-top-0">Marque Voiture</th>
             <th class="border-top-0">Nom Client</th>
@@ -1739,6 +1783,7 @@ function display_contrat_record()
             <td>' . $i . '</td>
             <td>' . $row['datedebut_contrat'] . '</td>
             <td>' . $row['datefin_contrat'] . '</td>
+            <td>' . $row['prix_contrat'] . '</td>
             <td>' . $row['pimm_voiture'] . '</td>
             <td>' . $row['marque'] . ' ' . $row['model'] .'</td>
             <td>' . $row['nom_client'] . '</td>
@@ -1769,6 +1814,7 @@ function searchContrat()
             <th class="border-top-0">#</th>
             <th class="border-top-0">Date Début</th>
             <th class="border-top-0">Date Fin</th>
+            <th class="border-top-0">Prix Contrat</th>
             <th class="border-top-0">Pimm Voiture</th>
             <th class="border-top-0">Marque Voiture</th>
             <th class="border-top-0">Nom Client</th>
@@ -1797,7 +1843,8 @@ function searchContrat()
             OR email_client LIKE ('%" . $search . "%')
             OR nom_agence LIKE ('%" . $search . "%')
             OR datedebut_contrat LIKE ('%" . $search . "%')
-            OR datefin_contrat LIKE ('%" . $search . "%'))
+            OR datefin_contrat LIKE ('%" . $search . "%')
+            OR prix_contrat LIKE ('%" . $search . "%'))
             ORDER BY id_contrat ASC");
         $result = mysqli_query($conn, $query);
         $i = 1;
@@ -1807,6 +1854,7 @@ function searchContrat()
                     <td>' . $i . '</td>
                     <td>' . $row['datedebut_contrat'] . '</td>
                     <td>' . $row['datefin_contrat'] . '</td>
+                    <td>' . $row['prix_contrat'] . '</td>
                     <td>' . $row['pimm_voiture'] . '</td>
                     <td>' . $row['marque'] . ' ' . $row['model'] .'</td>
                     <td>' . $row['nom_client'] . '</td>
@@ -1849,28 +1897,27 @@ function InsertContrat()
     $DateDebutContrat = $_POST['DateDebutContrat'];
     $DateFinContrat = $_POST['DateFinContrat'];
     $ClientContrat = $_POST['ClientContrat'];
-    $PrixContrat = $_POST['PrixContrat'];
     $AgenceContrat = $_POST['AgenceContrat'];
     $VoitureContrat = $_POST['VoitureContrat'];
+    //Nombre de jours
+    $nbJoursTimestamp = strtotime($DateFinContrat) - strtotime($DateDebutContrat);
+    $nbJours = $nbJoursTimestamp/86400;
+    $nbJours = number_format($nbJours, 0, '.', '');
+
     if ($AgenceContrat != "0") {
+        $query_getprice = "SELECT prix_marquevoiture 
+                            FROM marque_voiture AS M
+                            LEFT JOIN voiture AS V ON M.id_marquevoiture = V.id_marquemodel
+                            WHERE id_voiture = $VoitureContrat";
+        $result_price = mysqli_query($conn, $query_getprice);
+        $row_price = mysqli_fetch_assoc($result_price);
+        $PrixContrat = $row_price['prix_marquevoiture'] * $nbJours;
         $query = "INSERT INTO 
         contrat(id_client,id_agence,id_voiture,datedebut_contrat,datefin_contrat,prix_contrat) 
         VALUES ('$ClientContrat','$AgenceContrat','$VoitureContrat','$DateDebutContrat','$DateFinContrat','$PrixContrat')";
         $result = mysqli_query($conn, $query);
         if ($result) {
-            $queryContratVehiculeID = "SELECT id_contrat,date_created_contrat FROM contrat WHERE id_contrat=(SELECT max(id_contrat) from contrat)";
-            $resultContratVehiculeID = mysqli_query($conn, $queryContratVehiculeID);
-            while ($row = mysqli_fetch_assoc($resultContratVehiculeID)) {
-                $rowid = $row['id_contrat'];
-                $rowdate = $row['date_created_contrat'];
-            }
-            $queryContratVehicule = "INSERT INTO  
-                historique_contrat(id_contrat_HC,action,date_action) 
-                VALUES ('$rowid','Ajout','$rowdate')";
-            $resultContratVehicule = mysqli_query($conn, $queryContratVehicule);
-            if ($resultContratVehicule) {
-                echo "<div class='text-checked'>Le contrat est ajouté avec succés</div>";
-            }
+            echo "<div class='text-checked'>Le contrat est ajouté avec succés</div>";
         } else {
             echo "<div class='text-echec'>Erreur lors de l'ajout du contrat</div>";
         }

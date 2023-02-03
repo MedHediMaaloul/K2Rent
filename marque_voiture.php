@@ -117,6 +117,12 @@ if (!isset($_SESSION['User'])) {
                                         <input type="text" id="up_voituremodel" class="form-control p-0 border-0">
                                     </div>
                                 </div>
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Prix Location<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 border-bottom p-0">
+                                        <input type="text" id="up_voitureprix" class="form-control p-0 border-0">
+                                    </div>
+                                </div>
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -183,13 +189,19 @@ if (!isset($_SESSION['User'])) {
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Marque<span class="text-danger">*</span></label>
                                     <div class="col-md-12 border-bottom p-0">
-                                        <input type="text" id="voituremarque" class="form-control p-0 border-0">
+                                        <input type="text" id="voituremarque" placeholder="Renault" class="form-control p-0 border-0">
                                     </div>
                                 </div>
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Model<span class="text-danger">*</span></label>
                                     <div class="col-md-12 border-bottom p-0">
-                                        <input type="text" id="voituremodel" class="form-control p-0 border-0">
+                                        <input type="text" id="voituremodel" placeholder="Clio 4" class="form-control p-0 border-0">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Prix Location<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 border-bottom p-0">
+                                        <input type="text" id="voitureprix" placeholder="70000" class="form-control p-0 border-0">
                                     </div>
                                 </div>
                             </form>

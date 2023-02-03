@@ -916,11 +916,21 @@ function insert_voiture_Record() {
     var voitureMarqueModel = $("#voitureMarqueModel").val();
     var voituretypecarburant = $("#voituretypecarburant").val();
     var voitureboitevitesse = $("#voitureboitevitesse").val();
+    var voiturenbreplace = $("#voiturenbreplace").val();
+    var voiturenbrevalise = $("#voiturenbrevalise").val();
+    var voiturepuissance = $("#voiturepuissance").val();
     var voiturecartegrise = $("#voiturecartegrise").prop("files")[0];
     var voitureassurance = $("#voitureassurance").prop("files")[0];
     var voitureagence = $("#voitureagence").val();
+    // Checkbox
+    let checkboxes = document.querySelectorAll('input[name="voitureclim"]:checked');
+    let voitureclimatisation = [];
+    checkboxes.forEach((checkbox) => {
+      voitureclimatisation.push(checkbox.value);
+    });
 
-    if (voiturepimm1 == "" || voiturepimm2 == "" || voitureMarqueModel == null || voituretypecarburant == null || voitureboitevitesse == null || voiturecartegrise == null || voitureassurance == null || voitureagence == ""){
+    if (voiturepimm1 == "" || voiturepimm2 == "" || voiturenbreplace == "" || voiturepuissance == "" || voitureagence == "" || voitureclimatisation == "" ||
+        voitureMarqueModel == null || voituretypecarburant == null || voitureboitevitesse == null || voiturenbrevalise == null || voiturecartegrise == null || voitureassurance == null ){
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -928,13 +938,17 @@ function insert_voiture_Record() {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez vérifier l'immatriculation du voiture !");
-    }else {
+    } else {
       var form_data = new FormData();
       form_data.append("voiturepimm1", voiturepimm1);
       form_data.append("voiturepimm2", voiturepimm2);
       form_data.append("voitureMarqueModel", voitureMarqueModel);
       form_data.append("voituretypecarburant", voituretypecarburant);
       form_data.append("voitureboitevitesse", voitureboitevitesse);
+      form_data.append("voiturenbreplace", voiturenbreplace);
+      form_data.append("voiturenbrevalise", voiturenbrevalise);
+      form_data.append("voiturepuissance", voiturepuissance);
+      form_data.append("voitureclimatisation", voitureclimatisation);
       form_data.append("voiturecartegrise", voiturecartegrise);
       form_data.append("voitureassurance", voitureassurance);
       form_data.append("voitureagence", voitureagence);
@@ -993,8 +1007,17 @@ function get_voiture_record() {
         $("#up_voituretypecarburant").val(data[4]);
         $("#up_voitureboitevitesse").val(data[5]);
         $("#up_voitureagence").val(data[6]);
+        $("#up_voiturenbreplace").val(data[7]);
+        $("#up_voiturenbrevalise").val(data[8]);
+        $("#up_voiturepuissance").val(data[9]);
         $("#up_voiturecartegrise").val();
         $("#up_voitureassurance").val();
+        // get value checkbox
+        if(data[10] == "1"){
+          document.getElementById('up_voitureavecclim').setAttribute('checked', 'checked');
+        }else{
+          document.getElementById('up_voituresansclim').setAttribute('checked', 'checked');
+        }
         $("#updateVoiture").modal("show");
       },
     });
@@ -1010,11 +1033,20 @@ function update_voiture_record() {
     var up_voitureMarqueModel = $("#up_voitureMarqueModel").val();
     var up_voituretypecarburant = $("#up_voituretypecarburant").val();
     var up_voitureboitevitesse = $("#up_voitureboitevitesse").val();
-    var up_voitureagence = $("#up_voitureagence").val();
+    var up_voiturenbreplace = $("#up_voiturenbreplace").val();
+    var up_voiturenbrevalise = $("#up_voiturenbrevalise").val();
+    var up_voiturepuissance = $("#up_voiturepuissance").val();
     var up_voiturecartegrise = $("#up_voiturecartegrise").prop("files")[0];
     var up_voitureassurance = $("#up_voitureassurance").prop("files")[0];
+    // Checkbox
+    let checkboxes = document.querySelectorAll('input[name="up_voitureclim"]:checked');
+    let up_voitureclimatisation = [];
+    checkboxes.forEach((checkbox) => {
+      up_voitureclimatisation.push(checkbox.value);
+    });
 
-    if (up_voiturepimm1 == "" || up_voiturepimm2 == "" || up_voitureMarqueModel == null || up_voituretypecarburant == null || up_voitureboitevitesse == null || up_voitureagence == ""){
+    if (up_voiturepimm1 == "" || up_voiturepimm2 == "" || up_voiturenbreplace == "" || up_voiturepuissance == "" || up_voitureclimatisation == "" ||
+      up_voitureMarqueModel == null || up_voituretypecarburant == null || up_voitureboitevitesse == null || up_voiturenbrevalise == null ){
       $("#up_message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1030,7 +1062,10 @@ function update_voiture_record() {
       form_data.append("up_voitureMarqueModel", up_voitureMarqueModel);
       form_data.append("up_voituretypecarburant", up_voituretypecarburant);
       form_data.append("up_voitureboitevitesse", up_voitureboitevitesse);
-      form_data.append("up_voitureagence", up_voitureagence);
+      form_data.append("up_voiturenbreplace", up_voiturenbreplace);
+      form_data.append("up_voiturenbrevalise", up_voiturenbrevalise);
+      form_data.append("up_voiturepuissance", up_voiturepuissance);
+      form_data.append("up_voitureclimatisation", up_voitureclimatisation);
       form_data.append("up_voiturecartegrise", up_voiturecartegrise);
       form_data.append("up_voitureassurance", up_voitureassurance);
       
@@ -1152,8 +1187,9 @@ function insert_marquevoiture_Record() {
     $("#Registration-MarqueVoiture").scrollTop(0);
     var voituremarque = $("#voituremarque").val();
     var voituremodel = $("#voituremodel").val();
+    var voitureprix = $("#voitureprix").val();
 
-    if (voituremarque == "" || voituremodel == "" ){
+    if (voituremarque == "" || voituremodel == "" || voitureprix == ""){
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1161,6 +1197,7 @@ function insert_marquevoiture_Record() {
       var form_data = new FormData();
       form_data.append("voituremarque", voituremarque);
       form_data.append("voituremodel", voituremodel);
+      form_data.append("voitureprix", voitureprix);
       $.ajax({
         url: "AjoutMarqueVoiture.php",
         method: "post",
@@ -1210,6 +1247,7 @@ function get_marquevoiture_record() {
         $("#up_marquevoitureid").val(data[0]);
         $("#up_voituremarque").val(data[1]);
         $("#up_voituremodel").val(data[2]);
+        $("#up_voitureprix").val(data[3]);
         $("#updateMarqueVoiture").modal("show");
       },
     });
@@ -1222,8 +1260,9 @@ function update_marquevoiture_record() {
     var up_marquevoitureid = $("#up_marquevoitureid").val();
     var up_voituremarque = $("#up_voituremarque").val();
     var up_voituremodel = $("#up_voituremodel").val();
+    var up_voitureprix = $("#up_voitureprix").val();
 
-    if (up_voituremarque == "" || up_voituremodel == "" ){
+    if (up_voituremarque == "" || up_voituremodel == "" || up_voitureprix == ""){
       $("#up_message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1232,7 +1271,8 @@ function update_marquevoiture_record() {
       form_data.append("up_marquevoitureid", up_marquevoitureid);
       form_data.append("up_voituremarque", up_voituremarque);
       form_data.append("up_voituremodel", up_voituremodel);
-      
+      form_data.append("up_voitureprix", up_voitureprix);
+
       $.ajax({
         url: "update_marquevoiture.php",
         method: "POST",
@@ -1451,11 +1491,10 @@ function insert_contrat_Record() {
     var DateDebutContrat = $("#DateDebutContrat").val();
     var DateFinContrat = $("#DateFinContrat").val();
     var ClientContrat = $("#ClientContrat").val();
-    var PrixContrat = $("#PrixContrat").val();
     var AgenceContrat = $("#AgenceContrat").val();
     var VoitureContrat = $("#list_voiture").val();
 
-    if (DateDebutContrat == "" || DateFinContrat == "" || ClientContrat == null || PrixContrat == null || AgenceContrat == null || VoitureContrat == null){
+    if (DateDebutContrat == "" || DateFinContrat == "" || ClientContrat == null || AgenceContrat == null || VoitureContrat == null){
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1468,7 +1507,6 @@ function insert_contrat_Record() {
       form_data.append("DateDebutContrat", DateDebutContrat);
       form_data.append("DateFinContrat", DateFinContrat);
       form_data.append("ClientContrat", ClientContrat);
-      form_data.append("PrixContrat", PrixContrat);
       form_data.append("AgenceContrat", AgenceContrat);
       form_data.append("VoitureContrat", VoitureContrat);
       $.ajax({
@@ -1480,25 +1518,25 @@ function insert_contrat_Record() {
         success: function (data) {
           if(data.includes('text-echec')){
             $("#Registration-Contrat").modal("hide");
-            $("#addvoiture_echec").removeClass("text-checked").addClass("text-echec").html(data);
-            $("#EchecAddVoiture").modal("show");
+            $("#addcontrat_echec").removeClass("text-checked").addClass("text-echec").html(data);
+            $("#EchecAddContrat").modal("show");
             setTimeout(function () {
-              if ($("#EchecAddVoiture").length > 0) {
-                $("#EchecAddVoiture").modal("hide");
+              if ($("#EchecAddContrat").length > 0) {
+                $("#EchecAddContrat").modal("hide");
               }
             }, 5000);
-            view_voiture_record();
+            view_contrat_record();
           }else {
             $("#Registration-Contrat").modal("hide");
-            $("#addvoiture_success").addClass("text-checked").html(data);
-            $("#SuccessAddVoiture").modal("show");
-            $("#addvoiture_success").removeClass("text-echec").addClass("text-checked");
+            $("#addcontrat_success").addClass("text-checked").html(data);
+            $("#SuccessAddContrat").modal("show");
+            $("#addcontrat_success").removeClass("text-echec").addClass("text-checked");
             setTimeout(function () {
-              if ($("#SuccessAddVoiture").length > 0) {
-                $("#SuccessAddVoiture").modal("hide");
+              if ($("#SuccessAddContrat").length > 0) {
+                $("#SuccessAddContrat").modal("hide");
               }
             }, 5000);
-            view_voiture_record();
+            view_contrat_record();
           }
         },
       });

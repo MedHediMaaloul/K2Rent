@@ -120,13 +120,6 @@ if (!isset($_SESSION['User'])) {
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Prix (Par Jour)<span class="text-danger">*</span></label>
-                                    <div class="col-md-12 border-bottom p-0">
-                                        <input type="number" id="up_PrixContrat" class="form-control p-0 border-0">
-                                    </div>
-                                </div>
-
                                 <?php
                                 include_once('Gestion_location/inc/connect_db.php');
                                 $query = "SELECT * FROM agence WHERE id_agence != '0' AND action_agence = '1' ORDER BY nom_agence ASC";
@@ -247,13 +240,6 @@ if (!isset($_SESSION['User'])) {
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Prix (Par Jour)<span class="text-danger">*</span></label>
-                                    <div class="col-md-12 border-bottom p-0">
-                                        <input type="number" id="PrixContrat" class="form-control p-0 border-0">
-                                    </div>
-                                </div>
-
                                 <?php
                                 include_once('Gestion_location/inc/connect_db.php');
                                 $query = "SELECT * FROM agence WHERE id_agence != '0' AND action_agence = '1' ORDER BY nom_agence ASC";
@@ -288,11 +274,11 @@ if (!isset($_SESSION['User'])) {
             </div>
             <!-- end Model ajout Contrat -->
             <!-- Model alert ajout succès -->
-			<div class="modal fade" id="SuccessAddVoiture" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal fade" id="SuccessAddContrat" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header"  style="background-color: #D71218;" >
-                            <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Voiture</h5>
+                            <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Contrat</h5>
     						<button class="button-close" id="btn-close-x">X</button>
                         </div>
                         <div>
@@ -300,7 +286,7 @@ if (!isset($_SESSION['User'])) {
                                 <i class="bx bx-check"></i>
                             </div>
                             <div style="font-size:20px; margin:80px;">
-                                <center id="addvoiture_success"></center>  
+                                <center id="addcontrat_success"></center>  
                             </div>
                         </div>
                     </div>
@@ -308,11 +294,11 @@ if (!isset($_SESSION['User'])) {
             </div>
             <!-- end Model alert ajout succès -->
             <!-- Model alert ajout echec -->
-			<div class="modal fade" id="EchecAddVoiture" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal fade" id="EchecAddContrat" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header"  style="background-color: #D71218;" >
-                            <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Voiture</h5>
+                            <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Contrat</h5>
     						<button class="button-close" id="btn-close-x">X</button>
                         </div>
                         <div>
@@ -320,7 +306,7 @@ if (!isset($_SESSION['User'])) {
                                 <i class="bx bx-x"></i>
                             </div>
                             <div style="font-size:20px; margin:80px;">
-                                <center id="addvoiture_echec"></center>
+                                <center id="addcontrat_echec"></center>
                             </div>
                         </div>
                     </div>
