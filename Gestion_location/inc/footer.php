@@ -27,7 +27,6 @@
 <script src="assets/plugins/highcharts/js/accessibility.js"></script>
 <script src="assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script>
 
-<script src="assets/js/indexK2App.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="app.js"></script>
 <script src="assets/js/myjs.js"></script>
@@ -81,7 +80,6 @@
 	new PerfectScrollbar('.recent-reviews');
 	new PerfectScrollbar('.support-list');
 </script>
-	
 </body>
 </html>
 

@@ -51,6 +51,12 @@ $(document).ready(function () {
   insert_contrat_Record();
   afficher_voiture_dispo();
   delete_contrat_record();
+  // Contrat Archive
+  searchContratArchive();
+  view_contrat_archive_record();
+  // Contrat historique
+  view_contrat_historique_record();
+  searchContratHistorique();
 });
 
 function ReloadButtonExit() {
@@ -69,25 +75,25 @@ function isValidEmailAddress(emailAddress) {
   return pattern.test(emailAddress);
 }
 
-$(function() {
+$(function () {
   $('#voitureMarqueModel').select2({
-      dropdownParent: $('#voitureMarqueModel').parent()
+    dropdownParent: $('#voitureMarqueModel').parent()
   });
   $('#ClientContrat').select2({
     dropdownParent: $('#ClientContrat').parent()
   });
 });
 
-$(function() {
+$(function () {
   var table = $("#tablefix");
-  $(window).scroll(function() {
-      var windowTop = $(window).scrollTop();
-      if (windowTop > table.offset().top) {
-          $("thead", table).addClass("Fixed").css("top", windowTop);
-      }
-      else {
-          $("thead", table).removeClass("Fixed");
-      }
+  $(window).scroll(function () {
+    var windowTop = $(window).scrollTop();
+    if (windowTop > table.offset().top) {
+      $("thead", table).addClass("Fixed").css("top", windowTop);
+    }
+    else {
+      $("thead", table).removeClass("Fixed");
+    }
   });
 });
 
@@ -197,7 +203,7 @@ function insertAgenceRecord() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#Registration-Agence").modal("hide");
             $("#addagence_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecAddAgence").modal("show");
@@ -207,7 +213,7 @@ function insertAgenceRecord() {
               }
             }, 3000);
             view_agence_record();
-          }else {
+          } else {
             $("#Registration-Agence").modal("hide");
             $("#addagence_success").addClass("text-checked").html(data);
             $("#SuccessAddAgence").modal("show");
@@ -250,7 +256,7 @@ function insertAgenceRecordHeur() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#Registration-Agence-Heur").modal("hide");
             $("#addagencehoraire_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecAddAgence-Heur").modal("show");
@@ -260,7 +266,7 @@ function insertAgenceRecordHeur() {
               }
             }, 3000);
             view_agence_record();
-          }else {
+          } else {
             $("#Registration-Agence-Heur").modal("hide");
             $("#addagencehoraire_success").addClass("text-checked").html(data);
             $("#SuccessAddAgence-Heur").modal("show");
@@ -284,7 +290,7 @@ function get_agence_record() {
     $.ajax({
       url: "get_agence_data.php",
       method: "post",
-      data: {ClientID: ID},
+      data: { ClientID: ID },
       dataType: "JSON",
       success: function (data) {
         $("#up_idagence").val(data[0]);
@@ -305,7 +311,7 @@ function update_agence_record() {
     var up_agenceLieu = $("#up_agenceLieu").val();
     var up_agenceEmail = $("#up_agenceEmail").val();
     var up_agenceTel = $("#up_agenceTel").val();
-    
+
     if (up_agenceLieu == "" || up_agenceEmail == "" || up_agenceTel == "") {
       $("#up_message").addClass("alert alert-danger").html("Les champs obligatoires ne peuvent pas être nuls !");
     } else {
@@ -321,7 +327,7 @@ function update_agence_record() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#updateAgence").modal("hide");
             $("#upagence_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecUpAgence").modal("show");
@@ -331,7 +337,7 @@ function update_agence_record() {
               }
             }, 3000);
             view_agence_record();
-          }else {
+          } else {
             $("#updateAgence").modal("hide");
             $("#upagence_success").addClass("text-checked").html(data);
             $("#SuccessUpAgence").modal("show");
@@ -357,9 +363,9 @@ function delete_agence_record() {
       $.ajax({
         url: "delete_agence.php",
         method: "post",
-        data: {Delete_AgenceID: Delete_ID},
+        data: { Delete_AgenceID: Delete_ID },
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#deleteAgence").modal("hide");
             $("#deleteagence_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecDeleteAgence").modal("show");
@@ -369,7 +375,7 @@ function delete_agence_record() {
               }
             }, 3000);
             view_agence_record();
-          }else {
+          } else {
             $("#deleteAgence").modal("hide");
             $("#deleteagence_success").addClass("text-checked").html(data);
             $("#SuccessDeleteAgence").modal("show");
@@ -395,9 +401,9 @@ function delete_agence_heur_record() {
       $.ajax({
         url: "delete_agence_heur.php",
         method: "post",
-        data: {Delete_AgenceID: Delete_ID},
+        data: { Delete_AgenceID: Delete_ID },
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#deleteAgenceHeur").modal("hide");
             $("#deletehoragence_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecDeleteHorAgence").modal("show");
@@ -407,7 +413,7 @@ function delete_agence_heur_record() {
               }
             }, 3000);
             view_agence_record();
-          }else {
+          } else {
             $("#deleteAgenceHeur").modal("hide");
             $("#deletehoragence_success").addClass("text-checked").html(data);
             $("#SuccessDeleteHorAgence").modal("show");
@@ -496,7 +502,7 @@ function insertUserRecord() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#Registration-User").modal("hide");
             $("#adduser_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecAddUser").modal("show");
@@ -506,7 +512,7 @@ function insertUserRecord() {
               }
             }, 3000);
             view_user_record();
-          }else {
+          } else {
             $("#Registration-User").modal("hide");
             $("#adduser_success").addClass("text-checked").html(data);
             $("#SuccessAddUser").modal("show");
@@ -576,7 +582,7 @@ function update_user_record() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#updateUser").modal("hide");
             $("#upuser_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecUpUser").modal("show");
@@ -586,7 +592,7 @@ function update_user_record() {
               }
             }, 3000);
             view_user_record();
-          }else {
+          } else {
             $("#updateUser").modal("hide");
             $("#upuser_success").addClass("text-checked").html(data);
             $("#SuccessUpUser").modal("show");
@@ -616,7 +622,7 @@ function delete_user_record() {
           Delete_UserID: Delete_ID
         },
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#deleteUser").modal("hide");
             $("#deleteuser_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecDeleteUser").modal("show");
@@ -626,7 +632,7 @@ function delete_user_record() {
               }
             }, 3000);
             view_user_record();
-          }else {
+          } else {
             $("#deleteUser").modal("hide");
             $("#deleteuser_success").addClass("text-checked").html(data);
             $("#SuccessDeleteUser").modal("show");
@@ -692,11 +698,11 @@ function insertClientRecord() {
     var ClientCIN = $("#clientCIN").prop("files")[0];
     var ClientPermis = $("#clientPermis").prop("files")[0];
 
-    if (ClientName == "" || ClientEmail == "" || ClientPhone == "" || ClientAdresse == "" || ClientCIN == null || ClientPermis == null){
+    if (ClientName == "" || ClientEmail == "" || ClientPhone == "" || ClientAdresse == "" || ClientCIN == null || ClientPermis == null) {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
-    }else if (!isValidEmailAddress(ClientEmail)) {
+    } else if (!isValidEmailAddress(ClientEmail)) {
       $("#message")
         .addClass("alert alert-danger")
         .html("le champ « email » est invalide");
@@ -715,7 +721,7 @@ function insertClientRecord() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#Registration-Client").modal("hide");
             $("#addclient_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecAddClient").modal("show");
@@ -725,7 +731,7 @@ function insertClientRecord() {
               }
             }, 5000);
             view_client_record();
-          }else {
+          } else {
             $("#Registration-Client").modal("hide");
             $("#addclient_success").addClass("text-checked").html(data);
             $("#SuccessAddClient").modal("show");
@@ -778,15 +784,15 @@ function update_client_record() {
     var up_clientCIN = $("#up_clientCIN").prop("files")[0];
     var up_clientPermis = $("#up_clientPermis").prop("files")[0];
 
-  if (up_clientName == "" || up_clientEmail == "" || up_clientPhone == "" || up_clientAdresse == "" ){
-    $("#up_message")
-    .addClass("alert alert-danger")
-    .html("Veuillez remplir tous les champs obligatoires !");
-  }else if (!isValidEmailAddress(up_clientEmail)) {
+    if (up_clientName == "" || up_clientEmail == "" || up_clientPhone == "" || up_clientAdresse == "") {
+      $("#up_message")
+        .addClass("alert alert-danger")
+        .html("Veuillez remplir tous les champs obligatoires !");
+    } else if (!isValidEmailAddress(up_clientEmail)) {
       $("#up_message")
         .addClass("alert alert-danger")
         .html("le champ « email » est invalide");
-  } else {
+    } else {
       var form_data = new FormData();
       form_data.append("up_idclient", up_idclient);
       form_data.append("up_clientName", up_clientName);
@@ -802,7 +808,7 @@ function update_client_record() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#updateClient").modal("hide");
             $("#upclient_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecUpClient").modal("show");
@@ -812,7 +818,7 @@ function update_client_record() {
               }
             }, 5000);
             view_client_record();
-          }else {
+          } else {
             $("#updateClient").modal("hide");
             $("#upclient_success").addClass("text-checked").html(data);
             $("#SuccessUpClient").modal("show");
@@ -842,7 +848,7 @@ function delete_client_record() {
           Delete_ClientID: Delete_ID
         },
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#deleteClient").modal("hide");
             $("#deleteclient_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecDeleteClient").modal("show");
@@ -852,7 +858,7 @@ function delete_client_record() {
               }
             }, 5000);
             view_client_record();
-          }else {
+          } else {
             $("#deleteClient").modal("hide");
             $("#deleteclient_success").addClass("text-checked").html(data);
             $("#SuccessDeleteClient").modal("show");
@@ -920,15 +926,15 @@ function insert_voiture_Record() {
     var voitureassurance = $("#voitureassurance").prop("files")[0];
     var voitureagence = $("#voitureagence").val();
 
-    if (voiturepimm1 == "" || voiturepimm2 == "" || voitureMarqueModel == null || voituretypecarburant == null || voitureboitevitesse == null || voiturecartegrise == null || voitureassurance == null || voitureagence == ""){
+    if (voiturepimm1 == "" || voiturepimm2 == "" || voitureMarqueModel == null || voituretypecarburant == null || voitureboitevitesse == null || voiturecartegrise == null || voitureassurance == null || voitureagence == "") {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
-    } else if(voiturepimm1 > 999 || voiturepimm1 < 10 || voiturepimm2 > 9999 || voiturepimm2 < 0){
+    } else if (voiturepimm1 > 999 || voiturepimm1 < 10 || voiturepimm2 > 9999 || voiturepimm2 < 0) {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez vérifier l'immatriculation du voiture !");
-    }else {
+    } else {
       var form_data = new FormData();
       form_data.append("voiturepimm1", voiturepimm1);
       form_data.append("voiturepimm2", voiturepimm2);
@@ -945,7 +951,7 @@ function insert_voiture_Record() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#Registration-Voiture").modal("hide");
             $("#addvoiture_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecAddVoiture").modal("show");
@@ -956,7 +962,7 @@ function insert_voiture_Record() {
             }, 5000);
             view_voiture_record();
             view_stockvoiture_record();
-          }else {
+          } else {
             $("#Registration-Voiture").modal("hide");
             $("#addvoiture_success").addClass("text-checked").html(data);
             $("#SuccessAddVoiture").modal("show");
@@ -1014,11 +1020,11 @@ function update_voiture_record() {
     var up_voiturecartegrise = $("#up_voiturecartegrise").prop("files")[0];
     var up_voitureassurance = $("#up_voitureassurance").prop("files")[0];
 
-    if (up_voiturepimm1 == "" || up_voiturepimm2 == "" || up_voitureMarqueModel == null || up_voituretypecarburant == null || up_voitureboitevitesse == null || up_voitureagence == ""){
+    if (up_voiturepimm1 == "" || up_voiturepimm2 == "" || up_voitureMarqueModel == null || up_voituretypecarburant == null || up_voitureboitevitesse == null || up_voitureagence == "") {
       $("#up_message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
-    } else if(up_voiturepimm1 > 999 || up_voiturepimm1 < 10 || up_voiturepimm2 > 9999 || up_voiturepimm2 < 0){
+    } else if (up_voiturepimm1 > 999 || up_voiturepimm1 < 10 || up_voiturepimm2 > 9999 || up_voiturepimm2 < 0) {
       $("#up_message")
         .addClass("alert alert-danger")
         .html("Veuillez vérifier l'immatriculation du voiture !");
@@ -1033,7 +1039,7 @@ function update_voiture_record() {
       form_data.append("up_voitureagence", up_voitureagence);
       form_data.append("up_voiturecartegrise", up_voiturecartegrise);
       form_data.append("up_voitureassurance", up_voitureassurance);
-      
+
       $.ajax({
         url: "update_voiture.php",
         method: "POST",
@@ -1041,7 +1047,7 @@ function update_voiture_record() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#updateVoiture").modal("hide");
             $("#upvoiture_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecUpVoiture").modal("show");
@@ -1051,7 +1057,7 @@ function update_voiture_record() {
               }
             }, 5000);
             view_voiture_record();
-          }else {
+          } else {
             $("#updateVoiture").modal("hide");
             $("#upvoiture_success").addClass("text-checked").html(data);
             $("#SuccessUpVoiture").modal("show");
@@ -1081,7 +1087,7 @@ function delete_voiture_record() {
           id_voiture: Delete_ID
         },
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#deleteVoiture").modal("hide");
             $("#deletevoiture_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecDeleteVoiture").modal("show");
@@ -1091,7 +1097,7 @@ function delete_voiture_record() {
               }
             }, 5000);
             view_voiture_record();
-          }else {
+          } else {
             $("#deleteVoiture").modal("hide");
             $("#deletevoiture_success").addClass("text-checked").html(data);
             $("#SuccessDeleteVoiture").modal("show");
@@ -1153,7 +1159,7 @@ function insert_marquevoiture_Record() {
     var voituremarque = $("#voituremarque").val();
     var voituremodel = $("#voituremodel").val();
 
-    if (voituremarque == "" || voituremodel == "" ){
+    if (voituremarque == "" || voituremodel == "") {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1168,7 +1174,7 @@ function insert_marquevoiture_Record() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#Registration-MarqueVoiture").modal("hide");
             $("#addmarquevoiture_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecAddMarqueVoiture").modal("show");
@@ -1178,7 +1184,7 @@ function insert_marquevoiture_Record() {
               }
             }, 5000);
             view_marquevoiture_record();
-          }else {
+          } else {
             $("#Registration-MarqueVoiture").modal("hide");
             $("#addmarquevoiture_success").addClass("text-checked").html(data);
             $("#SuccessAddMarqueVoiture").modal("show");
@@ -1203,7 +1209,7 @@ function get_marquevoiture_record() {
       url: "get_marquevoiture_data.php",
       method: "post",
       data: {
-        id_marquevoiture : ID
+        id_marquevoiture: ID
       },
       dataType: "JSON",
       success: function (data) {
@@ -1223,7 +1229,7 @@ function update_marquevoiture_record() {
     var up_voituremarque = $("#up_voituremarque").val();
     var up_voituremodel = $("#up_voituremodel").val();
 
-    if (up_voituremarque == "" || up_voituremodel == "" ){
+    if (up_voituremarque == "" || up_voituremodel == "") {
       $("#up_message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1232,7 +1238,7 @@ function update_marquevoiture_record() {
       form_data.append("up_marquevoitureid", up_marquevoitureid);
       form_data.append("up_voituremarque", up_voituremarque);
       form_data.append("up_voituremodel", up_voituremodel);
-      
+
       $.ajax({
         url: "update_marquevoiture.php",
         method: "POST",
@@ -1240,7 +1246,7 @@ function update_marquevoiture_record() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#updateMarqueVoiture").modal("hide");
             $("#upmarquevoiture_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecUpMarqueVoiture").modal("show");
@@ -1250,7 +1256,7 @@ function update_marquevoiture_record() {
               }
             }, 5000);
             view_marquevoiture_record();
-          }else {
+          } else {
             $("#updateMarqueVoiture").modal("hide");
             $("#upmarquevoiture_success").addClass("text-checked").html(data);
             $("#SuccessUpMarqueVoiture").modal("show");
@@ -1277,10 +1283,10 @@ function delete_marquevoiture_record() {
         url: "delete_marquevoiture.php",
         method: "post",
         data: {
-          id_marquevoiture : Delete_ID
+          id_marquevoiture: Delete_ID
         },
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#deleteMarqueVoiture").modal("hide");
             $("#deletemarquevoiture_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecDeleteMarqueVoiture").modal("show");
@@ -1290,7 +1296,7 @@ function delete_marquevoiture_record() {
               }
             }, 5000);
             view_marquevoiture_record();
-          }else {
+          } else {
             $("#deleteMarqueVoiture").modal("hide");
             $("#deletemarquevoiture_success").addClass("text-checked").html(data);
             $("#SuccessDeleteMarqueVoiture").modal("show");
@@ -1350,7 +1356,7 @@ function get_agence_voiture() {
       url: "get_voiture_data.php",
       method: "post",
       data: {
-        id_voiture : ID
+        id_voiture: ID
       },
       dataType: "JSON",
       success: function (data) {
@@ -1379,7 +1385,7 @@ function transfert_voiture_agence_record() {
           up_voitureAgence: up_voitureAgence,
         },
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#updateagencevoiture").modal("hide");
             $("#upagencevoiture_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecUpAgenceVoiture").modal("show");
@@ -1389,7 +1395,7 @@ function transfert_voiture_agence_record() {
               }
             }, 5000);
             view_stockvoiture_record();
-          }else {
+          } else {
             $("#updateagencevoiture").modal("hide");
             $("#upagencevoiture_success").addClass("text-checked").html(data);
             $("#SuccessUpAgenceVoiture").modal("show");
@@ -1455,15 +1461,15 @@ function insert_contrat_Record() {
     var AgenceContrat = $("#AgenceContrat").val();
     var VoitureContrat = $("#list_voiture").val();
 
-    if (DateDebutContrat == "" || DateFinContrat == "" || ClientContrat == null || PrixContrat == null || AgenceContrat == null || VoitureContrat == null){
+    if (DateDebutContrat == "" || DateFinContrat == "" || ClientContrat == null || PrixContrat == null || AgenceContrat == null || VoitureContrat == null) {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
-    } else if(DateDebutContrat > DateFinContrat){
+    } else if (DateDebutContrat > DateFinContrat) {
       $("#message")
         .addClass("alert alert-danger")
         .html("Date Fin doit etre superieur à la Date Debut !");
-    }else {
+    } else {
       var form_data = new FormData();
       form_data.append("DateDebutContrat", DateDebutContrat);
       form_data.append("DateFinContrat", DateFinContrat);
@@ -1478,7 +1484,7 @@ function insert_contrat_Record() {
         contentType: false,
         data: form_data,
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#Registration-Contrat").modal("hide");
             $("#addvoiture_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecAddVoiture").modal("show");
@@ -1488,7 +1494,7 @@ function insert_contrat_Record() {
               }
             }, 5000);
             view_voiture_record();
-          }else {
+          } else {
             $("#Registration-Contrat").modal("hide");
             $("#addvoiture_success").addClass("text-checked").html(data);
             $("#SuccessAddVoiture").modal("show");
@@ -1518,7 +1524,7 @@ function delete_contrat_record() {
           id_contrat: Delete_ID
         },
         success: function (data) {
-          if(data.includes('text-echec')){
+          if (data.includes('text-echec')) {
             $("#deleteContrat").modal("hide");
             $("#deletecontrat_echec").removeClass("text-checked").addClass("text-echec").html(data);
             $("#EchecDeleteContrat").modal("show");
@@ -1528,7 +1534,7 @@ function delete_contrat_record() {
               }
             }, 5000);
             view_contrat_record();
-          }else {
+          } else {
             $("#deleteContrat").modal("hide");
             $("#deletecontrat_success").addClass("text-checked").html(data);
             $("#SuccessDeleteContrat").modal("show");
@@ -1561,6 +1567,75 @@ function afficher_voiture_dispo() {
     success: function (data) {
       $("#listevoiture").html(data);
     },
+  });
+}
+
+// Contrat Archive
+
+function view_contrat_archive_record() {
+  $.ajax({
+    url: "viewContratArchive.php",
+    method: "post",
+    success: function (data) {
+      try {
+        data = $.parseJSON(data);
+        if (data.status == "success") {
+          $("#contrat-archive").html(data.html);
+        }
+      } catch (e) {
+        console.error("Invalid Response!");
+      }
+    },
+  });
+}
+
+function searchContratArchive() {
+  $("#searchContratArchive").keyup(function () {
+    var search = $(this).val();
+    $.ajax({
+      url: "searchContratArchive.php",
+      method: "post",
+      data: {
+        query: search
+      },
+      success: function (response) {
+        $("#contrat-archive").html(response);
+      },
+    });
+  });
+}
+// Contrat Historique
+
+function view_contrat_historique_record() {
+  $.ajax({
+    url: "viewContratHistorique.php",
+    method: "post",
+    success: function (data) {
+      try {
+        data = $.parseJSON(data);
+        if (data.status == "success") {
+          $("#contrat-historique").html(data.html);
+        }
+      } catch (e) {
+        console.error("Invalid Response!");
+      }
+    },
+  });
+}
+
+function searchContratHistorique() {
+  $("#searchContratHistorique").keyup(function () {
+    var search = $(this).val();
+    $.ajax({
+      url: "searchContratHistorique.php",
+      method: "post",
+      data: {
+        query: search
+      },
+      success: function (response) {
+        $("#contrat-historique").html(response);
+      },
+    });
   });
 }
 

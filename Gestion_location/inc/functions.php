@@ -27,11 +27,12 @@ function disponibilite_Vehicule($id_voiture)
 function localisation_Vehicule($id_voiture)
 {
     global $conn;
-    $query = "SELECT CL.nom_client,CL.tel_client FROM contrat As C,client AS CL
+    $query = "SELECT CL.nom_client,CL.tel_client 
+                FROM contrat As C,client AS CL
                 WHERE C.id_voiture ='$id_voiture' 
                 AND C.id_client = CL.id_client 
                 AND C.action_contrat = '1' 
-                AND ((C.datedebut_contrat <= DATE(NOW()) and C.datefin_contrat >=DATE(NOW())))";
+                AND (C.datedebut_contrat <= DATE(NOW()) and C.datefin_contrat >=DATE(NOW()))";
     $result = mysqli_query($conn, $query);
     $row = mysqli_fetch_row($result);
     
@@ -1569,10 +1570,9 @@ function display_stockvoiture_record()
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
         $disponibilte = disponibilite_Vehicule($row['id_voiture']);
-        $localisation = localisation_Vehicule($row['id_voiture']);
         $class = "etatactif";
         if ($disponibilte == 'Loué') {
-            $row['nom_agence'] = $localisation;
+            $row['nom_agence'] = localisation_Vehicule($row['id_voiture']);
             $class = "etatinactif";
         } 
         $value .= '<tr>
@@ -1638,10 +1638,9 @@ function searchStockVoiture()
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $disponibilte = disponibilite_Vehicule($row['id_voiture']);
-                $localisation = localisation_Vehicule($row['id_voiture']);
                 $class = "etatactif";
                 if ($disponibilte == 'Loué') {
-                    $row['nom_agence'] = $localisation;
+                    $row['nom_agence'] = localisation_Vehicule($row['id_voiture']);
                     $class = "etatinactif";
                 } 
                 $value .= '<tr>
@@ -1897,3 +1896,272 @@ function delete_contrat_record()
         echo "<div class='text-echec'>Vous avez rencontré un problème lors de la suppression du contrat !</div>";
     }
 }
+
+// Contrat Archive
+
+function display_contrat_archive_record()
+{
+    global $conn;
+
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">Date Début</th>
+            <th class="border-top-0">Date Fin</th>
+            <th class="border-top-0">Pimm Voiture</th>
+            <th class="border-top-0">Marque Voiture</th>
+            <th class="border-top-0">Nom Client</th>
+            <th class="border-top-0">Email Client</th>
+            <th class="border-top-0">Agence</th>
+            <th class="border-top-0">Actions</th>      
+        </tr>
+    </thead>
+    <tbody>';
+    $query = "SELECT * 
+        FROM contrat as C 
+        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+        LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
+        LEFT JOIN client AS CL on CL.id_client = C.id_client
+        LEFT JOIN agence AS A on A.id_agence = C.id_agence
+        WHERE action_contrat = '1'
+        AND datefin_contrat < DATE(NOW())
+        ORDER BY id_contrat ASC";
+    $result = mysqli_query($conn, $query);
+    $i = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
+        $value .= '<tr>
+            <td>' . $i . '</td>
+            <td>' . $row['datedebut_contrat'] . '</td>
+            <td>' . $row['datefin_contrat'] . '</td>
+            <td>' . $row['pimm_voiture'] . '</td>
+            <td>' . $row['marque'] . ' ' . $row['model'] .'</td>
+            <td>' . $row['nom_client'] . '</td>
+            <td>' . $row['email_client'] . '</td>
+            <td>' . $row['nom_agence'] . '</td>
+            <td>
+                <div class="btn-group" role="group">
+                    <button type="button" title="Consulter le contrat" class="btn" style="font-size: 2px;" id="btn-show-contrat" data-id=' . $row['id_contrat'] . '>
+                    <i class="bx bx-download iconaction"></i></button>
+                    <button type="button" title="Supprimer le contrat" class="btn" style="font-size: 2px;" id="btn-delete-contrat" data-id1=' . $row['id_contrat'] . '>
+                    <i class="lni lni-trash iconaction"></i></button>
+                </div>
+            </td>
+        </tr>';
+        $i += 1;  
+    }
+    $value .= '</table>';
+    echo json_encode(['status' => 'success', 'html' => $value]);
+}
+
+function searchContratArchive()
+{
+    global $conn;
+
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">Date Début</th>
+            <th class="border-top-0">Date Fin</th>
+            <th class="border-top-0">Pimm Voiture</th>
+            <th class="border-top-0">Marque Voiture</th>
+            <th class="border-top-0">Nom Client</th>
+            <th class="border-top-0">Email Client</th>
+            <th class="border-top-0">Agence</th>
+            <th class="border-top-0">Actions</th>      
+        </tr>
+    </thead>
+    <tbody>';
+
+
+    if (isset($_POST['query'])) {
+        $search = $_POST['query'];
+        $query = ($query = "SELECT * 
+        FROM contrat as C 
+        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+        LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
+        LEFT JOIN client AS CL on CL.id_client = C.id_client
+        LEFT JOIN agence AS A on A.id_agence = C.id_agence
+        WHERE action_contrat = '1'
+        AND datefin_contrat < DATE(NOW())
+        AND (pimm_voiture LIKE ('%" . $search . "%') 
+            OR marque LIKE ('%" . $search . "%')
+            OR model LIKE ('%" . $search . "%')
+            OR nom_client LIKE ('%" . $search . "%')
+            OR email_client LIKE ('%" . $search . "%')
+            OR nom_agence LIKE ('%" . $search . "%')
+            OR datedebut_contrat LIKE ('%" . $search . "%')
+            OR datefin_contrat LIKE ('%" . $search . "%'))
+            ORDER BY id_contrat ASC");
+        $result = mysqli_query($conn, $query);
+        $i = 1;
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $value .= '<tr>
+                    <td>' . $i . '</td>
+                    <td>' . $row['datedebut_contrat'] . '</td>
+                    <td>' . $row['datefin_contrat'] . '</td>
+                    <td>' . $row['pimm_voiture'] . '</td>
+                    <td>' . $row['marque'] . ' ' . $row['model'] .'</td>
+                    <td>' . $row['nom_client'] . '</td>
+                    <td>' . $row['email_client'] . '</td>
+                    <td>' . $row['nom_agence'] . '</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <button type="button" title="Consulter le contrat" class="btn" style="font-size: 2px;" id="btn-show-contrat" data-id=' . $row['id_contrat'] . '>
+                            <i class="bx bx-download iconaction"></i></button>
+                            <button type="button" title="Supprimer le contrat" class="btn" style="font-size: 2px;" id="btn-delete-contrat" data-id1=' . $row['id_contrat'] . '>
+                            <i class="lni lni-trash iconaction"></i></button>
+                        </div>
+                    </td>
+                </tr>';
+                $i += 1; 
+            }
+            $value .= '</tbody>';
+        } else {
+            $value = '<table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Aucune donnée correspond à votre recherche!</td>
+            </tr>
+            </tbody>';
+        }
+        echo $value;
+    } else {
+        display_contrat_archive_record();
+    }
+}
+// Contrat Historique
+
+function display_contrat_historique_record()
+{
+    global $conn;
+
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">Date Début Contrat</th>
+            <th class="border-top-0">Date Fin Contrat</th>
+            <th class="border-top-0">Action</th>
+            <th class="border-top-0">Date Action</th>
+            <th class="border-top-0">Le contrat</th>           
+        </tr>
+    </thead>
+    <tbody>';
+    $query = "SELECT *
+        FROM contrat
+        ORDER BY id_contrat ASC";
+    $result = mysqli_query($conn, $query);
+    $i = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
+        $class = "etatactif";
+        $value .= '<tr>
+            <td>' . $i . '</td>
+            <td>' . $row['datedebut_contrat'] . '</td>
+            <td>' . $row['datefin_contrat'] . '</td>
+            <td style="height: 70px;"><center><div class="'.$class.'">  AJOUT </div></center></td>
+            <td>' . $row['date_created_contrat'] . '</td>
+            <td>
+                <div class="btn-group" role="group">
+                    <button type="button" title="Consulter le contrat" class="btn" style="font-size: 2px;" id="btn-show-contrat" data-id=' . $row['id_contrat'] . '>
+                    <i class="bx bx-download iconaction"></i></button>
+                </div>
+            </td>
+        </tr>';
+        $i += 1;  
+        if($row['action_contrat']==0){
+            $class = "etatdelete"; 
+            $value .= '<tr>
+                <td>' . $i . '</td>
+                <td>' . $row['datedebut_contrat'] . '</td>
+                <td>' . $row['datefin_contrat'] . '</td>
+                <td style="height: 70px;"><center><div class="'.$class.'">  SUPPRESSION </div></center></td>
+                <td>' . $row['date_updated_contrat'] . '</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button type="button" title="Consulter le contrat" class="btn" style="font-size: 2px;" id="btn-show-contrat" data-id=' . $row['id_contrat'] . '>
+                        <i class="bx bx-download iconaction"></i></button>
+                    </div>
+                </td>
+            </tr>';
+            $i += 1;  
+        }
+    }
+    $value .= '</table>';
+    echo json_encode(['status' => 'success', 'html' => $value]);
+}
+
+function searchContratHistorique()
+{
+    global $conn;
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">Date Création</th>
+            <th class="border-top-0">Date Début</th>
+            <th class="border-top-0">Date Fin</th>
+            <th class="border-top-0">Disponibilité</th> 
+            <th class="border-top-0">Actions</th>           
+        </tr>
+    </thead>
+    <tbody>';
+
+    if (isset($_POST['query'])) {
+        $search = $_POST['query'];
+        $query = ($query = "SELECT * 
+        FROM contrat
+        WHERE ( 
+            datedebut_contrat LIKE ('%" . $search . "%')
+            OR date_created_contrat LIKE ('%" . $search . "%')
+            OR datefin_contrat LIKE ('%" . $search . "%'))
+            ORDER BY id_contrat ASC");
+        $result = mysqli_query($conn, $query);
+        $i = 1;
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $class = "etatactif";
+                $value .= '<tr>
+                    <td>' . $i . '</td>
+                    <td>' . $row['datedebut_contrat'] . '</td>
+                    <td>' . $row['datefin_contrat'] . '</td>
+                    <td>' . $row['date_created_contrat'] . '</td>
+                    <td style="height: 70px;"><center><div class="'.$class.'"> ajout </div></center></td>
+        
+                    <td>
+                        <div class="btn-group" role="group">
+                            <button type="button" title="Consulter le contrat" class="btn" style="font-size: 2px;" id="btn-show-contrat" data-id=' . $row['id_contrat'] . '>
+                            <i class="bx bx-download iconaction"></i></button>
+                            <button type="button" title="Supprimer le contrat" class="btn" style="font-size: 2px;" id="btn-delete-contrat" data-id1=' . $row['id_contrat'] . '>
+                            <i class="lni lni-trash iconaction"></i></button>
+                        </div>
+                    </td>
+                </tr>';
+                $i += 1;  
+            }
+            $value .= '</tbody>';
+        } else {
+            $value = '<table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Aucune donnée correspond à votre recherche!</td>
+            </tr>
+            </tbody>';
+        }
+        echo $value;
+    } else {
+        display_contrat_historique_record();
+    }
+} 
