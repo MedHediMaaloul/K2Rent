@@ -22,6 +22,8 @@
 	<link href="assets/css/icons.css" rel="stylesheet">
 	<link rel="stylesheet" href="app.css">
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	<!-- calendar css -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css" />
 	<!-- Theme Style CSS -->
 	<link rel="stylesheet" href="assets/css/dark-theme.css" />
 	<link rel="stylesheet" href="assets/css/semi-dark.css" />
@@ -91,8 +93,8 @@
 					</a>
 					<ul>
 						<li> <a href="contrat_voiture.php"><i class="bx bx-right-arrow-alt"></i>Liste des Contrats</a></li>
-						<li> <a href="archivage-contart-voiture.php"><i class="bx bx-right-arrow-alt"></i>Liste archivage des Contrats</a></li>
-                        <li> <a href="contart-pack.php"><i class="bx bx-right-arrow-alt"></i>Historique Contrat</a></li>
+						<li> <a href="archivage-contrat-voiture.php"><i class="bx bx-right-arrow-alt"></i>Liste archivage des Contrats</a></li>
+                        <li> <a href="contrat-historique.php"><i class="bx bx-right-arrow-alt"></i>Historique Contrat</a></li>
 					</ul>
 				</li>
                 <li>
