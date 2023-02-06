@@ -69,15 +69,15 @@ span.min-temperature {
 							<p class="mb-5"></p>
     						<h2>MÉTÉO <?php echo $data->name; ?></h2>
 							<h4>Ville , Médenine , Tunisie</h4>
+							<p class="mb-4"></p>
     						<div class="time">
-								<div>MÉTÉO DU JOUR - <?php setlocale(LC_TIME, "fr_FR", "French"); echo utf8_encode(strftime("%A %d %B %G", strtotime($currentTime))); echo " - ". date('h')."H";?></div>
+								<div>MÉTÉO DU JOUR - <?php setlocale(LC_TIME, "fr_FR", "French"); echo utf8_encode(strftime("%A %d %B %G", strtotime($currentTime))); echo " - ". date('H')."H";?></div>
     						    <div><?php echo ucwords($data->weather[0]->description); ?></div>
     						</div>
     						<div class="weather-forecast">
     						    <img
     						        src="http://openweathermap.org/img/w/<?php echo $data->weather[0]->icon; ?>.png"
-    						        class="weather-icon" /> <?php echo $data->main->temp_max; ?>&deg;C<span
-    						        class="min-temperature"><?php echo $data->main->temp_min; ?>&deg;C</span>
+    						        class="min-temperature"><?php echo $data->main->temp_max." "; ?>&deg;C</span>
     						</div>
     						<div class="time">
     						    <div>Humidité : <?php echo $data->main->humidity; ?> %</div>
@@ -121,7 +121,7 @@ span.min-temperature {
 			<div class="col-2 col-lg-6">
 				<?php
 				$apikey = 'AIzaSyBS1I5ulR-2sQLaX1fpPXqkImsD4MrcGRc';
-				$videoId = 'Kvv6HCAD0pM';
+				$videoId = 'QO4qI6z7XvE';
 			    $googleApiUrl = 'https://www.googleapis.com/youtube/v3/videos?id=' . $videoId . '&key=' . $apikey . '&part=snippet';
 
 				$ch = curl_init();

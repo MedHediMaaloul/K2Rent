@@ -93,8 +93,8 @@
 					</a>
 					<ul>
 						<li> <a href="contrat_voiture.php"><i class="bx bx-right-arrow-alt"></i>Liste des Contrats</a></li>
-						<li> <a href="archivage-contrat-voiture.php"><i class="bx bx-right-arrow-alt"></i>Liste archivage des Contrats</a></li>
-                        <li> <a href="contrat-historique.php"><i class="bx bx-right-arrow-alt"></i>Historique Contrat</a></li>
+						<li> <a href="contrat_archivage_voiture.php"><i class="bx bx-right-arrow-alt"></i>Liste archivage des Contrats</a></li>
+                        <li> <a href="historique_contrat_voiture.php"><i class="bx bx-right-arrow-alt"></i>Historique Contrat</a></li>
 					</ul>
 				</li>
                 <li>

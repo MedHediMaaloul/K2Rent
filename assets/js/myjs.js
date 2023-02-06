@@ -54,9 +54,11 @@ $(document).ready(function () {
   // Contrat Archive
   searchContratArchive();
   view_contrat_archive_record();
-  // Contrat historique
+  // Contrat Historique
   view_contrat_historique_record();
   searchContratHistorique();
+  // Download Contrat
+  get_contrat_pdf();
 });
 
 function ReloadButtonExit() {
@@ -1612,7 +1614,7 @@ function afficher_voiture_dispo() {
 
 function view_contrat_archive_record() {
   $.ajax({
-    url: "viewContratArchive.php",
+    url: "viewcontratarchive.php",
     method: "post",
     success: function (data) {
       try {
@@ -1646,7 +1648,7 @@ function searchContratArchive() {
 
 function view_contrat_historique_record() {
   $.ajax({
-    url: "viewContratHistorique.php",
+    url: "viewcontrathistorique.php",
     method: "post",
     success: function (data) {
       try {
@@ -1674,6 +1676,15 @@ function searchContratHistorique() {
         $("#contrat-historique").html(response);
       },
     });
+  });
+}
+
+// Download Contrat
+
+function get_contrat_pdf() {
+  $(document).on("click", "#btn-show-contrat", function () {
+    var id_contrat = $(this).attr("data-id");
+    window.open("fpdf/contratlocation.php?N=" + id_contrat, '_blank');
   });
 }
 

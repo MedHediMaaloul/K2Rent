@@ -475,10 +475,10 @@ function display_user_record()
     while ($row = mysqli_fetch_assoc($result)) {
         if ($row['etat_user'] == 'T'){
             $etat = "ACTIF";
-            $class = "etatactif";
+            $class = "etat etatactif";
         } else{
             $etat = "INACTIF";
-            $class = "etatinactif";
+            $class = "etat etatinactif";
         }
 
         $agence ='K2 Rent';
@@ -547,10 +547,10 @@ function searchUser()
             while ($row = mysqli_fetch_assoc($result)) {
                 if ($row['etat_user'] == 'T') {
                     $etat = "ACTIF";
-                    $class = "etatactif";
+                    $class = "etat etatactif";
                 } else {
                     $etat = "INACTIF";
-                    $class = "etatinactif";
+                    $class = "etat etatinactif";
                 }
             
                 $agence ='K2 Rent';
@@ -1044,10 +1044,10 @@ function display_voiture_record()
     $result = mysqli_query($conn, $query);
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
-        $class = "etatactif";
+        $class = "etat etatactif";
         $climatisation = "OUI";
         if ($row['climatisation_voiture'] == '0') {
-            $class = "etatinactif";
+            $class = "etat etatinactif";
             $climatisation = "NON";
         } 
         $value .= '<tr>
@@ -1613,10 +1613,10 @@ function display_stockvoiture_record()
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
         $disponibilte = disponibilite_Vehicule($row['id_voiture']);
-        $class = "etatactif";
+        $class = "etat etatactif";
         if ($disponibilte == 'Loué') {
             $row['nom_agence'] = localisation_Vehicule($row['id_voiture']);
-            $class = "etatinactif";
+            $class = "etat etatinactif";
         } 
         $value .= '<tr>
             <td>' . $i . '</td>
@@ -1681,10 +1681,10 @@ function searchStockVoiture()
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $disponibilte = disponibilite_Vehicule($row['id_voiture']);
-                $class = "etatactif";
+                $class = "etat etatactif";
                 if ($disponibilte == 'Loué') {
                     $row['nom_agence'] = localisation_Vehicule($row['id_voiture']);
-                    $class = "etatinactif";
+                    $class = "etat etatinactif";
                 } 
                 $value .= '<tr>
                     <td>' . $i . '</td>
@@ -1990,8 +1990,6 @@ function display_contrat_archive_record()
                 <div class="btn-group" role="group">
                     <button type="button" title="Consulter le contrat" class="btn" style="font-size: 2px;" id="btn-show-contrat" data-id=' . $row['id_contrat'] . '>
                     <i class="bx bx-download iconaction"></i></button>
-                    <button type="button" title="Supprimer le contrat" class="btn" style="font-size: 2px;" id="btn-delete-contrat" data-id1=' . $row['id_contrat'] . '>
-                    <i class="lni lni-trash iconaction"></i></button>
                 </div>
             </td>
         </tr>';
@@ -2020,7 +2018,6 @@ function searchContratArchive()
         </tr>
     </thead>
     <tbody>';
-
 
     if (isset($_POST['query'])) {
         $search = $_POST['query'];
@@ -2058,8 +2055,6 @@ function searchContratArchive()
                         <div class="btn-group" role="group">
                             <button type="button" title="Consulter le contrat" class="btn" style="font-size: 2px;" id="btn-show-contrat" data-id=' . $row['id_contrat'] . '>
                             <i class="bx bx-download iconaction"></i></button>
-                            <button type="button" title="Supprimer le contrat" class="btn" style="font-size: 2px;" id="btn-delete-contrat" data-id1=' . $row['id_contrat'] . '>
-                            <i class="lni lni-trash iconaction"></i></button>
                         </div>
                     </td>
                 </tr>';
@@ -2108,7 +2103,7 @@ function display_contrat_historique_record()
     $result = mysqli_query($conn, $query);
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
-        $class = "etatactif";
+        $class = "etat etatactif";
         $value .= '<tr>
             <td>' . $i . '</td>
             <td>' . $row['datedebut_contrat'] . '</td>
@@ -2124,7 +2119,7 @@ function display_contrat_historique_record()
         </tr>';
         $i += 1;  
         if($row['action_contrat']==0){
-            $class = "etatdelete"; 
+            $class = "etatL etatinactif"; 
             $value .= '<tr>
                 <td>' . $i . '</td>
                 <td>' . $row['datedebut_contrat'] . '</td>
@@ -2174,24 +2169,38 @@ function searchContratHistorique()
         $i = 1;
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
-                $class = "etatactif";
+                $class = "etat etatactif";
                 $value .= '<tr>
                     <td>' . $i . '</td>
                     <td>' . $row['datedebut_contrat'] . '</td>
                     <td>' . $row['datefin_contrat'] . '</td>
+                    <td style="height: 70px;"><center><div class="'.$class.'">AJOUT</div></center></td>
                     <td>' . $row['date_created_contrat'] . '</td>
-                    <td style="height: 70px;"><center><div class="'.$class.'"> ajout </div></center></td>
-        
                     <td>
                         <div class="btn-group" role="group">
                             <button type="button" title="Consulter le contrat" class="btn" style="font-size: 2px;" id="btn-show-contrat" data-id=' . $row['id_contrat'] . '>
                             <i class="bx bx-download iconaction"></i></button>
-                            <button type="button" title="Supprimer le contrat" class="btn" style="font-size: 2px;" id="btn-delete-contrat" data-id1=' . $row['id_contrat'] . '>
-                            <i class="lni lni-trash iconaction"></i></button>
                         </div>
                     </td>
                 </tr>';
                 $i += 1;  
+                if($row['action_contrat'] == 0){
+                    $class = "etatL etatinactif"; 
+                    $value .= '<tr>
+                        <td>' . $i . '</td>
+                        <td>' . $row['datedebut_contrat'] . '</td>
+                        <td>' . $row['datefin_contrat'] . '</td>
+                        <td style="height: 70px;"><center><div class="'.$class.'">SUPPRESSION</div></center></td>
+                        <td>' . $row['date_updated_contrat'] . '</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button type="button" title="Consulter le contrat" class="btn" style="font-size: 2px;" id="btn-show-contrat" data-id=' . $row['id_contrat'] . '>
+                                <i class="bx bx-download iconaction"></i></button>
+                            </div>
+                        </td>
+                    </tr>';
+                    $i += 1;  
+                }  
             }
             $value .= '</tbody>';
         } else {
