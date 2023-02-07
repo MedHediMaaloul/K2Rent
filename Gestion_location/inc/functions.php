@@ -1013,7 +1013,9 @@ function delete_client_record()
 function display_voiture_record()
 {
     global $conn;
-
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
+    
     $value = '<table class="table table-striped align-middle">
     <thead>
         <tr>
@@ -1033,7 +1035,18 @@ function display_voiture_record()
         </tr>
     </thead>
     <tbody>';
-    $query = "SELECT * 
+    if($id_role == 2){
+        $query = "SELECT * 
+        FROM voiture as V 
+        LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+        LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
+        LEFT JOIN valise_voiture AS VV on V.valise_voiture = VV.id_valisevoiture
+        LEFT JOIN agence AS A on V.id_agence = A.id_agence
+        WHERE action_voiture = '1'
+        AND V.id_agence = $id_agence
+        ORDER BY id_voiture ASC";
+    }else{
+        $query = "SELECT * 
         FROM voiture as V 
         LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
         LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
@@ -1041,6 +1054,7 @@ function display_voiture_record()
         LEFT JOIN agence AS A on V.id_agence = A.id_agence
         WHERE action_voiture = '1'
         ORDER BY id_voiture ASC";
+    }
     $result = mysqli_query($conn, $query);
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
@@ -1081,6 +1095,8 @@ function display_voiture_record()
 function searchVoiture()
 {
     global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
 
     $value = '<table class="table table-striped align-middle">
     <thead>
@@ -1090,37 +1106,74 @@ function searchVoiture()
             <th class="border-top-0">Marque/Modèle</th>
             <th class="border-top-0">Type de carburant</th>
             <th class="border-top-0">Boite de vitesse</th>
+            <th class="border-top-0">Puissance</th>
+            <th class="border-top-0">Nombre de place</th>
+            <th class="border-top-0">Nombre de valise</th>
+            <th class="border-top-0">Air conditionné</th>
             <th class="border-top-0">Agence</th>
             <th class="border-top-0">Carte grise</th>
             <th class="border-top-0">Assurance</th>
-            <th class="border-top-0">Actions</th>      
+            <th class="border-top-0">Actions</th>       
         </tr>
     </thead>
     <tbody>';
     if (isset($_POST['query'])) {
         $search = $_POST['query'];
-        $query = ($query = "SELECT * 
-        FROM voiture as V 
-        LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
-        LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
-        LEFT JOIN agence AS A on V.id_agence = A.id_agence
-        WHERE action_voiture = '1'
-         AND (pimm_voiture LIKE ('%" . $search . "%')
-                OR marque LIKE ('%" . $search . "%') 
-                OR model LIKE ('%" . $search . "%')       
-                OR label_carburant LIKE ('%" . $search . "%')
-                OR boitevitesse_voiture LIKE ('%" . $search . "%')
-                OR nom_agence LIKE ('%" . $search . "%'))");
+        if($id_role == 2){
+            $query = ($query = "SELECT * 
+            FROM voiture as V 
+            LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
+            LEFT JOIN valise_voiture AS VV on V.valise_voiture = VV.id_valisevoiture
+            LEFT JOIN agence AS A on V.id_agence = A.id_agence
+            WHERE action_voiture = '1'
+            AND V.id_agence = $id_agence
+            AND (pimm_voiture LIKE ('%" . $search . "%')
+                    OR marque LIKE ('%" . $search . "%') 
+                    OR model LIKE ('%" . $search . "%')       
+                    OR label_carburant LIKE ('%" . $search . "%')
+                    OR boitevitesse_voiture LIKE ('%" . $search . "%')
+                    OR nom_agence LIKE ('%" . $search . "%')
+                    OR puissance_voiture LIKE ('%" . $search . "%') 
+                    OR nbreplace_voiture LIKE ('%" . $search . "%')       
+                    OR label_valise LIKE ('%" . $search . "%'))");
+        }else{
+            $query = ($query = "SELECT * 
+            FROM voiture as V 
+            LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
+            LEFT JOIN agence AS A on V.id_agence = A.id_agence
+            WHERE action_voiture = '1'
+            AND (pimm_voiture LIKE ('%" . $search . "%')
+                    OR marque LIKE ('%" . $search . "%') 
+                    OR model LIKE ('%" . $search . "%')       
+                    OR label_carburant LIKE ('%" . $search . "%')
+                    OR boitevitesse_voiture LIKE ('%" . $search . "%')
+                    OR nom_agence LIKE ('%" . $search . "%')
+                    OR puissance_voiture LIKE ('%" . $search . "%') 
+                    OR nbreplace_voiture LIKE ('%" . $search . "%')       
+                    OR label_valise LIKE ('%" . $search . "%'))");
+        }
         $result = mysqli_query($conn, $query);
         $i = 1;
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
+                $class = "etat etatactif";
+                $climatisation = "OUI";
+                if ($row['climatisation_voiture'] == '0') {
+                    $class = "etat etatinactif";
+                    $climatisation = "NON";
+                } 
                 $value .= '<tr>
                     <td>' . $i . '</td>
                     <td>' . $row['pimm_voiture'] . '</td>
                     <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
                     <td>' . $row['label_carburant'] . '</td>
                     <td>' . $row['boitevitesse_voiture'] . '</td>
+                    <td>' . $row['puissance_voiture'] . ' CV' .'</td>
+                    <td>' . $row['nbreplace_voiture'] . ' places' .'</td>
+                    <td>' . $row['label_valise'] . '</td>
+                    <td style="height: 70px;"><center><div class="'.$class.'">' . $climatisation . '</div></center></td>
                     <td>' . $row['nom_agence'] . '</td>
                     <td><a href="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '"></a></td>
                     <td><a href="uploadfile/voiture/assurance/' . $row["assurance_voiture"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/assurance/' . $row["assurance_voiture"] . '"></a></td>
@@ -1956,6 +2009,7 @@ function display_contrat_archive_record()
             <th class="border-top-0">#</th>
             <th class="border-top-0">Date Début</th>
             <th class="border-top-0">Date Fin</th>
+            <th class="border-top-0">Prix Contrat</th>
             <th class="border-top-0">Pimm Voiture</th>
             <th class="border-top-0">Marque Voiture</th>
             <th class="border-top-0">Nom Client</th>
@@ -1981,6 +2035,7 @@ function display_contrat_archive_record()
             <td>' . $i . '</td>
             <td>' . $row['datedebut_contrat'] . '</td>
             <td>' . $row['datefin_contrat'] . '</td>
+            <td>' . $row['prix_contrat'] . '</td>
             <td>' . $row['pimm_voiture'] . '</td>
             <td>' . $row['marque'] . ' ' . $row['model'] .'</td>
             <td>' . $row['nom_client'] . '</td>
@@ -2009,6 +2064,7 @@ function searchContratArchive()
             <th class="border-top-0">#</th>
             <th class="border-top-0">Date Début</th>
             <th class="border-top-0">Date Fin</th>
+            <th class="border-top-0">Prix Contrat</th>
             <th class="border-top-0">Pimm Voiture</th>
             <th class="border-top-0">Marque Voiture</th>
             <th class="border-top-0">Nom Client</th>
@@ -2036,7 +2092,8 @@ function searchContratArchive()
             OR email_client LIKE ('%" . $search . "%')
             OR nom_agence LIKE ('%" . $search . "%')
             OR datedebut_contrat LIKE ('%" . $search . "%')
-            OR datefin_contrat LIKE ('%" . $search . "%'))
+            OR datefin_contrat LIKE ('%" . $search . "%')
+            OR prix_contrat LIKE ('%" . $search . "%'))
             ORDER BY id_contrat ASC");
         $result = mysqli_query($conn, $query);
         $i = 1;
@@ -2046,6 +2103,7 @@ function searchContratArchive()
                     <td>' . $i . '</td>
                     <td>' . $row['datedebut_contrat'] . '</td>
                     <td>' . $row['datefin_contrat'] . '</td>
+                    <td>' . $row['prix_contrat'] . '</td>
                     <td>' . $row['pimm_voiture'] . '</td>
                     <td>' . $row['marque'] . ' ' . $row['model'] .'</td>
                     <td>' . $row['nom_client'] . '</td>
@@ -2091,6 +2149,8 @@ function display_contrat_historique_record()
             <th class="border-top-0">#</th>
             <th class="border-top-0">Date Début Contrat</th>
             <th class="border-top-0">Date Fin Contrat</th>
+            <th class="border-top-0">Pimm Voiture</th>
+            <th class="border-top-0">Nom Client</th>
             <th class="border-top-0">Action</th>
             <th class="border-top-0">Date Action</th>
             <th class="border-top-0">Le contrat</th>           
@@ -2098,7 +2158,9 @@ function display_contrat_historique_record()
     </thead>
     <tbody>';
     $query = "SELECT *
-        FROM contrat
+        FROM contrat AS C
+        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+        LEFT JOIN client AS CL on CL.id_client = C.id_client
         ORDER BY id_contrat ASC";
     $result = mysqli_query($conn, $query);
     $i = 1;
@@ -2108,6 +2170,8 @@ function display_contrat_historique_record()
             <td>' . $i . '</td>
             <td>' . $row['datedebut_contrat'] . '</td>
             <td>' . $row['datefin_contrat'] . '</td>
+            <td>' . $row['pimm_voiture'] . '</td>
+            <td>' . $row['nom_client'] . '</td>
             <td style="height: 70px;"><center><div class="'.$class.'">  AJOUT </div></center></td>
             <td>' . $row['date_created_contrat'] . '</td>
             <td>
@@ -2118,12 +2182,14 @@ function display_contrat_historique_record()
             </td>
         </tr>';
         $i += 1;  
-        if($row['action_contrat']==0){
+        if($row['action_contrat'] == 0){
             $class = "etatL etatinactif"; 
             $value .= '<tr>
                 <td>' . $i . '</td>
                 <td>' . $row['datedebut_contrat'] . '</td>
                 <td>' . $row['datefin_contrat'] . '</td>
+                <td>' . $row['pimm_voiture'] . '</td>
+                <td>' . $row['nom_client'] . '</td>
                 <td style="height: 70px;"><center><div class="'.$class.'">  SUPPRESSION </div></center></td>
                 <td>' . $row['date_updated_contrat'] . '</td>
                 <td>
@@ -2147,11 +2213,13 @@ function searchContratHistorique()
     <thead>
         <tr>
             <th class="border-top-0">#</th>
-            <th class="border-top-0">Date Création</th>
-            <th class="border-top-0">Date Début</th>
-            <th class="border-top-0">Date Fin</th>
-            <th class="border-top-0">Disponibilité</th> 
-            <th class="border-top-0">Actions</th>           
+            <th class="border-top-0">Date Début Contrat</th>
+            <th class="border-top-0">Date Fin Contrat</th>
+            <th class="border-top-0">Pimm Voiture</th>
+            <th class="border-top-0">Nom Client</th>
+            <th class="border-top-0">Action</th>
+            <th class="border-top-0">Date Action</th>
+            <th class="border-top-0">Le contrat</th>              
         </tr>
     </thead>
     <tbody>';
@@ -2159,11 +2227,14 @@ function searchContratHistorique()
     if (isset($_POST['query'])) {
         $search = $_POST['query'];
         $query = ($query = "SELECT * 
-        FROM contrat
-        WHERE ( 
-            datedebut_contrat LIKE ('%" . $search . "%')
-            OR date_created_contrat LIKE ('%" . $search . "%')
-            OR datefin_contrat LIKE ('%" . $search . "%'))
+        FROM contrat AS C
+        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+        LEFT JOIN client AS CL on CL.id_client = C.id_client
+        WHERE (datedebut_contrat LIKE ('%" . $search . "%')
+            OR datefin_contrat LIKE ('%" . $search . "%')
+            OR pimm_voiture LIKE ('%" . $search . "%')
+            OR nom_client LIKE ('%" . $search . "%')
+            OR date_created_contrat LIKE ('%" . $search . "%'))
             ORDER BY id_contrat ASC");
         $result = mysqli_query($conn, $query);
         $i = 1;
@@ -2174,6 +2245,8 @@ function searchContratHistorique()
                     <td>' . $i . '</td>
                     <td>' . $row['datedebut_contrat'] . '</td>
                     <td>' . $row['datefin_contrat'] . '</td>
+                    <td>' . $row['pimm_voiture'] . '</td>
+                    <td>' . $row['nom_client'] . '</td>
                     <td style="height: 70px;"><center><div class="'.$class.'">AJOUT</div></center></td>
                     <td>' . $row['date_created_contrat'] . '</td>
                     <td>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-$id_agence = $_SESSION['id_agence'];
+$id_agence = $_SESSION['Agence'];
 include('Gestion_location/inc/header_sidebar.php');
 include('Gestion_location/inc/connect_db.php');
 ?>

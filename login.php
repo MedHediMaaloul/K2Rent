@@ -13,17 +13,17 @@ if (isset($_POST['login'])) {
         $erreurpassword = "Mot de passe est obligatoire!";
     }else {
         $query = "SELECT * 
-					FROM user 
-					LEFT JOIN role_user ON user.role_user = role_user.id_roleuser
-					WHERE etat_user ='T' 
-					AND login_user='" . $_POST['login'] . "' and motdepasse_user='" . md5($_POST['password']) . "'";
+					FROM user AS U,role_user AS R
+					WHERE U.role_user = R.id_roleuser
+					AND U.etat_user ='T' 
+					AND U.login_user='" . $_POST['login'] . "' and U.motdepasse_user='" . md5($_POST['password']) . "'";
         $result = mysqli_query($conn, $query);
         if ($row = mysqli_fetch_assoc($result)) {
-            $_SESSION['User'] = $_POST['login'];
-            $_SESSION['Role'] =  $row['label_roleuser'];
-			$_SESSION['Nom'] =  $row['nom_user'];
-            $_SESSION['id_user'] =  $row['id_user'];
-            $_SESSION['id_agence'] =  $row['id_agence'];
+			$_SESSION['Nom'] = $row['nom_user'];
+            $_SESSION['Login'] = $row['login_user'];
+            $_SESSION['Role'] = $row['role_user'];
+			$_SESSION['RoleLabel'] = $row['label_roleuser'];
+			$_SESSION['Agence'] = $row['id_agence'];
             header("location:dashboard.php");
         } else {
             $erreur = "Mot de passe incorrect !";

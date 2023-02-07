@@ -1,6 +1,6 @@
 <?php
 session_start();
-if ((($_SESSION['Role']) == "superadmin")) {
+if ((($_SESSION['Role']) == "0")) {
     include('Gestion_location/inc/header_sidebar.php');
 } else {
     header("Location:login.php");

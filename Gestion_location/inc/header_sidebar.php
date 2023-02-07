@@ -53,7 +53,7 @@
 						<div class="menu-title">Tableau De Bord</div>
 					</a>
 				</li>
-				<?php if ($_SESSION['Role'] == "superadmin") {?>
+				<?php if ($_SESSION['Role'] == 0) {?>
                 <li>
                     <a href="agence.php">
 						<div class="menu-title">Agence</div>
@@ -179,7 +179,7 @@
 						<img src="assets/images/avatars/avatar.jpg" class="user-img" alt="user avatar">
 						<div class="user-info ps-3">
 							<span class="user-name mb-0"><?php echo $_SESSION['Nom'];?></span>
-							<p class="role mb-0"><?php echo $_SESSION['Role'];?></p>
+							<p class="role mb-0"><?php echo $_SESSION['RoleLabel'];?></p>
 						</div>
 					</a>
 					<ul class="dropdown-menu dropdown-menu-end">

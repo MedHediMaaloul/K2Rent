@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['User'])) {
+if (!isset($_SESSION['Login'])) {
     header("Location:login.php");
 } else {
     include('Gestion_location/inc/header_sidebar.php');
