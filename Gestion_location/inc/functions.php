@@ -45,25 +45,23 @@ function localisation_Vehicule($id_voiture)
 function ContratNotification()
 {
     global $conn;
-    $id_agence = $_SESSION['id_agence'];
+    $id_agence = $_SESSION['Agence'];
     
     if (isset($_POST["view"])) {
-        if ($_SESSION['Role'] == "superadmin" || $_SESSION['Role'] == "responsable") {
-            $query = "SELECT C.id_contrat,C.type_location,C.date_fin,CL.nom,CL.email,CL.tel,CL.adresse,C.view,CL.nom_entreprise
-            FROM contrat_client as C
-            left JOIN client as CL
-            on C.id_client=CL.id_client
-            WHERE C.etat_contrat != 'S'
-            AND (DATE(NOW()) BETWEEN DATE_SUB(C.date_fin, INTERVAL 7 DAY) AND DATE_SUB(C.date_fin, INTERVAL -3 DAY))
+        if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+            $query = "SELECT C.id_contrat,C.datefin_contrat,C.notification_contrat,CL.nom_client,CL.email_client,CL.tel_client,CL.adresse_client
+            FROM contrat AS C
+            left JOIN client AS CL ON C.id_client = CL.id_client
+            WHERE C.action_contrat = '1'
+            AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))
             LIMIT 4";
         }else{
-            $query = "SELECT C.id_contrat,C.type_location,C.date_fin,CL.nom,CL.email,CL.tel,CL.adresse,C.view,CL.nom_entreprise
-            FROM contrat_client as C
-            left JOIN client as CL
-            on C.id_client=CL.id_client
-            WHERE C.etat_contrat != 'S'
+            $query = "SELECT C.id_contrat,C.datefin_contrat,C.notification_contrat,CL.nom_client,CL.email_client,CL.tel_client,CL.adresse_client
+            FROM contrat AS C
+            left JOIN client AS CL ON C.id_client=CL.id_client
+            WHERE C.action_contrat = '1'
             AND C.id_agence = $id_agence
-            AND (DATE(NOW()) BETWEEN DATE_SUB(C.date_fin, INTERVAL 7 DAY) AND DATE_SUB(C.date_fin, INTERVAL -3 DAY))
+            AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))
             LIMIT 4";
         }
         $result = mysqli_query($conn, $query);
@@ -71,73 +69,59 @@ function ContratNotification()
 
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_array($result)) {
-                $str1 = "Le contrat de ";
+                $str1 = "Le contrat N° ";
                 $str2 = " du client ";
                 $str3 = " se terminera bientôt";
 
-                if ($row['view'] == 1) {
-                    $style = 'background-color: #DFE9F2;';
+                if ($row['notification_contrat'] == 1) {
+                    $style = 'background-color: #F5F5F5;';
                 } else {
                     $style = 'background-color: white;';
                 }
 
-                if ($row['nom_entreprise'] == "") {
-                    $output .= '
-                        <li>
-                            <div class="border-bottom border-dark p-3" style="' . $style . '">
-                                <div class="text-secondary" ><a onClick="reply_click(this.id)" id="' . $row["id_contrat"] . '" target="_blank" att="' . $row["id_contrat"] .
-                        '" href="Liste_notifications_update.php?clicked_id=' . $row["id_contrat"] . '">' . $str1 . '' . $row["type_location"] . '' . $str2 . '' .
-                        $row["nom"] . '' . $str3 . '</a></div>
+                $output .= '
+                    <li>
+                        <div class="border-bottom border-dark p-3" style="'. $style .'">
+                            <div class="text-secondary">
+                                <a onClick="reply_click(this.id)" id="'.$row["id_contrat"].'" target="_blank" att="'.$row["id_contrat"].'" 
+                                    href="Liste_notifications_update.php?clicked_id='.$row["id_contrat"].'">'.$str1.$row["id_contrat"].''.$str2.''.$row["nom_client"] . '' . $str3 .'</a>
                             </div>
-                        </li>
-                        <li class="divider"></li>';
-                } else if ($row['nom'] == "") {
-                    $output .= '
-                        <li>
-                            <div class="border-bottom border-dark p-3" style="' . $style . '">
-                                <div class="text-secondary" ><a onClick="reply_click(this.id)" id="' . $row["id_contrat"] . '" target="_blank" att="' . $row["id_contrat"] .
-                        '" href="Liste_notifications_update.php?clicked_id=' . $row["id_contrat"] . '">' . $str1 . '' . $row["type_location"] . '' . $str2 . '' .
-                        $row["nom_entreprise"] . '' . $str3 . '</a></div>
-                            </div>
-                        </li>
-                        <li class="divider"></li>';
-                } else {
-                    $output .= '
-                        <li>
-                            <div class="border-bottom border-dark p-3" style="' . $style . '">
-                                <div class="text-secondary" ><a onClick="reply_click(this.id)" id="' . $row["id_contrat"] . '" target="_blank" att="' . $row["id_contrat"] .
-                        '" href="Liste_notifications_update.php?clicked_id=' . $row["id_contrat"] . '">' . $str1 . '' . $row["type_location"] . '' . $str2 . '' .
-                        $row["nom"] . '(' . $row["nom_entreprise"] . ')' . '' . $str3 . '</a></div>
-                            </div>
-                        </li>
-                        <li class="divider"></li>';
-                }
+                        </div>
+                    </li>
+                    <li class="divider"></li>';
             }
             $output .= ' <div > <a href="Liste_notifications.php"> Voir Plus </a> </div>';
         } else {
             $output .= '<li class="text-bold text-italic">Aucune notification trouvée</li>';
         }
 
-        if ($_SESSION['Role'] == "superadmin" || $_SESSION['Role'] == "responsable") {
-            $query_1 = "SELECT C.id_contrat,C.type_location,C.date_fin,CL.nom,CL.email,CL.tel,CL.adresse
-            FROM contrat_client as C
-            left JOIN client as CL on C.id_client=CL.id_client
-            WHERE C.contrat_status = 0
-            AND C.view = 1
-            AND C.etat_contrat != 'S'
-            AND (DATE(NOW()) BETWEEN DATE_SUB(C.date_fin, INTERVAL 7 DAY) AND DATE_SUB(C.date_fin, INTERVAL 0 DAY))";
+        if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+            $query_count = "SELECT COUNT(*) AS count
+                FROM contrat AS C
+                LEFT JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND C.notification_contrat = '1'
+                AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))"; 
         }else{
-            $query_1 = "SELECT C.id_contrat,C.type_location,C.date_fin,CL.nom,CL.email,CL.tel,CL.adresse
-            FROM contrat_client as C
-            left JOIN client as CL on C.id_client=CL.id_client
-            WHERE C.contrat_status = 0
-            AND C.view = 1
-            AND C.id_agence = $id_agence
-            AND C.etat_contrat != 'S'
-            AND (DATE(NOW()) BETWEEN DATE_SUB(C.date_fin, INTERVAL 7 DAY) AND DATE_SUB(C.date_fin, INTERVAL 0 DAY))";
+            $query_count = "SELECT COUNT(*) AS count
+                FROM contrat AS C
+                LEFT JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND C.notification_contrat = '1'
+                AND C.id_agence = $id_agence
+                AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))";
         }
-        $result_1 = mysqli_query($conn, $query_1);
-        $count = mysqli_num_rows($result_1);
+        $result_count = mysqli_query($conn, $query_count);
+        $row = mysqli_fetch_row($result_count);
+        $count = $row[0];
+        $data = array(
+            'notification_contrat' => $output,
+            'unseen_notification' => $count
+        );
+        echo json_encode($data);
+    }else{
+        $output ="test";
+        $count = 0;
         $data = array(
             'notification_contrat' => $output,
             'unseen_notification' => $count
@@ -1142,6 +1126,7 @@ function searchVoiture()
             FROM voiture as V 
             LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
             LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
+            LEFT JOIN valise_voiture AS VV on V.valise_voiture = VV.id_valisevoiture
             LEFT JOIN agence AS A on V.id_agence = A.id_agence
             WHERE action_voiture = '1'
             AND (pimm_voiture LIKE ('%" . $search . "%')
@@ -1638,6 +1623,8 @@ function delete_marquevoiture_record()
 function display_stockvoiture_record()
 {
     global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
 
     $value = '<table class="table table-striped align-middle">
     <thead>
@@ -1655,13 +1642,24 @@ function display_stockvoiture_record()
         </tr>
     </thead>
     <tbody>';
-    $query = "SELECT * 
+    if($id_role == 2){
+        $query = "SELECT * 
+        FROM voiture as V 
+        LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+        LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
+        LEFT JOIN agence AS A on V.id_agence = A.id_agence
+        WHERE action_voiture = '1'
+        AND V.id_agence = $id_agence
+        ORDER BY id_voiture ASC";
+    }else{
+        $query = "SELECT * 
         FROM voiture as V 
         LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
         LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
         LEFT JOIN agence AS A on V.id_agence = A.id_agence
         WHERE action_voiture = '1'
         ORDER BY id_voiture ASC";
+    }
     $result = mysqli_query($conn, $query);
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
@@ -1698,6 +1696,8 @@ function display_stockvoiture_record()
 function searchStockVoiture()
 {
     global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
 
     $value = '<table class="table table-striped align-middle">
     <thead>
@@ -1717,18 +1717,34 @@ function searchStockVoiture()
     <tbody>';
     if (isset($_POST['query'])) {
         $search = $_POST['query'];
-        $query = ($query = "SELECT * 
-        FROM voiture as V 
-        LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
-        LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
-        LEFT JOIN agence AS A on V.id_agence = A.id_agence
-        WHERE action_voiture = '1'
-        AND (pimm_voiture LIKE ('%" . $search . "%') 
-            OR marque LIKE ('%" . $search . "%')
-            OR model LIKE ('%" . $search . "%')
-            OR label_carburant LIKE ('%" . $search . "%')
-            OR boitevitesse_voiture LIKE ('%" . $search . "%'))
-            ORDER BY id_voiture ASC");
+        if($id_role == 2){
+            $query = "SELECT * 
+            FROM voiture as V 
+            LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
+            LEFT JOIN agence AS A on V.id_agence = A.id_agence
+            WHERE action_voiture = '1'
+            AND V.id_agence = $id_agence
+            AND (pimm_voiture LIKE ('%" . $search . "%') 
+                OR marque LIKE ('%" . $search . "%')
+                OR model LIKE ('%" . $search . "%')
+                OR label_carburant LIKE ('%" . $search . "%')
+                OR boitevitesse_voiture LIKE ('%" . $search . "%'))
+                ORDER BY id_voiture ASC";
+        }else{
+            $query = "SELECT * 
+            FROM voiture as V 
+            LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            LEFT JOIN carburant_voiture AS C on V.id_typecarburant = C.id_carburantvoiture
+            LEFT JOIN agence AS A on V.id_agence = A.id_agence
+            WHERE action_voiture = '1'
+            AND (pimm_voiture LIKE ('%" . $search . "%') 
+                OR marque LIKE ('%" . $search . "%')
+                OR model LIKE ('%" . $search . "%')
+                OR label_carburant LIKE ('%" . $search . "%')
+                OR boitevitesse_voiture LIKE ('%" . $search . "%'))
+                ORDER BY id_voiture ASC";
+        }
         $result = mysqli_query($conn, $query);
         $i = 1;
         if (mysqli_num_rows($result) > 0) {
@@ -1802,6 +1818,8 @@ function update_agence_voiture()
 function display_contrat_record()
 {
     global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
 
     $value = '<table class="table table-striped align-middle">
     <thead>
@@ -1819,7 +1837,20 @@ function display_contrat_record()
         </tr>
     </thead>
     <tbody>';
-    $query = "SELECT * 
+
+    if($id_role == 2){
+        $query = "SELECT * 
+        FROM contrat as C 
+        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+        LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
+        LEFT JOIN client AS CL on CL.id_client = C.id_client
+        LEFT JOIN agence AS A on A.id_agence = C.id_agence
+        WHERE action_contrat = '1'
+        AND C.id_agence = $id_agence
+        AND datefin_contrat >= DATE(NOW())
+        ORDER BY id_contrat ASC";
+    }else{
+        $query = "SELECT * 
         FROM contrat as C 
         LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
         LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
@@ -1828,6 +1859,7 @@ function display_contrat_record()
         WHERE action_contrat = '1'
         AND datefin_contrat >= DATE(NOW())
         ORDER BY id_contrat ASC";
+    }
     $result = mysqli_query($conn, $query);
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
@@ -1859,6 +1891,8 @@ function display_contrat_record()
 function searchContrat()
 {
     global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
 
     $value = '<table class="table table-striped align-middle">
     <thead>
@@ -1877,27 +1911,48 @@ function searchContrat()
     </thead>
     <tbody>';
 
-
     if (isset($_POST['query'])) {
         $search = $_POST['query'];
-        $query = ($query = "SELECT * 
-        FROM contrat as C 
-        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
-        LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
-        LEFT JOIN client AS CL on CL.id_client = C.id_client
-        LEFT JOIN agence AS A on A.id_agence = C.id_agence
-        WHERE action_contrat = '1'
-        AND datefin_contrat >= DATE(NOW())
-        AND (pimm_voiture LIKE ('%" . $search . "%') 
-            OR marque LIKE ('%" . $search . "%')
-            OR model LIKE ('%" . $search . "%')
-            OR nom_client LIKE ('%" . $search . "%')
-            OR email_client LIKE ('%" . $search . "%')
-            OR nom_agence LIKE ('%" . $search . "%')
-            OR datedebut_contrat LIKE ('%" . $search . "%')
-            OR datefin_contrat LIKE ('%" . $search . "%')
-            OR prix_contrat LIKE ('%" . $search . "%'))
-            ORDER BY id_contrat ASC");
+        if($id_role == 2){
+            $query = ("SELECT * 
+            FROM contrat as C 
+            LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+            LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
+            LEFT JOIN client AS CL on CL.id_client = C.id_client
+            LEFT JOIN agence AS A on A.id_agence = C.id_agence
+            WHERE action_contrat = '1'
+            AND C.id_agence = $id_agence
+            AND datefin_contrat >= DATE(NOW())
+            AND (pimm_voiture LIKE ('%" . $search . "%') 
+                OR marque LIKE ('%" . $search . "%')
+                OR model LIKE ('%" . $search . "%')
+                OR nom_client LIKE ('%" . $search . "%')
+                OR email_client LIKE ('%" . $search . "%')
+                OR nom_agence LIKE ('%" . $search . "%')
+                OR datedebut_contrat LIKE ('%" . $search . "%')
+                OR datefin_contrat LIKE ('%" . $search . "%')
+                OR prix_contrat LIKE ('%" . $search . "%'))
+                ORDER BY id_contrat ASC"); 
+        }else{
+            $query = ("SELECT * 
+            FROM contrat as C 
+            LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+            LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
+            LEFT JOIN client AS CL on CL.id_client = C.id_client
+            LEFT JOIN agence AS A on A.id_agence = C.id_agence
+            WHERE action_contrat = '1'
+            AND datefin_contrat >= DATE(NOW())
+            AND (pimm_voiture LIKE ('%" . $search . "%') 
+                OR marque LIKE ('%" . $search . "%')
+                OR model LIKE ('%" . $search . "%')
+                OR nom_client LIKE ('%" . $search . "%')
+                OR email_client LIKE ('%" . $search . "%')
+                OR nom_agence LIKE ('%" . $search . "%')
+                OR datedebut_contrat LIKE ('%" . $search . "%')
+                OR datefin_contrat LIKE ('%" . $search . "%')
+                OR prix_contrat LIKE ('%" . $search . "%'))
+                ORDER BY id_contrat ASC"); 
+        }
         $result = mysqli_query($conn, $query);
         $i = 1;
         if (mysqli_num_rows($result) > 0) {
@@ -1950,6 +2005,9 @@ function InsertContrat()
     $DateFinContrat = $_POST['DateFinContrat'];
     $ClientContrat = $_POST['ClientContrat'];
     $AgenceContrat = $_POST['AgenceContrat'];
+    if($_SESSION['Role'] == 2){
+        $AgenceContrat = $_SESSION['Agence'];
+    }
     $VoitureContrat = $_POST['VoitureContrat'];
     //Nombre de jours
     $nbJoursTimestamp = strtotime($DateFinContrat) - strtotime($DateDebutContrat);
@@ -2002,6 +2060,8 @@ function delete_contrat_record()
 function display_contrat_archive_record()
 {
     global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
 
     $value = '<table class="table table-striped align-middle">
     <thead>
@@ -2019,7 +2079,19 @@ function display_contrat_archive_record()
         </tr>
     </thead>
     <tbody>';
-    $query = "SELECT * 
+    if($id_role == 2){
+        $query = "SELECT * 
+        FROM contrat as C 
+        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+        LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
+        LEFT JOIN client AS CL on CL.id_client = C.id_client
+        LEFT JOIN agence AS A on A.id_agence = C.id_agence
+        WHERE action_contrat = '1'
+        AND C.id_agence = $id_agence
+        AND datefin_contrat < DATE(NOW())
+        ORDER BY id_contrat ASC"; 
+    }else{
+        $query = "SELECT * 
         FROM contrat as C 
         LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
         LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
@@ -2028,6 +2100,7 @@ function display_contrat_archive_record()
         WHERE action_contrat = '1'
         AND datefin_contrat < DATE(NOW())
         ORDER BY id_contrat ASC";
+    }
     $result = mysqli_query($conn, $query);
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
@@ -2057,6 +2130,8 @@ function display_contrat_archive_record()
 function searchContratArchive()
 {
     global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
 
     $value = '<table class="table table-striped align-middle">
     <thead>
@@ -2077,24 +2152,46 @@ function searchContratArchive()
 
     if (isset($_POST['query'])) {
         $search = $_POST['query'];
-        $query = ($query = "SELECT * 
-        FROM contrat as C 
-        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
-        LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
-        LEFT JOIN client AS CL on CL.id_client = C.id_client
-        LEFT JOIN agence AS A on A.id_agence = C.id_agence
-        WHERE action_contrat = '1'
-        AND datefin_contrat < DATE(NOW())
-        AND (pimm_voiture LIKE ('%" . $search . "%') 
-            OR marque LIKE ('%" . $search . "%')
-            OR model LIKE ('%" . $search . "%')
-            OR nom_client LIKE ('%" . $search . "%')
-            OR email_client LIKE ('%" . $search . "%')
-            OR nom_agence LIKE ('%" . $search . "%')
-            OR datedebut_contrat LIKE ('%" . $search . "%')
-            OR datefin_contrat LIKE ('%" . $search . "%')
-            OR prix_contrat LIKE ('%" . $search . "%'))
-            ORDER BY id_contrat ASC");
+        if($id_role == 2){
+            $query = ("SELECT * 
+            FROM contrat as C 
+            LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+            LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
+            LEFT JOIN client AS CL on CL.id_client = C.id_client
+            LEFT JOIN agence AS A on A.id_agence = C.id_agence
+            WHERE action_contrat = '1'
+            AND C.id_agence = $id_agence
+            AND datefin_contrat < DATE(NOW())
+            AND (pimm_voiture LIKE ('%" . $search . "%') 
+                OR marque LIKE ('%" . $search . "%')
+                OR model LIKE ('%" . $search . "%')
+                OR nom_client LIKE ('%" . $search . "%')
+                OR email_client LIKE ('%" . $search . "%')
+                OR nom_agence LIKE ('%" . $search . "%')
+                OR datedebut_contrat LIKE ('%" . $search . "%')
+                OR datefin_contrat LIKE ('%" . $search . "%')
+                OR prix_contrat LIKE ('%" . $search . "%'))
+                ORDER BY id_contrat ASC");
+        }else{
+            $query = ("SELECT * 
+            FROM contrat as C 
+            LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+            LEFT JOIN marque_voiture AS M on M.id_marquevoiture = V.id_marquemodel
+            LEFT JOIN client AS CL on CL.id_client = C.id_client
+            LEFT JOIN agence AS A on A.id_agence = C.id_agence
+            WHERE action_contrat = '1'
+            AND datefin_contrat < DATE(NOW())
+            AND (pimm_voiture LIKE ('%" . $search . "%') 
+                OR marque LIKE ('%" . $search . "%')
+                OR model LIKE ('%" . $search . "%')
+                OR nom_client LIKE ('%" . $search . "%')
+                OR email_client LIKE ('%" . $search . "%')
+                OR nom_agence LIKE ('%" . $search . "%')
+                OR datedebut_contrat LIKE ('%" . $search . "%')
+                OR datefin_contrat LIKE ('%" . $search . "%')
+                OR prix_contrat LIKE ('%" . $search . "%'))
+                ORDER BY id_contrat ASC");
+        }
         $result = mysqli_query($conn, $query);
         $i = 1;
         if (mysqli_num_rows($result) > 0) {
@@ -2142,6 +2239,8 @@ function searchContratArchive()
 function display_contrat_historique_record()
 {
     global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
 
     $value = '<table class="table table-striped align-middle">
     <thead>
@@ -2157,11 +2256,20 @@ function display_contrat_historique_record()
         </tr>
     </thead>
     <tbody>';
-    $query = "SELECT *
+    if($id_role == 2){
+        $query = "SELECT *
+        FROM contrat AS C
+        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+        LEFT JOIN client AS CL on CL.id_client = C.id_client
+        WHERE C.id_agence = $id_agence
+        ORDER BY id_contrat ASC";
+    }else{
+        $query = "SELECT *
         FROM contrat AS C
         LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
         LEFT JOIN client AS CL on CL.id_client = C.id_client
         ORDER BY id_contrat ASC";
+    }
     $result = mysqli_query($conn, $query);
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
@@ -2209,6 +2317,8 @@ function display_contrat_historique_record()
 function searchContratHistorique()
 {
     global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
     $value = '<table class="table table-striped align-middle">
     <thead>
         <tr>
@@ -2226,16 +2336,31 @@ function searchContratHistorique()
 
     if (isset($_POST['query'])) {
         $search = $_POST['query'];
-        $query = ($query = "SELECT * 
-        FROM contrat AS C
-        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
-        LEFT JOIN client AS CL on CL.id_client = C.id_client
-        WHERE (datedebut_contrat LIKE ('%" . $search . "%')
-            OR datefin_contrat LIKE ('%" . $search . "%')
-            OR pimm_voiture LIKE ('%" . $search . "%')
-            OR nom_client LIKE ('%" . $search . "%')
-            OR date_created_contrat LIKE ('%" . $search . "%'))
-            ORDER BY id_contrat ASC");
+        if($id_role == 2){
+            $query = ("SELECT * 
+            FROM contrat AS C
+            LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+            LEFT JOIN client AS CL on CL.id_client = C.id_client
+            WHERE V.id_agence = $id_agence
+            AND (datedebut_contrat LIKE ('%" . $search . "%')
+                OR datefin_contrat LIKE ('%" . $search . "%')
+                OR pimm_voiture LIKE ('%" . $search . "%')
+                OR nom_client LIKE ('%" . $search . "%')
+                OR date_created_contrat LIKE ('%" . $search . "%'))
+                ORDER BY id_contrat ASC");
+            
+        }else{
+            $query = ("SELECT * 
+            FROM contrat AS C
+            LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+            LEFT JOIN client AS CL on CL.id_client = C.id_client
+            WHERE (datedebut_contrat LIKE ('%" . $search . "%')
+                OR datefin_contrat LIKE ('%" . $search . "%')
+                OR pimm_voiture LIKE ('%" . $search . "%')
+                OR nom_client LIKE ('%" . $search . "%')
+                OR date_created_contrat LIKE ('%" . $search . "%'))
+                ORDER BY id_contrat ASC");
+        }
         $result = mysqli_query($conn, $query);
         $i = 1;
         if (mysqli_num_rows($result) > 0) {
@@ -2263,6 +2388,8 @@ function searchContratHistorique()
                         <td>' . $i . '</td>
                         <td>' . $row['datedebut_contrat'] . '</td>
                         <td>' . $row['datefin_contrat'] . '</td>
+                        <td>' . $row['pimm_voiture'] . '</td>
+                        <td>' . $row['nom_client'] . '</td>
                         <td style="height: 70px;"><center><div class="'.$class.'">SUPPRESSION</div></center></td>
                         <td>' . $row['date_updated_contrat'] . '</td>
                         <td>

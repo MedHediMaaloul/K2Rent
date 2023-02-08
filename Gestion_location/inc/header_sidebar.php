@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="color-sidebar sidebarcolor3 color-header headercolor1">
+<html lang="en" class="color-header headercolor3">
 
 <head>
 	<!-- Required meta tags -->
@@ -41,85 +41,81 @@
 	<div class="wrapper">
 		<!--sidebar wrapper -->
 		<div class="sidebar-wrapper" data-simplebar="true">
-			<div class="sidebar-header">
-				<div class="col-3"></div>
-				<div><img src="assets/images/k2rent_menu.png" class="logo-icon" alt="logo icon"></div>
-				<div class="toggle-icon ms-auto"><i class='bx bx-first-page'></i></div>
-			</div>
+			<img src="assets/images/k2rent.png" class="logo-icon">
 			<!--navigation-->
 			<ul class="metismenu" id="menu">
 				<li>
                     <a href="dashboard.php">
-						<div class="menu-title">Tableau De Bord</div>
+						<div class="menu-title"><img src="assets/images/img_menu/dashboard.png" style="margin-right: 15px;" width="18px" height="18px">Tableau De Bord</div>
 					</a>
 				</li>
 				<?php if ($_SESSION['Role'] == 0) {?>
                 <li>
                     <a href="agence.php">
-						<div class="menu-title">Agence</div>
+						<div class="menu-title"><img src="assets/images/img_menu/agence.png" style="margin-right: 15px;" width="20px" height="18px">Agences</div>
 					</a>
 				</li>
                 <li>
                     <a href="utilisateur.php">
-						<div class="menu-title">Utilisateur</div>
+						<div class="menu-title"><img src="assets/images/img_menu/user.png" style="margin-right: 15px;" width="20px" height="20px">Utilisateurs</div>
 					</a>
 				</li>
-				<hr class="solid">
 				<?php }?>
 				<li>
 					<a href="client.php">
-						<div class="menu-title">Client</div>
+						<div class="menu-title"><img src="assets/images/img_menu/clients.png" style="margin-right: 15px;" width="20px" height="20px">Clients</div>
 					</a>
 				</li>
                 <li>
 					<a href="javascript:;" class="has-arrow">
-						<div class="menu-title">Voiture</div>
+						<div class="menu-title"><img src="assets/images/img_menu/voiture.png" style="margin-right: 15px;" width="22px" height="13px">Voitures</div>
 					</a>
 					<ul>
-						<li> <a href="voiture.php"><i class="bx bx-right-arrow-alt"></i>Liste des voitures</a></li>
-						<li> <a href="marque_voiture.php"><i class="bx bx-right-arrow-alt"></i>Liste des marques</a></li>
+						<li> <a href="voiture.php">Liste des voitures</a></li>
+						<li> <a href="marque_voiture.php">Liste des marques</a></li>
 					</ul>		
 				</li>
                 
+				<li>
+					<a href="javascript:;" class="has-arrow">
+						<div class="menu-title"><img src="assets/images/img_menu/contrat.png" style="margin-right: 15px;" width="20px" height="20px">Contrat</div>
+					</a>
+					<ul>
+						<li> <a href="contrat_voiture.php">Liste des Contrats</a></li>
+						<li> <a href="contrat_archivage_voiture.php">Liste archivage des Contrats</a></li>
+                        <li> <a href="historique_contrat_voiture.php">Historiques Contrat</a></li>
+					</ul>
+				</li>
+
+				<li>
+                    <a href="planning.php">
+						<div class="menu-title"><img src="assets/images/img_menu/planing.png" style="margin-right: 15px;" width="20px" height="20px">Planning</div>
+					</a>
+				</li>
+
                 <li>
 					<a href="stock_voiture.php">
-						<div class="menu-title">Stock</div>
+						<div class="menu-title"><img src="assets/images/img_menu/stock.png" style="margin-right: 15px;" width="20px" height="20px">Stock</div>
 					</a>
 				</li>
-                <hr class="solid">
-                <li>
-					<a href="javascript:;" class="has-arrow">
-						<div class="menu-title">Contrat</div>
-					</a>
-					<ul>
-						<li> <a href="contrat_voiture.php"><i class="bx bx-right-arrow-alt"></i>Liste des Contrats</a></li>
-						<li> <a href="contrat_archivage_voiture.php"><i class="bx bx-right-arrow-alt"></i>Liste archivage des Contrats</a></li>
-                        <li> <a href="historique_contrat_voiture.php"><i class="bx bx-right-arrow-alt"></i>Historique Contrat</a></li>
-					</ul>
-				</li>
-                <li>
-                    <a href="planning.php">
-						<div class="menu-title">Planning</div>
-					</a>
-				</li>
-                <hr class="solid">
+
 				<li>
-					<a href="entretien.php" class="has-arrow">
-						<div class="menu-title">Entretien</div>
+					<a href="javascript:;" class="has-arrow">
+						<div class="menu-title"><img src="assets/images/img_menu/entretien.png" style="margin-right: 15px;" width="17px" height="17px">Entretiens</div>
 					</a>
 					<ul>
-                        <li> <a class="has-arrow" href="javascript:;"><i class="bx bx-right-arrow-alt"></i>Archivage Entretien</a>
-                            <ul>
-						        <li> <a href="entretien-voiture.php"><i class="bx bx-right-arrow-alt"></i>Archivage Entretien Vehicule</a>
-						        </li>
-                                <li> <a href="entretien-materiel.php"><i class="bx bx-right-arrow-alt"></i>Archivage Entretien Matériel</a>
-						        </li>
-                            </ul>
-                        </li>
-                        <li> <a href="historique-entretien.php"><i class="bx bx-right-arrow-alt"></i>Historique Entretiens</a>
-						</li>
+						<li> <a href="entretien_voiture.php"></i>Liste des Entretiens</a></li>
+						<li> <a href="entretien_archivage_voiture.php"></i>Liste archivage des Entretiens</a></li>
+                        <li> <a href="historique_entretien_voiture.php"></i>Historiques Entretien</a></li>
 					</ul>
 				</li>
+
+				<li>
+					<a href="notifications.php">
+						<div class="menu-title"><img src="assets/images/img_menu/notification.png" style="margin-right: 15px;" width="20px" height="20px">Notifications</div>
+					</a>
+				</li>
+                	
 			</ul>
 			<!--end navigation-->
 		</div>
@@ -133,21 +129,38 @@
 					<div class="user-info d-none d-lg-block">
 						<ul class="nav">
 							<li class="nav-item">
-								<div class="user-name"><i class='bx bx-time-five'></i><i id="time"></i></div>
+								<div class="user-name"><img src="assets/images/img_menu/time.png" style="margin-bottom: 5px;" width="24px" height="24px"><i id="time"></i></div>
 						  	</li>
 					  	</ul>
 					</div>
 					<div class="top-menu ms-auto">
 						<ul class="navbar-nav align-items-center">
-						<li class="nav-item dropdown dropdown-large">
-								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-									<span class="alert-count"></span>
-									<i class='bx bx-message-alt-edit'></i>
+							<li class="nav-item dropdown dropdown-large">
+								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="toggle-contrat" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
+									<span id="count_contrat_fin" class="alert-count"></span>
+									<img src="assets/images/img_menu/FinContrat.png" width="50px" height="50px">
 								</a>
 								<div class="dropdown-menu dropdown-menu-end">
 									<a href="javascript:;">
 										<div class="msg-header">
-											<p class="msg-header-title">Contrat crée</p>
+											<p class="msg-header-title">Contrats qui prendront fin</p>
+										</div>
+									</a>
+									<div class="header-message-list">
+										<p class="msg-info" id="contrat_prendront_fin"></p>	
+									</div>
+								</div>
+							</li>
+
+							<li class="nav-item dropdown dropdown-large">
+								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<span id="count_contrat_fin" class="alert-count"></span>
+									<img src="assets/images/img_menu/CreateContrat.png" width="50px" height="50px">
+								</a>
+								<div class="dropdown-menu dropdown-menu-end">
+									<a href="javascript:;">
+										<div class="msg-header">
+											<p class="msg-header-title">Contrats crées</p>
 										</div>
 									</a>
 									<div class="header-notifications-list">
@@ -156,33 +169,20 @@
 							
 								</div>
 							</li>
-							<li class="nav-item dropdown dropdown-large">
-								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="toggle-contrat" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
-									<span id="count-contrat" class="alert-count"></span>
-									<i class='bx bx-message-alt-detail'></i>
-								</a>
-								<div class="dropdown-menu dropdown-menu-end">
-									<a href="javascript:;">
-										<div class="msg-header">
-											<p class="msg-header-title">Contrat qui prendront fin</p>
-										</div>
-									</a>
-									<div class="header-message-list">
-										<p class="msg-info" id="dropdown-menu-contrat"></p>	
-									</div>
-								</div>
-							</li>
 						</ul>
 					</div>
 					<div class="user-box dropdown">
 					<a class="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-						<img src="assets/images/avatars/avatar.jpg" class="user-img" alt="user avatar">
-						<div class="user-info ps-3">
-							<span class="user-name mb-0"><?php echo $_SESSION['Nom'];?></span>
-							<p class="role mb-0"><?php echo $_SESSION['RoleLabel'];?></p>
-						</div>
+						<img src="assets/images/avatars/avatar.png" class="user-img" alt="user avatar">
 					</a>
 					<ul class="dropdown-menu dropdown-menu-end">
+						<li>
+							<div class="user-info ps-2"><span class="user-name"><?php echo $_SESSION['Nom'];?></span></div>
+							<?php if ($_SESSION['Role'] != 0) {?>
+								<div class="user-info ps-2"><span class="role"><?php echo $_SESSION['RoleLabel'];?></span></div>
+							<?php }?>
+						</li>
+						<hr class="solid">
 						<li><a class="dropdown-item" href="logout.php?logout"><i class='bx bx-log-out-circle'></i><span>Déconnexion</span></a></li>
 					</ul>
 					</div>

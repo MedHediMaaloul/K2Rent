@@ -13,8 +13,9 @@ if (isset($_POST['login'])) {
         $erreurpassword = "Mot de passe est obligatoire!";
     }else {
         $query = "SELECT * 
-					FROM user AS U,role_user AS R
+					FROM user AS U,role_user AS R,agence AS A
 					WHERE U.role_user = R.id_roleuser
+					AND U.id_agence = A.id_agence
 					AND U.etat_user ='T' 
 					AND U.login_user='" . $_POST['login'] . "' and U.motdepasse_user='" . md5($_POST['password']) . "'";
         $result = mysqli_query($conn, $query);
@@ -24,6 +25,7 @@ if (isset($_POST['login'])) {
             $_SESSION['Role'] = $row['role_user'];
 			$_SESSION['RoleLabel'] = $row['label_roleuser'];
 			$_SESSION['Agence'] = $row['id_agence'];
+			$_SESSION['NomAgence'] = $row['nom_agence'];
             header("location:dashboard.php");
         } else {
             $erreur = "Mot de passe incorrect !";

@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('Gestion_location/inc/connect_db.php');
-$id_agence = $_SESSION['id_agence'];
+$id_agence = $_SESSION['Agence'];
 
 if ($_POST['DateDebutContrat'] && $_POST['DateFinContrat']) {
     $debut = $_POST['DateDebutContrat'];

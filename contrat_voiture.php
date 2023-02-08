@@ -139,25 +139,29 @@ if (!isset($_SESSION['Login'])) {
                                 </div>
 
                                 <?php
-                                include_once('Gestion_location/inc/connect_db.php');
-                                $query = "SELECT * FROM agence WHERE id_agence != '0' AND action_agence = '1' ORDER BY nom_agence ASC";
-                                $result = mysqli_query($conn, $query);
+                                if($_SESSION['Role'] == "0"){
+                                    include_once('Gestion_location/inc/connect_db.php');
+                                    $query = "SELECT * FROM agence WHERE id_agence != '0' AND action_agence = '1' ORDER BY nom_agence ASC";
+                                    $result = mysqli_query($conn, $query);
                                 ?>
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Agence<span class="text-danger">*</span></label>
-                                    <div class="col-md-12 border-bottom p-0">
-                                        <select name="AgenceContrat" id="AgenceContrat" onchange="afficher_voiture_dispo()" class="form-control p-0 border-0" required>
-                                            <option value="" disabled selected>Selectionner l'agence</option>
-                                            <?php
-                                            if ($result->num_rows > 0) {
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo '<option value="' . $row['id_agence'] . '">' . $row['nom_agence'] . '</option>';
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">Agence<span class="text-danger">*</span></label>
+                                        <div class="col-md-12 border-bottom p-0">
+                                            <select name="AgenceContrat" id="AgenceContrat" onchange="afficher_voiture_dispo()" class="form-control p-0 border-0" required>
+                                                <option value="" disabled selected>Selectionner l'agence</option>
+                                                <?php
+                                                if ($result->num_rows > 0) {
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo '<option value="' . $row['id_agence'] . '">' . $row['nom_agence'] . '</option>';
+                                                    }
                                                 }
-                                            }
-                                            ?>
-                                        </select>
+                                                ?>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
+                                <?php
+                                }
+                                ?>
                                 <div class="form-group mb-4" id="listevoiture"></div>
                             </form>
                         </div>

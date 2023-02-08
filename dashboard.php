@@ -62,7 +62,7 @@ span.min-temperature {
 		</div>
 		<div class="row">
 			<div class="col-2 col-lg-5">
-				<div style="height:435px; background-color:#bedff7;" class="card radius-10">
+				<div style="height:435px; background-color:#ffffff;" class="card radius-10">
 					<div class="light">
 						<p class="mb-4"></p>
 						<center>

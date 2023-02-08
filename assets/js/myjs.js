@@ -45,6 +45,7 @@ $(document).ready(function () {
   searchStockVoiture();
   get_agence_voiture();
   transfert_voiture_agence_record();
+  export_stock_voiture();
   // Contrat
   view_contrat_record();
   searchContrat();
@@ -108,11 +109,11 @@ function load_unseen_notification(view = "") {
     },
     dataType: "json",
     success: function (data) {
-      $("#dropdown-menu-contrat").html(data.notification_contrat);
+      $("#contrat_prendront_fin").html(data.notification_contrat);
       if (data.unseen_notification > 0) {
-        $("#count-contrat").html(data.unseen_notification);
+        $("#count_contrat_fin").html(data.unseen_notification);
       } else {
-        $("#count-contrat").css("display", "none");
+        $("#count_contrat_fin").css("display", "none");
       }
     },
   });
@@ -120,7 +121,7 @@ function load_unseen_notification(view = "") {
 
 function removeNotification() {
   $(document).on("click", "#toggle-contrat", function () {
-    $("#count-contrat").html("0").css("display", "none");
+    $("#count_contrat_fin").html("0").css("display", "none");
     load_unseen_notification("yes");
   });
 }
@@ -1455,6 +1456,10 @@ function transfert_voiture_agence_record() {
   });
 }
 
+function export_stock_voiture() {
+  window.open("export_stock_voiture.php");
+}
+
 // Contrat 
 
 function view_contrat_record() {
@@ -1502,7 +1507,7 @@ function insert_contrat_Record() {
     var AgenceContrat = $("#AgenceContrat").val();
     var VoitureContrat = $("#list_voiture").val();
 
-    if (DateDebutContrat == "" || DateFinContrat == "" || ClientContrat == null || AgenceContrat == null || VoitureContrat == null){
+    if (DateDebutContrat == "" || DateFinContrat == "" || ClientContrat == null || VoitureContrat == null){
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");

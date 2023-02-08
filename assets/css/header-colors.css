@@ -1,7 +1,7 @@
 
 html.color-header .topbar .navbar-nav .nav-link {
 
-	color: #ffffff;
+	color: #000000;
 
 }
 
@@ -59,7 +59,7 @@ html.color-header .search-show {
 
 html.color-header .user-info .user-name {
 
-	color: #ffffff;
+	color: #000000;
 
 }
 
@@ -97,7 +97,7 @@ html.color-header .mobile-toggle-menu {
 
 .switcher-body .headercolor3 {
 
-	background: #e10a1f !important;
+	background: #F7F6F9 !important;
 
 }
 
@@ -145,7 +145,7 @@ html.headercolor2 .topbar {
 
 html.headercolor3 .topbar {
 
-	background: #e10a1f;
+	background: #F7F6F9;
 
 }
 

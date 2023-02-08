@@ -162,12 +162,10 @@ a {
 
 
 .logo-icon {
-
-	max-width: 55%;
-  	
-	height: 55%;
-
-	filter: invert(1) grayscale(100%) brightness(200%);
+	margin-top: 47px;
+	width: 66px;
+	height: 40px;
+	margin-left: 100px;
 
 }
 
@@ -292,6 +290,8 @@ a {
 
 	margin-left: 250px;
 
+	background: #F7F6F9;
+
 
 }
 
@@ -300,6 +300,8 @@ a {
 
 
 	padding: 1.5rem;
+
+	background: #F7F6F9;
 
 
 }
@@ -409,7 +411,7 @@ a {
 	padding: 10px;
 
 
-	margin-top: 60px;
+	margin-top: 30px;
 
 
 	-webkit-box-orient: vertical;
@@ -504,13 +506,13 @@ a {
 	justify-content: left;
 
 
-	padding: 8px 15px;
+	padding: 10px 15px;
 
 
-	font-size: 15px;
+	font-size: 14px;
 
 
-	color: #9ea4aa;
+	color: #ffffff;
 
 
 	outline-width: 0;
@@ -548,8 +550,8 @@ a {
 
 .sidebar-wrapper .metismenu a .menu-title {
 
-
-	margin-left: 10px;
+	margin-top: 10px;
+	margin-left: 23px;
 
 
 }
@@ -558,10 +560,10 @@ a {
 .sidebar-wrapper .metismenu ul a {
 
 
-	padding: 6px 15px 6px 15px;
+	padding: 10px 20px 10px 20px;
 
 
-	font-size: 15px;
+	font-size: 14px;
 
 
 	border: 0;
@@ -585,7 +587,7 @@ a {
 	border: 1px solid #ffffff00;
 
 
-	background: rgb(255 255 255 / 8%);
+	background: rgb(255 255 255 / 2%);
 
 
 }
@@ -594,7 +596,7 @@ a {
 .sidebar-wrapper .metismenu ul ul a {
 
 
-	padding: 8px 15px 8px 30px;
+	padding: 10px 15px 10px 45px;
 
 
 }
@@ -603,7 +605,7 @@ a {
 .sidebar-wrapper .metismenu ul ul ul a {
 
 
-	padding: 8px 15px 8px 45px;
+	padding: 10px 15px 10px 45px;
 
 
 }
@@ -620,14 +622,15 @@ a {
 
 .sidebar-wrapper .metismenu .mm-active>a {
 
-
+	padding: 10px 0px 10px 25px;
+	gap: 15px;
 	color: #fff;
-	
     text-decoration: none;
-	
-    background: rgb(255 255 255 / 18%);
-
-
+	background: linear-gradient(94.22deg, #BF1616 -7.43%, rgba(191, 22, 22, 0) 98.56%);
+	border-radius: 3px;
+	flex: none;
+	order: 0;
+	flex-grow: 0;
 }
 
 
@@ -637,7 +640,7 @@ a {
 	padding: 20px 15px 5px 5px;
 
 
-	color: #b0afaf;
+	color: #ffffff;
 
 
 	text-transform: uppercase;
@@ -4568,7 +4571,7 @@ input::placeholder {
 	padding-left: 0.8rem;
 
 
-	color: #e4e5e6;
+	color: #000000;
 
 
 	font-size: 22px;
@@ -4622,7 +4625,7 @@ input::placeholder {
 	font-weight: 500;
 
 
-	color: #fff;
+	color: rgb(255, 255, 255);
 
 
 	background: #f62718;
@@ -4658,7 +4661,7 @@ input::placeholder {
 	font-size: 16px;
 	font-weight: bold;
 	/* font-weight: 500; */
-	color: #ffffff;
+	color: #000000;
 
 
 }
@@ -4815,7 +4818,7 @@ input::placeholder {
 	background-clip: border-box;
 
 
-	background: #ffffff;
+	background: linear-gradient(94.22deg, #BF1616 -7.43%, rgba(191, 22, 22, 0) 98.56%);
 
 
 	text-align: left;
@@ -4839,7 +4842,7 @@ input::placeholder {
 .dropdown-large .msg-header .msg-header-title {
 
 
-	font-size: 15px;
+	font-size: 13px;
 
 
 	color: #1c1b1b;
