@@ -5,6 +5,16 @@ use PhpMyAdmin\Console;
 session_start();
 require_once('connect_db.php');
 
+// Message des alertes
+
+$msg_echec = "Vous avez rencontré un problème lors de";
+$msg_success = "avec succés !";
+$msg_insert_succés = "a été ajouté $msg_success";
+$msg_insert_echec = "$msg_echec l'ajout de";
+$msg_update_succés = "a été mis à jour $msg_success";
+$msg_update_echec = "$msg_echec la mise à jour de";
+$msg_delete_succés = "a été supprimé $msg_success";
+$msg_delete_echec = "$msg_echec la suppression de";
 // Gestion Voiture Loué
 
 function disponibilite_Vehicule($id_voiture)
@@ -276,6 +286,8 @@ function searchAgence()
 function InsertAgence()
 {
     global $conn;
+    global $msg_insert_succés;
+    global $msg_insert_echec;
     $errors = [];
     if (!empty($errors)) {
         echo json_encode(["error" => "Requête invalide", "data" => $errors]);
@@ -294,7 +306,7 @@ function InsertAgence()
     $sql_e = "SELECT * FROM agence WHERE nom_agence='$agenceLieu'";
     $res_e = mysqli_query($conn, $sql_e);
     if (mysqli_num_rows($res_e) > 0) {
-        echo "<div class='text-echec'>Désolé ... l'agence est déjà pris!</div>";
+        echo "<div class='text-echec'>Désolé ... l'agence $agenceLieu est déjà pris!</div>";
     } else {
         $query = "INSERT INTO 
             agence(nom_agence,email_agence,tel_agence) 
@@ -312,9 +324,9 @@ function InsertAgence()
                     $result_query_insert_heur_list = mysqli_query($conn, $query_insert_heur_list);
                 }
             }
-            echo "<div class='text-checked'>L'agence a été ajouté avec succées</div>";
+            echo "<div class='text-checked'>L'agence $agenceLieu $msg_insert_succés</div>";
         } else {
-            echo "<div class='text-echec'>Vous avez rencontré un problème lors de l'ajout d'une agence</div>";
+            echo "<div class='text-echec'>$msg_insert_echec l'agence</div>";
         }
     }
 }
@@ -322,6 +334,8 @@ function InsertAgence()
 function InsertAgenceHeur()
 {
     global $conn;
+    global $msg_insert_succés;
+    global $msg_insert_echec;
     $errors = [];
     if (!empty($errors)) {
         echo json_encode(["error" => "Requête invalide", "data" => $errors]);
@@ -343,9 +357,9 @@ function InsertAgenceHeur()
         VALUES ('$IdAgence', '$jourH', '$heurdebutH', '$heurfinH')";
         $result = mysqli_query($conn, $query);
         if ($result) {
-            echo "<div class='text-checked'>L'horaire de l'agence a été ajouté avec succées</div>";
+            echo "<div class='text-checked'>L'horaire de l'agence $msg_insert_succés</div>";
         } else {
-            echo "<div class='text-echec'>Vous avez rencontré un problème lors de l'ajout l'horaire d'une agence</div>";
+            echo "<div class='text-echec'>$msg_insert_echec l'horaire d'une agence</div>";
         }
     }else{
         echo "<div class='text-echec'>L'horaire de l'agence choisi est déja existe !</div>";
@@ -372,6 +386,8 @@ function get_agence_record()
 function update_agence_value()
 {
     global $conn;
+    global $msg_update_succés;
+    global $msg_update_echec;
     $date = date('Y-m-d H:i:s');
     if (!array_key_exists("up_idagence", $_POST)) {
         echo json_encode(["error" => "ID utilisateur manquant ", "data" => "ID utilisateur manquant"]);
@@ -396,36 +412,42 @@ function update_agence_value()
         WHERE id_agence = $agence_id";
     $update_result = mysqli_query($conn, $update_query);
     if ($update_result) {
-        echo "<div class='text-checked'>Agence a été mis à jour avec succès!</div>";
+        echo "<div class='text-checked'>L'gence $msg_update_succés</div>";
     }else{
-        echo "<div class='text-echec'>Erreur lors de la mise à jour d'agence !</div>";
+        echo "<div class='text-echec'>$msg_update_echec l'agence !</div>";
     } 
 }
 
 function delete_agence_record()
 {
     global $conn;
+    global $msg_delete_succés;
+    global $msg_delete_echec;
+
     $date = date('Y-m-d H:i:s');
     $Del_ID = $_POST['Delete_AgenceID'];
     $query = "UPDATE agence SET action_agence = '0', date_updated_agence='$date' WHERE id_agence = '$Del_ID'";
     $result = mysqli_query($conn, $query);
     if ($result) {
-        echo "<div class='text-checked'>L'agence a été supprimé avec succées !</div>";
+        echo "<div class='text-checked'>L'agence $msg_delete_succés</div>";
     } else {
-        echo "<div class='text-echec'>Vous avez rencontré un problème lors de la suppression de l'agence !</div>";
+        echo "<div class='text-echec'>$msg_delete_echec l'agence !</div>";
     }
 }
 
 function delete_agence_heur_record()
 {
     global $conn;
+    global $msg_delete_succés;
+    global $msg_delete_echec;
+
     $Del_ID = $_POST['Delete_AgenceID'];
     $query = "DELETE FROM horaire_agence where id_horaire = '$Del_ID'";
     $result = mysqli_query($conn, $query);
     if ($result) {
-        echo "<div class='text-checked'>L'horaire de l'agence est supprimé avec succès !</div>";
+        echo "<div class='text-checked'>L'horaire de l'agence $msg_delete_succés</div>";
     } else {
-        echo "<div class='text-echec'>Vous avez rencontré un problème lors de la suppression de l'horaire !</div>";
+        echo "<div class='text-echec'>$msg_delete_echec l'horaire !</div>";
     }
 }
 
@@ -585,6 +607,7 @@ function searchUser()
 function InsertUser()
 {
     global $conn;
+    global $msg_insert_succés;
 
     $typeuser = $_POST['typeuser'];
     $nom = $_POST['nom'];
@@ -609,7 +632,7 @@ function InsertUser()
         }
         $result = mysqli_query($conn, $query);
         if ($result) {
-            echo "<div class='text-checked'>L'utilisateur est ajouté avec succès !</div>";
+            echo "<div class='text-checked'>L'utilisateur $msg_insert_succés</div>";
         } else {
             echo "<div class='text-echec'>Vous avez rencontré un problème lors de l'ajout d'utilisateur !</div>";
         }
@@ -636,6 +659,8 @@ function get_user_record()
 function update_user_value()
 {
     global $conn;
+    global $msg_update_succés;
+    global $msg_update_echec;
     $date = date('Y-m-d H:i:s');
     $user_id = $_POST["_id"];
     $user_query = "SELECT * FROM  user where id_user = $user_id";
@@ -665,23 +690,26 @@ function update_user_value()
                         WHERE id_user = $user_id";
     $update_result = mysqli_query($conn, $update_query);
     if (!$update_result) {
-        echo "<div class='text-echec'>Vous avez rencontré un problème lors de la mise à jour d'utilisateur !</div>";
+        echo "<div class='text-echec'>$msg_update_echec l'utilisateur !</div>";
     }else{
-        echo "<div class='text-checked'>L'utilisateur a été mis à jour avec succès !</div>";
+        echo "<div class='text-checked'>L'utilisateur $msg_update_succés</div>";
     }
 }
 
 function delete_user_record()
 {
     global $conn;
+    global $msg_delete_succés;
+    global $msg_delete_echec;
+
     $date = date('Y-m-d H:i:s');
     $Del_ID = $_POST['Delete_UserID'];
     $query = "UPDATE user SET etat_user = 'S', date_updated_user = '$date' WHERE id_user= '$Del_ID'";
     $result = mysqli_query($conn, $query);
     if ($result) {
-        echo "<div class='text-checked'>L'utilisateur est supprimé avec succès !</div>";
+        echo "<div class='text-checked'>L'utilisateur $msg_delete_succés</div>";
     } else {
-        echo "<div class='text-echec'>Vous avez rencontré un problème lors de la suppression d'utilisateur !</div>";
+        echo "<div class='text-echec'>$msg_delete_echec l'utilisateur !</div>";
     }
 }
 
@@ -802,6 +830,8 @@ function searchClient()
 function InsertClient()
 {
     global $conn;
+    global $msg_insert_succés;
+
     $ClientName = $_POST['ClientName'];
     $ClientEmail = $_POST['ClientEmail'];
     $Namefile = md5($ClientEmail);
@@ -855,7 +885,7 @@ function InsertClient()
 
         $result = mysqli_query($conn, $query);
         if ($result) {
-            echo "<div class='text-checked'>Un client est ajouté avec succès</div>";
+            echo "<div class='text-checked'>Le client $msg_insert_succés</div>";
         } else {
             echo "<div class='text-echec'>Vous avez rencontré un problème lors de l'ajout du client</div>";
         }
@@ -884,6 +914,8 @@ function get_client_record()
 function update_client_value()
 {
     global $conn;
+    global $msg_update_succés;
+    global $msg_update_echec;
 
     $up_idclient = $_POST["up_idclient"];
     $up_clientName = $_POST["up_clientName"];
@@ -963,10 +995,10 @@ function update_client_value()
 
         $update_result = mysqli_query($conn, $update_query);
         if (!$update_result) {
-            echo "<div class='text-echec'>Vous avez rencontré un problème lors de la mise à jour du client !</div>";
+            echo "<div class='text-echec'>$msg_update_echec client !</div>";
             return;
         }
-        echo "<div class='text-checked'>Le client a été mis à jour avec succès !</div>";
+        echo "<div class='text-checked'>Le client $msg_update_succés</div>";
 
         return;
     }
@@ -975,6 +1007,9 @@ function update_client_value()
 function delete_client_record()
 {
     global $conn;
+    global $msg_delete_succés;
+    global $msg_delete_echec;
+
     $Del_ID = $_POST['Delete_ClientID'];
     $date = date('Y-m-d H:i:s');
     $query = "UPDATE client 
@@ -986,9 +1021,9 @@ function delete_client_record()
     $result = mysqli_query($conn, $query);
 
     if ($result) {
-        echo "<div class='text-checked'>Le client est supprimé avec succès !</div>";
+        echo "<div class='text-checked'>Le client $msg_delete_succés</div>";
     } else {
-        echo "<div class='text-echec'>Vous avez rencontré un problème lors de la suppression du client !</div>";
+        echo "<div class='text-echec'>$msg_delete_echec client !</div>";
     }
 }
 
@@ -1196,6 +1231,9 @@ function searchVoiture()
 function InsertVoiture()
 {
     global $conn;
+    global $msg_insert_succés;
+    $id_agence = $_SESSION['Agence'];
+
     $voiturepimm = $_POST['voiturepimm1']." TU ".$_POST['voiturepimm2'];
     $Namefile = md5($voiturepimm);
     $voitureMarqueModel = $_POST['voitureMarqueModel'];
@@ -1207,60 +1245,69 @@ function InsertVoiture()
     $voitureclimatisation = $_POST['voitureclimatisation'];
     $voiturecartegrise = isset($_FILES['voiturecartegrise']) ? $_FILES['voiturecartegrise'] : "";
     $voitureassurance = isset($_FILES['voitureassurance']) ? $_FILES['voitureassurance'] : "";
-    $voitureagence = $_POST['voitureagence'];
-    // upload file cartegrise
-    $emplacement_cartegrise = "uploadfile/voiture/cartegrise/";
-    $file_cartegrise = $emplacement_cartegrise . basename($_FILES["voiturecartegrise"]["name"]);
-    $uploadOk_cartegrise = 1;
-    $type_cartegrise = strtolower(pathinfo($file_cartegrise,PATHINFO_EXTENSION));
-
-    if($type_cartegrise != "jpg" && $type_cartegrise != "png" && $type_cartegrise != "jpeg" && $type_cartegrise != "gif" ) {
-        echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
-        $uploadOk_cartegrise = 0;
-    }  
-    if ($uploadOk_cartegrise != 0) {
-      if (move_uploaded_file($_FILES["voiturecartegrise"]["tmp_name"], $emplacement_cartegrise .$Namefile.".".$type_cartegrise)) {
-        $voiturecartegrise = $Namefile.".".$type_cartegrise;
-      } else {
-        echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
-      }
-    }
-    // upload file assurance
-    $emplacement_assurance = "uploadfile/voiture/assurance/";
-    $file_assurance = $emplacement_assurance . basename($_FILES["voitureassurance"]["name"]);
-    $uploadOk_assurance = 1;
-    $type_assurance = strtolower(pathinfo($file_assurance,PATHINFO_EXTENSION));
-
-    if($type_assurance != "jpg" && $type_assurance != "png" && $type_assurance != "jpeg" && $type_assurance != "gif" ) {
-        echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
-        $uploadOk_assurance = 0;
-    }  
-    if ($uploadOk_assurance != 0) {
-      if (move_uploaded_file($_FILES["voitureassurance"]["tmp_name"], $emplacement_assurance .$Namefile.".".$type_assurance)) {
-        $voitureassurance = $Namefile.".".$type_assurance;
-      } else {
-        echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
-      }
-    }
-    // vérification si le pimm existe
-    $sql_e = "SELECT * FROM voiture WHERE pimm_voiture = '$voiturepimm' AND action_voiture = '1'";
-    $res_e = mysqli_query($conn, $sql_e);
-    if (mysqli_num_rows($res_e) > 0) {
-        echo '<div class="text-echec">Désolé ... Immatriculation est déjà pris!</div>';
+    if ($id_agence != "0") {
+        $voitureagence = $id_agence;
     } else {
-        $date = date('Y-m-d H:i:s');
-        $query = "INSERT INTO voiture(pimm_voiture,id_marquemodel,id_agence,id_typecarburant,boitevitesse_voiture,nbreplace_voiture,valise_voiture,puissance_voiture,climatisation_voiture,
-                    cartegrise_voiture,assurance_voiture,date_created_voiture,date_updated_voiture) 
-                VALUES ('$voiturepimm','$voitureMarqueModel','$voitureagence','$voituretypecarburant','$voitureboitevitesse','$voiturenbreplace','$voiturenbrevalise','$voiturepuissance','$voitureclimatisation',
-                    '$voiturecartegrise','$voitureassurance','$date','$date') ";
-
-        $result = mysqli_query($conn, $query);
-        if ($result) {
-            echo "<div class='text-checked'>La voiture est ajoutée avec succès</div>";
-        } else {
-            echo "<div class='text-echec'>Vous avez rencontré un problème lors de l'ajout du voiture</div>";
-        }
+        $voitureagence = $_POST['voitureagence'];
     }
+    
+    if($voitureagence == 0){
+        echo '<div class="text-echec">Veuillez choisir l\'agence!</div>';
+    }else{
+        // upload file cartegrise
+        $emplacement_cartegrise = "uploadfile/voiture/cartegrise/";
+        $file_cartegrise = $emplacement_cartegrise . basename($_FILES["voiturecartegrise"]["name"]);
+        $uploadOk_cartegrise = 1;
+        $type_cartegrise = strtolower(pathinfo($file_cartegrise,PATHINFO_EXTENSION));
+
+        if($type_cartegrise != "jpg" && $type_cartegrise != "png" && $type_cartegrise != "jpeg" && $type_cartegrise != "gif" ) {
+            echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+            $uploadOk_cartegrise = 0;
+        }  
+        if ($uploadOk_cartegrise != 0) {
+          if (move_uploaded_file($_FILES["voiturecartegrise"]["tmp_name"], $emplacement_cartegrise .$Namefile.".".$type_cartegrise)) {
+            $voiturecartegrise = $Namefile.".".$type_cartegrise;
+          } else {
+            echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
+          }
+        }
+        // upload file assurance
+        $emplacement_assurance = "uploadfile/voiture/assurance/";
+        $file_assurance = $emplacement_assurance . basename($_FILES["voitureassurance"]["name"]);
+        $uploadOk_assurance = 1;
+        $type_assurance = strtolower(pathinfo($file_assurance,PATHINFO_EXTENSION));
+
+        if($type_assurance != "jpg" && $type_assurance != "png" && $type_assurance != "jpeg" && $type_assurance != "gif" ) {
+            echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+            $uploadOk_assurance = 0;
+        }  
+        if ($uploadOk_assurance != 0) {
+          if (move_uploaded_file($_FILES["voitureassurance"]["tmp_name"], $emplacement_assurance .$Namefile.".".$type_assurance)) {
+            $voitureassurance = $Namefile.".".$type_assurance;
+          } else {
+            echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
+          }
+        }
+        // vérification si le pimm existe
+        $sql_e = "SELECT * FROM voiture WHERE pimm_voiture = '$voiturepimm' AND action_voiture = '1'";
+        $res_e = mysqli_query($conn, $sql_e);
+        if (mysqli_num_rows($res_e) > 0) {
+            echo '<div class="text-echec">Désolé ... Immatriculation est déjà pris!</div>';
+        } else {
+            $date = date('Y-m-d H:i:s');
+            $query = "INSERT INTO voiture(pimm_voiture,id_marquemodel,id_agence,id_typecarburant,boitevitesse_voiture,nbreplace_voiture,valise_voiture,puissance_voiture,climatisation_voiture,
+                        cartegrise_voiture,assurance_voiture,date_created_voiture,date_updated_voiture) 
+                    VALUES ('$voiturepimm','$voitureMarqueModel','$voitureagence','$voituretypecarburant','$voitureboitevitesse','$voiturenbreplace','$voiturenbrevalise','$voiturepuissance','$voitureclimatisation',
+                        '$voiturecartegrise','$voitureassurance','$date','$date') ";
+
+            $result = mysqli_query($conn, $query);
+            if ($result) {
+                echo "<div class='text-checked'>La voiture $msg_insert_succés</div>";
+            } else {
+                echo "<div class='text-echec'>Vous avez rencontré un problème lors de l'ajout du voiture</div>";
+            }
+        }
+    }     
 }
 
 function get_voiture_record()
@@ -1296,6 +1343,8 @@ function get_voiture_record()
 function update_voiture_value()
 {
     global $conn;
+    global $msg_update_succés;
+    global $msg_update_echec;
 
     $up_voitureid = $_POST["up_voitureid"];
     $up_voiturepimm = $_POST['up_voiturepimm1']." TU ".$_POST['up_voiturepimm2'];
@@ -1383,10 +1432,10 @@ function update_voiture_value()
 
         $update_result = mysqli_query($conn, $update_query);
         if (!$update_result) {
-            echo "<div class='text-echec'>Vous avez rencontré un problème lors de la mise à jour du voiture !</div>";
+            echo "<div class='text-echec'>$msg_update_echec voiture !</div>";
             return;
         }
-        echo "<div class='text-checked'>La voiture a été mis à jour avec succès !</div>";
+        echo "<div class='text-checked'>La voiture $msg_update_succés</div>";
         return;
     }
 }
@@ -1394,6 +1443,9 @@ function update_voiture_value()
 function delete_voiture_record()
 {
     global $conn;
+    global $msg_delete_succés;
+    global $msg_delete_echec;
+
     $Del_ID = $_POST['id_voiture'];
     $date = date('Y-m-d H:i:s');
     $query = "UPDATE voiture 
@@ -1404,9 +1456,9 @@ function delete_voiture_record()
     $result = mysqli_query($conn, $query);
 
     if ($result) {
-        echo "<div class='text-checked'>La voiture est supprimée avec succès !</div>";
+        echo "<div class='text-checked'>La voiture $msg_delete_succés</div>";
     } else {
-        echo "<div class='text-echec'>Vous avez rencontré un problème lors de la suppression du voiture !</div>";
+        echo "<div class='text-echec'>$msg_delete_echec voiture !</div>";
     }
 }
 
@@ -1519,6 +1571,7 @@ function searchMarqueVoiture()
 function InsertMarqueVoiture()
 {
     global $conn;
+    global $msg_insert_succés;
 
     $voituremarque = $_POST['voituremarque'];
     $voituremodel = $_POST['voituremodel'];
@@ -1535,7 +1588,7 @@ function InsertMarqueVoiture()
 
         $result = mysqli_query($conn, $query);
         if ($result) {
-            echo "<div class='text-checked'>La marque voiture est ajoutée avec succès</div>";
+            echo "<div class='text-checked'>La marque voiture $msg_insert_succés</div>";
         } else {
             echo "<div class='text-echec'>Vous avez rencontré un problème lors de l'ajout du marque voiture</div>";
         }
@@ -1564,6 +1617,8 @@ function get_marquevoiture_record()
 function update_marquevoiture_value()
 {
     global $conn;
+    global $msg_update_succés;
+    global $msg_update_echec;
 
     $up_marquevoitureid = $_POST["up_marquevoitureid"];
     $up_voituremarque = $_POST["up_voituremarque"];
@@ -1591,10 +1646,10 @@ function update_marquevoiture_value()
                             WHERE id_marquevoiture = $up_marquevoitureid";
         $update_result = mysqli_query($conn, $update_query);
         if (!$update_result) {
-            echo "<div class='text-echec'>Vous avez rencontré un problème lors de la mise à jour du marque voiture !</div>";
+            echo "<div class='text-echec'>$msg_update_echec marque voiture !</div>";
             return;
         }
-        echo "<div class='text-checked'>La marque voiture a été mis à jour avec succès !</div>";
+        echo "<div class='text-checked'>La marque voiture $msg_update_succés</div>";
         return;
     }
 }
@@ -1602,6 +1657,9 @@ function update_marquevoiture_value()
 function delete_marquevoiture_record()
 {
     global $conn;
+    global $msg_delete_succés;
+    global $msg_delete_echec;
+
     $id_marquevoiture = $_POST['id_marquevoiture'];
     $date = date('Y-m-d H:i:s');
     $query = "UPDATE marque_voiture 
@@ -1612,9 +1670,9 @@ function delete_marquevoiture_record()
     $result = mysqli_query($conn, $query);
 
     if ($result) {
-        echo "<div class='text-checked'>La marque voiture est supprimée avec succès !</div>";
+        echo "<div class='text-checked'>La marque voiture $msg_delete_succés</div>";
     } else {
-        echo "<div class='text-echec'>Vous avez rencontré un problème lors de la suppression du marque voiture !</div>";
+        echo "<div class='text-echec'>$msg_delete_echec marque voiture !</div>";
     }
 }
 
@@ -2001,6 +2059,8 @@ function searchContrat()
 function InsertContrat()
 {
     global $conn;
+    global $msg_insert_succés;
+
     $DateDebutContrat = $_POST['DateDebutContrat'];
     $DateFinContrat = $_POST['DateFinContrat'];
     $ClientContrat = $_POST['ClientContrat'];
@@ -2027,7 +2087,7 @@ function InsertContrat()
         VALUES ('$ClientContrat','$AgenceContrat','$VoitureContrat','$DateDebutContrat','$DateFinContrat','$PrixContrat')";
         $result = mysqli_query($conn, $query);
         if ($result) {
-            echo "<div class='text-checked'>Le contrat est ajouté avec succés</div>";
+            echo "<div class='text-checked'>Le contrat $msg_insert_succés</div>";
         } else {
             echo "<div class='text-echec'>Erreur lors de l'ajout du contrat</div>";
         }
@@ -2039,6 +2099,9 @@ function InsertContrat()
 function delete_contrat_record()
 {
     global $conn;
+    global $msg_delete_succés;
+    global $msg_delete_echec;
+
     $Del_ID = $_POST['id_contrat'];
     $date = date('Y-m-d H:i:s');
     $query = "UPDATE contrat 
@@ -2049,9 +2112,9 @@ function delete_contrat_record()
     $result = mysqli_query($conn, $query);
 
     if ($result) {
-        echo "<div class='text-checked'>Le contrat est supprimé avec succès !</div>";
+        echo "<div class='text-checked'>Le contrat $msg_delete_succés</div>";
     } else {
-        echo "<div class='text-echec'>Vous avez rencontré un problème lors de la suppression du contrat !</div>";
+        echo "<div class='text-echec'>$msg_delete_echec contrat !</div>";
     }
 }
 

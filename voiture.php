@@ -431,26 +431,30 @@ if (!isset($_SESSION['Login'])) {
                                 </div>
 
                                 <?php
+                                if($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1"){
                                 include_once('Gestion_location/inc/connect_db.php');
                                 $query = "SELECT * FROM agence WHERE id_agence != '0' AND action_agence = '1' ORDER BY nom_agence ASC";
                                 $result = mysqli_query($conn, $query);
                                 ?>
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Agence<span class="text-danger">*</span></label>
-                                    <div class="col-md-12 border-bottom p-0">
-                                        <select name="type" id="voitureagence"
-                                            class="form-control p-0 border-0" required>
-                                            <option value="" disabled selected>Selectionner l'agence</option>
-                                            <?php
-                                            if ($result->num_rows > 0) {
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo '<option value="' . $row['id_agence'] . '">' . $row['nom_agence'] . '</option>';
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">Agence<span class="text-danger">*</span></label>
+                                        <div class="col-md-12 border-bottom p-0">
+                                            <select name="voitureagence" id="voitureagence"
+                                                class="form-control p-0 border-0" required>
+                                                <option value="" disabled selected>Selectionner l'agence</option>
+                                                <?php
+                                                if ($result->num_rows > 0) {
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo '<option value="' . $row['id_agence'] . '">' . $row['nom_agence'] . '</option>';
+                                                    }
                                                 }
-                                            }
-                                            ?>
-                                        </select>
+                                                ?>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
+                                <?php
+                                }
+                                ?>
                             </form>
                         </div>
                         <div class="modal-footer">

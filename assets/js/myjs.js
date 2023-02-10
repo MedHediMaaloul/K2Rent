@@ -938,7 +938,7 @@ function insert_voiture_Record() {
       voitureclimatisation.push(checkbox.value);
     });
 
-    if (voiturepimm1 == "" || voiturepimm2 == "" || voiturenbreplace == "" || voiturepuissance == "" || voitureagence == "" || voitureclimatisation == "" ||
+    if (voiturepimm1 == "" || voiturepimm2 == "" || voiturenbreplace == "" || voiturepuissance == "" || voitureclimatisation == "" ||
         voitureMarqueModel == null || voituretypecarburant == null || voitureboitevitesse == null || voiturenbrevalise == null || voiturecartegrise == null || voitureassurance == null ){
       $("#message")
         .addClass("alert alert-danger")
@@ -1457,7 +1457,9 @@ function transfert_voiture_agence_record() {
 }
 
 function export_stock_voiture() {
-  window.open("export_stock_voiture.php");
+  $(document).on("click", "#export_stock", function () {
+    window.open("export_stock_voiture.php");
+  });
 }
 
 // Contrat 

@@ -139,7 +139,7 @@ if (!isset($_SESSION['Login'])) {
                                 </div>
 
                                 <?php
-                                if($_SESSION['Role'] == "0"){
+                                if($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1"){
                                     include_once('Gestion_location/inc/connect_db.php');
                                     $query = "SELECT * FROM agence WHERE id_agence != '0' AND action_agence = '1' ORDER BY nom_agence ASC";
                                     $result = mysqli_query($conn, $query);

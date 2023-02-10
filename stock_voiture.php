@@ -284,7 +284,7 @@ if (!isset($_SESSION['Login'])) {
             </div>
             <!-- end Model alert modification echec -->
 		</div>
-        <button class="btn btn-add-bleu" onclick="export_stock_voiture()" title="Exporter le stock">Exporter<i class="bx bx-arrow-to-bottom" style="color:white"></i></button>
+        <button class="btn btn-add-bleu" id="export_stock" title="Exporter le stock">Exporter<i class="bx bx-arrow-to-bottom" style="color:white"></i></button>
 	</div>
 </div>
 
