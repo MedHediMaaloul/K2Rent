@@ -950,7 +950,7 @@ function insert_voiture_Record() {
       voitureclimatisation.push(checkbox.value);
     });
 
-    if (voiturepimm1 == "" || voiturepimm2 == "" || voiturenbreplace == "" || voiturepuissance == "" || voitureagence == "" || voitureclimatisation == "" ||
+    if (voiturepimm1 == "" || voiturepimm2 == "" || voiturenbreplace == "" || voiturepuissance == "" || voitureagence == "" ||
       voitureMarqueModel == null || voituretypecarburant == null || voitureboitevitesse == null || voiturenbrevalise == null || voiturecartegrise == null || voitureassurance == null) {
       $("#message")
         .addClass("alert alert-danger")

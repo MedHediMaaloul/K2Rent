@@ -149,7 +149,7 @@ if (!isset($_SESSION['Login'])) {
                                     <label class="col-md-12 p-0">Air conditionné<span class="text-danger">*</span></label>
                                     <div class="col-md-12 p-0">
                                         <div>
-                                            <input type="radio" id="voitureavecclim" name="voitureclim" value="1">
+                                            <input type="radio" id="voitureavecclim" name="voitureclim" value="1" checked>
                                             <label for="voitureavecclim">OUI</label>
                                         </div>
                                         <div>
