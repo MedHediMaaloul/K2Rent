@@ -232,6 +232,9 @@ function insertAgenceRecord() {
       });
     }
   });
+  $('#Registration-Agence').on('hidden.bs.modal', function () {
+    $(this).find('form').trigger('reset');
+  });
 }
 
 function insertAgenceRecordHeur() {
@@ -284,6 +287,9 @@ function insertAgenceRecordHeur() {
         },
       });
     }
+  });
+  $('#Registration-Agence-Heur').on('hidden.bs.modal', function () {
+    $(this).find('form').trigger('reset');
   });
 }
 
@@ -531,6 +537,9 @@ function insertUserRecord() {
       });
     }
   });
+  $('#Registration-User').on('hidden.bs.modal', function () {
+    $(this).find('form').trigger('reset');
+  });
 }
 
 function get_user_record() {
@@ -750,6 +759,9 @@ function insertClientRecord() {
       });
     }
   });
+  $('#Registration-Client').on('hidden.bs.modal', function () {
+    $(this).find('form').trigger('reset');
+  });
 }
 
 function get_client_record() {
@@ -939,7 +951,7 @@ function insert_voiture_Record() {
     });
 
     if (voiturepimm1 == "" || voiturepimm2 == "" || voiturenbreplace == "" || voiturepuissance == "" || voitureagence == "" || voitureclimatisation == "" ||
-        voitureMarqueModel == null || voituretypecarburant == null || voitureboitevitesse == null || voiturenbrevalise == null || voiturecartegrise == null || voitureassurance == null ){
+      voitureMarqueModel == null || voituretypecarburant == null || voitureboitevitesse == null || voiturenbrevalise == null || voiturecartegrise == null || voitureassurance == null) {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -996,6 +1008,9 @@ function insert_voiture_Record() {
       });
     }
   });
+  $('#Registration-Voiture').on('hidden.bs.modal', function () {
+    $(this).find('form').trigger('reset');
+  });
 }
 
 function get_voiture_record() {
@@ -1022,9 +1037,9 @@ function get_voiture_record() {
         $("#up_voiturecartegrise").val();
         $("#up_voitureassurance").val();
         // get value checkbox
-        if(data[10] == "1"){
+        if (data[10] == "1") {
           document.getElementById('up_voitureavecclim').setAttribute('checked', 'checked');
-        }else{
+        } else {
           document.getElementById('up_voituresansclim').setAttribute('checked', 'checked');
         }
         $("#updateVoiture").modal("show");
@@ -1055,7 +1070,7 @@ function update_voiture_record() {
     });
 
     if (up_voiturepimm1 == "" || up_voiturepimm2 == "" || up_voiturenbreplace == "" || up_voiturepuissance == "" || up_voitureclimatisation == "" ||
-      up_voitureMarqueModel == null || up_voituretypecarburant == null || up_voitureboitevitesse == null || up_voiturenbrevalise == null ){
+      up_voitureMarqueModel == null || up_voituretypecarburant == null || up_voitureboitevitesse == null || up_voiturenbrevalise == null) {
       $("#up_message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1198,7 +1213,7 @@ function insert_marquevoiture_Record() {
     var voituremodel = $("#voituremodel").val();
     var voitureprix = $("#voitureprix").val();
 
-    if (voituremarque == "" || voituremodel == "" || voitureprix == ""){
+    if (voituremarque == "" || voituremodel == "" || voitureprix == "") {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1240,6 +1255,9 @@ function insert_marquevoiture_Record() {
       });
     }
   });
+  $('#Registration-MarqueVoiture').on('hidden.bs.modal', function () {
+    $(this).find('form').trigger('reset');
+  });
 }
 
 function get_marquevoiture_record() {
@@ -1271,7 +1289,7 @@ function update_marquevoiture_record() {
     var up_voituremodel = $("#up_voituremodel").val();
     var up_voitureprix = $("#up_voitureprix").val();
 
-    if (up_voituremarque == "" || up_voituremodel == "" || up_voitureprix == ""){
+    if (up_voituremarque == "" || up_voituremodel == "" || up_voitureprix == "") {
       $("#up_message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1507,7 +1525,7 @@ function insert_contrat_Record() {
     var AgenceContrat = $("#AgenceContrat").val();
     var VoitureContrat = $("#list_voiture").val();
 
-    if (DateDebutContrat == "" || DateFinContrat == "" || ClientContrat == null || VoitureContrat == null){
+    if (DateDebutContrat == "" || DateFinContrat == "" || ClientContrat == null || VoitureContrat == null) {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1539,7 +1557,7 @@ function insert_contrat_Record() {
               }
             }, 5000);
             view_contrat_record();
-          }else {
+          } else {
             $("#Registration-Contrat").modal("hide");
             $("#addcontrat_success").addClass("text-checked").html(data);
             $("#SuccessAddContrat").modal("show");
@@ -1554,6 +1572,9 @@ function insert_contrat_Record() {
         },
       });
     }
+  });
+  $('#Registration-Contrat').on('hidden.bs.modal', function () {
+    $(this).find('form').trigger('reset');
   });
 }
 

@@ -31,8 +31,8 @@ if (!isset($_SESSION['Login'])) {
 			<!-- Liste des marques -->
 			<div class="table-responsive-xxl" id="stockvoiture-list"></div>
 			<!-- end  Liste des marques -->
-			<!-- Model ajout Voiture -->
-            <div class="modal fade" id="Registration-Voiture" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			    <!-- Model ajout Voiture -->
+                <div class="modal fade" id="Registration-Voiture" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header" style="background: #D71218;">
@@ -63,7 +63,7 @@ if (!isset($_SESSION['Login'])) {
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Marque<span class="text-danger">*</span></label>
                                     <div class="col-md-12 border-bottom p-0">
-                                        <select name="type" id="voitureMarqueModel" class="form-control p-0 border-0" required>
+                                        <select id="voitureMarqueModel" name="voitureMarqueModel" style="width: 470px;" class="form-control p-0 border-0" required>
                                             <option value="0" disabled selected>Selectionner la marque</option>
                                             <?php
                                             if ($result->num_rows > 0) {
@@ -107,6 +107,56 @@ if (!isset($_SESSION['Login'])) {
                                             <option value="Manuelle">Manuelle</option>
                                             <option value="Automatique">Automatique</option>
                                         </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Nombre de place<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 p-0">
+                                        <div id="divimm1">
+                                            <input type="number" id="voiturenbreplace" placeholder="5" class="form-control p-0 border-0">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Nombre de valise<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 border-bottom p-0">
+                                        <select type="text" name="type" id="voiturenbrevalise"
+                                            class="form-control p-0 border-0" required>
+                                            <option value="" disabled selected>Selectionner le nombre de valise</option>
+                                            <option value="1">1G + 1P</option>
+                                            <option value="2">1G + 2P</option>
+                                            <option value="3">2G + 1P</option>
+                                            <option value="4">2G + 2P</option>
+                                            <option value="5">3G + 1P</option>
+                                            <option value="6">3G + 2P</option>
+                                            <option value="7">3G + 3P</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Puissance (CV)<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 p-0">
+                                        <div id="divimm1">
+                                            <input type="number" id="voiturepuissance" placeholder="4" class="form-control p-0 border-0">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Air conditionné<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 p-0">
+                                        <div>
+                                            <input type="radio" id="voitureavecclim" name="voitureclim" value="1">
+                                            <label for="voitureavecclim">OUI</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" id="voituresansclim" name="voitureclim" value="0">
+                                            <label for="voituresansclim">NON</label>
+                                        </div>
+
                                     </div>
                                 </div>
 
