@@ -43,7 +43,7 @@
 		<div class="sidebar-wrapper" data-simplebar="true">
 			<img src="assets/images/k2rent.png" class="logo-icon">
 			<!--navigation-->
-			<ul class="metismenu" id="menu">
+			<ul class="metismenu" id="menu" >
 				<li>
                     <a href="dashboard.php">
 						<div class="menu-title"><img src="assets/images/img_menu/dashboard.png" style="margin-right: 15px;" width="18px" height="18px">Tableau De Bord</div>
@@ -133,8 +133,8 @@
 						  	</li>
 					  	</ul>
 					</div>
-					<div class="top-menu ms-auto">
-						<ul class="navbar-nav align-items-center">
+					<div class="top-menu ms-auto" >
+						<ul class="navbar-nav align-items-center" style="margin-right: -30px; margin-top:10px;">
 							<li class="nav-item dropdown dropdown-large">
 								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="toggle-contrat" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
 									<span id="count_contrat_fin" class="alert-count"></span>
@@ -152,7 +152,7 @@
 								</div>
 							</li>
 
-							<li class="nav-item dropdown dropdown-large">
+							<li class="nav-item dropdown dropdown-large" style="margin-left: -29px;">
 								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 									<span id="count_contrat_fin" class="alert-count"></span>
 									<img src="assets/images/img_menu/CreateContrat.png" width="50px" height="50px">

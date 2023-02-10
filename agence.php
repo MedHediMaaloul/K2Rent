@@ -27,7 +27,7 @@ if ((($_SESSION['Role']) == "0")) {
                     <button class="btn btn-add-vert" id="show_form_agence" title="Ajouter une agence">Ajouter une agence <i class="bx bx-plus" style="color:white"></i></button>
                 </div>
                 <div id="div3">
-                    <button class="btn btn-add-bleu" id="show_form_horaire_agence" title="Ajouter l'horaire">Ajouter ouverture agence <i class="bx bx-plus" style="color:white"></i></button>
+                    <button class="btn btn-add-bleu" id="show_form_horaire_agence" title="Ajouter l'horaire">Ajouter Horaire Agence <i class="bx bx-plus" style="color:white"></i></button>
                 </div>
 			</div>
 		</div>

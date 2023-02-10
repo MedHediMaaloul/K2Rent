@@ -213,11 +213,11 @@ if (!isset($_SESSION['Login'])) {
                                     <label class="col-md-12 p-0">Air conditionné<span class="text-danger">*</span></label>
                                     <div class="col-md-12 p-0">
                                         <div>
-                                            <input type="checkbox" id="up_voitureavecclim" name="up_voitureclim" value="1">
+                                            <input type="radio" id="up_voitureavecclim" name="up_voitureclim" value="1">
                                             <label for="up_voitureavecclim">OUI</label>
                                         </div>
                                         <div>
-                                            <input type="checkbox" id="up_voituresansclim" name="up_voitureclim" value="0">
+                                            <input type="radio" id="up_voituresansclim" name="up_voitureclim" value="0">
                                             <label for="up_voituresansclim">NON</label>
                                         </div>
 
@@ -406,11 +406,11 @@ if (!isset($_SESSION['Login'])) {
                                     <label class="col-md-12 p-0">Air conditionné<span class="text-danger">*</span></label>
                                     <div class="col-md-12 p-0">
                                         <div>
-                                            <input type="checkbox" id="voitureavecclim" name="voitureclim" value="1">
+                                            <input type="radio" id="voitureavecclim" name="voitureclim" value="1" checked>
                                             <label for="voitureavecclim">OUI</label>
                                         </div>
                                         <div>
-                                            <input type="checkbox" id="voituresansclim" name="voitureclim" value="0">
+                                            <input type="radio" id="voituresansclim" name="voitureclim" value="0">
                                             <label for="voituresansclim">NON</label>
                                         </div>
 

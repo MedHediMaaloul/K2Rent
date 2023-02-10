@@ -16,17 +16,21 @@ if (isset($_POST['login'])) {
 					FROM user AS U,role_user AS R,agence AS A
 					WHERE U.role_user = R.id_roleuser
 					AND U.id_agence = A.id_agence
-					AND U.etat_user ='T' 
 					AND U.login_user='" . $_POST['login'] . "' and U.motdepasse_user='" . md5($_POST['password']) . "'";
         $result = mysqli_query($conn, $query);
         if ($row = mysqli_fetch_assoc($result)) {
-			$_SESSION['Nom'] = $row['nom_user'];
-            $_SESSION['Login'] = $row['login_user'];
-            $_SESSION['Role'] = $row['role_user'];
-			$_SESSION['RoleLabel'] = $row['label_roleuser'];
-			$_SESSION['Agence'] = $row['id_agence'];
-			$_SESSION['NomAgence'] = $row['nom_agence'];
-            header("location:dashboard.php");
+			if($row['etat_user'] == "F"){
+				$erreur = "Votre compte est désactivé !";
+				$ressaye = "Veuillez contacter votre administrateur.";
+			}else{
+				$_SESSION['Nom'] = $row['nom_user'];
+				$_SESSION['Login'] = $row['login_user'];
+				$_SESSION['Role'] = $row['role_user'];
+				$_SESSION['RoleLabel'] = $row['label_roleuser'];
+				$_SESSION['Agence'] = $row['id_agence'];
+				$_SESSION['NomAgence'] = $row['nom_agence'];
+				header("location:dashboard.php");
+			}
         } else {
             $erreur = "Mot de passe incorrect !";
 			$ressaye = "Veuillez essayer à nouveau.";
