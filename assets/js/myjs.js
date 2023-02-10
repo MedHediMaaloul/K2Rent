@@ -948,6 +948,9 @@ function insert_voiture_Record() {
         .addClass("alert alert-danger")
         .html("Veuillez vérifier l'immatriculation du voiture !");
     } else {
+      if(voitureagence == null){
+        voitureagence = 0;
+      }
       var form_data = new FormData();
       form_data.append("voiturepimm1", voiturepimm1);
       form_data.append("voiturepimm2", voiturepimm2);
