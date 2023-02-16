@@ -44,6 +44,7 @@ $result = mysqli_query($conn, $query);
 <script type="text/javascript">
     $(function() {
         $('#list_voiture').select2({
+            width: '100%',
             dropdownParent: $('#list_voiture').parent()
         });
     })

@@ -1,8 +1,11 @@
 $(document).ready(function () {
   ReloadButtonExit();
   ReloadButtonExitX();
-  load_unseen_notification();
-  removeNotification();
+  notification_fin_contrat();
+  remove_notification_fin_contrat();
+  notification_create_contrat();
+  remove_notification_create_contrat();
+  view_notification_record();
   //  Agence
   insertAgenceRecord();
   insertAgenceRecordHeur();
@@ -53,13 +56,27 @@ $(document).ready(function () {
   afficher_voiture_dispo();
   delete_contrat_record();
   // Contrat Archive
-  searchContratArchive();
   view_contrat_archive_record();
+  searchContratArchive();
   // Contrat Historique
   view_contrat_historique_record();
   searchContratHistorique();
   // Download Contrat
   get_contrat_pdf();
+  // Entretien
+  view_entretien_record();
+  searchEntretien();
+  afficher_voiture_agence();
+  insert_entretien_Record();
+  get_entretien_record();
+  update_entretien_record();
+  delete_entretien_record();
+  // Entretien Archive
+  view_entretien_archive_record();
+  searchEntretienArchive();
+  // Entretien Historique
+  view_entretien_historique_record();
+  searchEntretienHistorique();
 });
 
 function ReloadButtonExit() {
@@ -100,32 +117,6 @@ $(function () {
   });
 });
 
-function load_unseen_notification(view = "") {
-  $.ajax({
-    url: "contratnotification.php",
-    method: "POST",
-    data: {
-      view: view
-    },
-    dataType: "json",
-    success: function (data) {
-      $("#contrat_prendront_fin").html(data.notification_contrat);
-      if (data.unseen_notification > 0) {
-        $("#count_contrat_fin").html(data.unseen_notification);
-      } else {
-        $("#count_contrat_fin").css("display", "none");
-      }
-    },
-  });
-}
-
-function removeNotification() {
-  $(document).on("click", "#toggle-contrat", function () {
-    $("#count_contrat_fin").html("0").css("display", "none");
-    load_unseen_notification("yes");
-  });
-}
-
 function selectrole(data) {
   if (data == "2") {
     $("#cont_UserAgence").show();
@@ -134,7 +125,81 @@ function selectrole(data) {
   }
 }
 
+// Notification
 
+function notification_fin_contrat(view = "") {
+  const str2 = 'Non Lus';
+  $.ajax({
+    url: "contratnotification.php",
+    method: "POST",
+    data: {
+      view: view
+    },
+    dataType: "json",
+    success: function (data) {
+      $("#contrat_prendront_fin").html(data.notification_fin_contrat);
+      if (data.count_fin_contrat > 0) {
+        $("#count_contrat_fin").html(data.count_fin_contrat);
+        $("#count_contrat_fin_not_vue").html(data.count_fin_contrat.concat(' ', str2));
+      } else {
+        $("#count_contrat_fin").css("display", "none");
+      }
+    },
+  });
+}
+
+function remove_notification_fin_contrat() {
+  $(document).on("click", "#toggle-contrat", function () {
+    $("#count_contrat_fin").html("0").css("display", "none");
+    notification_fin_contrat("yes");
+  });
+}
+
+var bong = document.createElement('audio');
+bong.setAttribute('src', 'sounds/notification.mp3');
+
+function notification_create_contrat(view = "") {
+  const str2 = 'Non Lus';
+  $.ajax({
+    url: "notification_create_contrat.php",
+    method: "POST",
+    data: {
+      view: view
+    },
+    dataType: "json",
+    success: function (data) {
+      $("#contrat_crée").html(data.notification_create_contrat);
+      if (data.count_create_contrat > 0) {
+        $("#count_contrat_crée").html(data.count_create_contrat);
+        $("#count_contrat_crée_not_vue").html(data.count_create_contrat.concat(' ', str2));
+        bong.play();
+      } else {
+        $("#count_contrat_crée").css("display", "none");
+      }
+    },
+  });
+}
+
+function remove_notification_create_contrat() {
+  $(document).on("click", "#toggle-contrat", function () {
+    $("#count_contrat_crée").html("0").css("display", "none");
+    notification_create_contrat("yes");
+  });
+}
+
+function view_notification_record() {
+  var entretien_search = $("#search_entretien").val();
+  $.ajax({
+    url: "viewnotification.php",
+    method: "post",
+    data: {
+      querytype: entretien_search,
+    },
+    success: function (response) {
+      $("#notification-list").html(response);
+    },
+  });
+}
 
 //  Agence
 function view_agence_record() {
@@ -488,11 +553,7 @@ function insertUserRecord() {
     var password = $("#userPassword").val();
     var id_user_agence = $("#UserAgence").val();
 
-    if (typeuser == "responsable" && (nom == "" || login == "" || id_user_agence == "" || password == "")) {
-      $("#message")
-        .addClass("alert alert-danger")
-        .html("Veuillez remplir tous les champs obligatoires !");
-    } else if (nom == "" || login == "" || password == "") {
+    if (typeuser == null || nom == "" || login == "" || password == "") {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -574,10 +635,10 @@ function update_user_record() {
     var updateuserPassword = $("#up_userPassword").val();
     var updateuseretat = $("#updateuseretat").val();
     var updateuserEmail = $("#up_userEmail").val();
-    if (updateuserID == "" || updateuserName == "" || updateuserLogin == "" || updateuserPassword == "") {
+    if (updateuserName == "" || updateuserLogin == "" || updateuserPassword == "") {
       $("#up_message")
         .addClass("alert alert-danger")
-        .html("Les champs obligatoires ne peuvent pas être nuls !");
+        .html("Veuillez remplir tous les champs obligatoires !");
       $("#updateUser").modal("show");
     } else {
       var form_data = new FormData();
@@ -959,6 +1020,14 @@ function insert_voiture_Record() {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez vérifier l'immatriculation du voiture !");
+    } else if (voiturepuissance > 20 || voiturepuissance < 1 ) {
+      $("#message")
+        .addClass("alert alert-danger")
+        .html("Veuillez vérifier la puissance du voiture !");
+    } else if (voiturenbreplace > 10 || voiturenbreplace < 1 ) {
+      $("#message")
+        .addClass("alert alert-danger")
+        .html("Veuillez vérifier le nombre de place du voiture !");
     } else {
       if(voitureagence == null){
         voitureagence = 0;
@@ -1081,6 +1150,14 @@ function update_voiture_record() {
       $("#up_message")
         .addClass("alert alert-danger")
         .html("Veuillez vérifier l'immatriculation du voiture !");
+    } else if (up_voiturepuissance > 20 || up_voiturepuissance < 1 ) {
+      $("#message")
+        .addClass("alert alert-danger")
+        .html("Veuillez vérifier la puissance du voiture !");
+    } else if (up_voiturenbreplace > 10 || up_voiturenbreplace < 1 ) {
+      $("#message")
+        .addClass("alert alert-danger")
+        .html("Veuillez vérifier le nombre de place du voiture !");
     } else {
       var form_data = new FormData();
       form_data.append("up_voitureid", up_voitureid);
@@ -1719,3 +1796,303 @@ function get_contrat_pdf() {
   });
 }
 
+// Entretien 
+
+function view_entretien_record() {
+  $.ajax({
+    url: "viewentretien.php",
+    method: "post",
+    success: function (data) {
+      try {
+        data = $.parseJSON(data);
+        if (data.status == "success") {
+          $("#entretien-list").html(data.html);
+        }
+      } catch (e) {
+        console.error("Invalid Response!");
+      }
+    },
+  });
+}
+
+function searchEntretien() {
+  $("#searchEntretien").keyup(function () {
+    var search = $(this).val();
+    $.ajax({
+      url: "searchEntretien.php",
+      method: "post",
+      data: {
+        query: search
+      },
+      success: function (response) {
+        $("#entretien-list").html(response);
+      },
+    });
+  });
+}
+
+function afficher_voiture_agence() {
+  var entretienagence = $("#entretienagence").val();
+  $.ajax({
+    type: "post",
+    url: "listevoiture_agence.php",
+    data: {
+      entretienagence: entretienagence,
+    },
+    success: function (data) {
+      $("#listevoiture_agence").html(data);
+    },
+  });
+}
+
+function insert_entretien_Record() {
+  $(document).on("click", "#show_form_entretien", function () {
+    $("#Registration-Entretien").modal("show");
+  });
+  $(document).on("click", "#btn-register-entretien", function () {
+    $("#Registration-Entretien").scrollTop(0);
+    var DateDebutEntretien = $("#DateDebutEntretien").val();
+    var DateFinEntretien = $("#DateFinEntretien").val();
+    var prixentretien = $("#prixentretien").val();
+    var voiture_entretien = $("#voiture_entretien").val();
+
+    if (DateDebutEntretien == "" || DateFinEntretien == "" || prixentretien == "" || voiture_entretien == undefined) {
+      $("#message")
+        .addClass("alert alert-danger")
+        .html("Veuillez remplir tous les champs obligatoires !");
+    } else if (DateDebutEntretien > DateFinEntretien) {
+      $("#message")
+        .addClass("alert alert-danger")
+        .html("Date Fin doit etre superieur à la Date Debut !");
+    } else {
+      var form_data = new FormData();
+      form_data.append("DateDebutEntretien", DateDebutEntretien);
+      form_data.append("DateFinEntretien", DateFinEntretien);
+      form_data.append("prixentretien", prixentretien);
+      form_data.append("voiture_entretien", voiture_entretien);
+      $.ajax({
+        url: "AjoutEntretien.php",
+        method: "post",
+        processData: false,
+        contentType: false,
+        data: form_data,
+        success: function (data) {
+          if (data.includes('text-echec')) {
+            $("#Registration-Entretien").modal("hide");
+            $("#addentretien_echec").removeClass("text-checked").addClass("text-echec").html(data);
+            $("#EchecAddEntretien").modal("show");
+            setTimeout(function () {
+              if ($("#EchecAddEntretien").length > 0) {
+                $("#EchecAddEntretien").modal("hide");
+              }
+            }, 5000);
+            view_entretien_record();
+          } else {
+            $("#Registration-Entretien").modal("hide");
+            $("#addentretien_success").addClass("text-checked").html(data);
+            $("#SuccessAddEntretien").modal("show");
+            $("#addentretien_success").removeClass("text-echec").addClass("text-checked");
+            setTimeout(function () {
+              if ($("#SuccessAddEntretien").length > 0) {
+                $("#SuccessAddEntretien").modal("hide");
+              }
+            }, 5000);
+            view_entretien_record();
+          }
+        },
+      });
+    }
+  });
+  $('#Registration-Entretien').on('hidden.bs.modal', function () {
+    $(this).find('form').trigger('reset');
+  });
+}
+
+function get_entretien_record() {
+  $(document).on("click", "#btn-edit-entretien", function () {
+    var ID = $(this).attr("data-id");
+    $.ajax({
+      url: "get_entretien_data.php",
+      method: "post",
+      data: {
+        id_entretien: ID
+      },
+      dataType: "JSON",
+      success: function (data) {
+        $("#up_entretienid").val(data[0]);
+        $("#up_DateDebutEntretien").val(data[1]);
+        $("#up_DateFinEntretien").val(data[2]);
+        $("#up_prixentretien").val(data[3]);
+        $("#updateEntretien").modal("show");
+      },
+    });
+  });
+}
+
+function update_entretien_record() {
+  $(document).on("click", "#btn_update_entretien", function () {
+    $("#updateEntretien").scrollTop(0);
+    var up_entretienid = $("#up_entretienid").val();
+    var up_DateDebutEntretien = $("#up_DateDebutEntretien").val();
+    var up_DateFinEntretien = $("#up_DateFinEntretien").val();
+    var up_prixentretien = $("#up_prixentretien").val();
+
+    if (up_DateDebutEntretien == "" || up_DateFinEntretien == "" || up_prixentretien == "") {
+      $("#up_message")
+        .addClass("alert alert-danger")
+        .html("Veuillez remplir tous les champs obligatoires !");
+    } else if (up_prixentretien < 0) {
+      $("#up_message")
+        .addClass("alert alert-danger")
+        .html("Veuillez vérifier le prix de l'entretien !");
+    } else {
+      var form_data = new FormData();
+      form_data.append("up_entretienid", up_entretienid);
+      form_data.append("up_DateDebutEntretien", up_DateDebutEntretien);
+      form_data.append("up_DateFinEntretien", up_DateFinEntretien);
+      form_data.append("up_prixentretien", up_prixentretien);
+      
+      $.ajax({
+        url: "update_entretien.php",
+        method: "POST",
+        processData: false,
+        contentType: false,
+        data: form_data,
+        success: function (data) {
+          if (data.includes('text-echec')) {
+            $("#updateEntretien").modal("hide");
+            $("#upentretien_echec").removeClass("text-checked").addClass("text-echec").html(data);
+            $("#EchecUpEntretien").modal("show");
+            setTimeout(function () {
+              if ($("#EchecUpEntretien").length > 0) {
+                $("#EchecUpEntretien").modal("hide");
+              }
+            }, 5000);
+            view_entretien_record();
+          } else {
+            $("#updateEntretien").modal("hide");
+            $("#upentretien_success").addClass("text-checked").html(data);
+            $("#SuccessUpEntretien").modal("show");
+            $("#upentretien_success").removeClass("text-echec").addClass("text-checked");
+            setTimeout(function () {
+              if ($("#SuccessUpEntretien").length > 0) {
+                $("#SuccessUpEntretien").modal("hide");
+              }
+            }, 5000);
+            view_entretien_record();
+          }
+        },
+      });
+    }
+  });
+}
+
+function delete_entretien_record() {
+  $(document).on("click", "#btn-delete-entretien", function () {
+    var Delete_ID = $(this).attr("data-id1");
+    $("#deleteEntretien").modal("show");
+    $(document).on("click", "#btn_delete", function () {
+      $.ajax({
+        url: "delete_entretien.php",
+        method: "post",
+        data: {
+          id_entretien: Delete_ID
+        },
+        success: function (data) {
+          if (data.includes('text-echec')) {
+            $("#deleteEntretien").modal("hide");
+            $("#deleteentretien_echec").removeClass("text-checked").addClass("text-echec").html(data);
+            $("#EchecDeleteEntretien").modal("show");
+            setTimeout(function () {
+              if ($("#EchecDeleteEntretien").length > 0) {
+                $("#EchecDeleteEntretien").modal("hide");
+              }
+            }, 5000);
+            view_entretien_record();
+          } else {
+            $("#deleteEntretien").modal("hide");
+            $("#deleteentretien_success").addClass("text-checked").html(data);
+            $("#SuccessDeleteEntretien").modal("show");
+            $("#deleteentretien_success").removeClass("text-echec").addClass("text-checked");
+            setTimeout(function () {
+              if ($("#SuccessDeleteEntretien").length > 0) {
+                $("#SuccessDeleteEntretien").modal("hide");
+              }
+            }, 5000);
+            view_entretien_record();
+          }
+        },
+      });
+    });
+  });
+}
+
+// Entretien Archive
+
+function view_entretien_archive_record() {
+  $.ajax({
+    url: "viewentretienarchive.php",
+    method: "post",
+    success: function (data) {
+      try {
+        data = $.parseJSON(data);
+        if (data.status == "success") {
+          $("#entretien-archive").html(data.html);
+        }
+      } catch (e) {
+        console.error("Invalid Response!");
+      }
+    },
+  });
+}
+
+function searchEntretienArchive() {
+  $("#searchEntretienArchive").keyup(function () {
+    var search = $(this).val();
+    $.ajax({
+      url: "searchEntretienArchive.php",
+      method: "post",
+      data: {
+        query: search
+      },
+      success: function (response) {
+        $("#entretien-archive").html(response);
+      },
+    });
+  });
+}
+
+// Historique Entretien
+
+function view_entretien_historique_record() {
+  $.ajax({
+    url: "viewentretienhistorique.php",
+    method: "post",
+    success: function (data) {
+      try {
+        data = $.parseJSON(data);
+        if (data.status == "success") {
+          $("#entretien-historique").html(data.html);
+        }
+      } catch (e) {
+        console.error("Invalid Response!");
+      }
+    },
+  });
+}
+
+function searchEntretienHistorique() {
+  $("#searchEntretienHistorique").keyup(function () {
+    var search = $(this).val();
+    $.ajax({
+      url: "searchEntretienHistorique.php",
+      method: "post",
+      data: {
+        query: search
+      },
+      success: function (response) {
+        $("#entretien-historique").html(response);
+      },
+    });
+  });
+}

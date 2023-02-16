@@ -59,22 +59,40 @@ function ContratNotification()
     
     if (isset($_POST["view"])) {
         if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
-            $query = "SELECT C.id_contrat,C.datefin_contrat,C.notification_contrat,CL.nom_client,CL.email_client,CL.tel_client,CL.adresse_client
+            $query = "SELECT C.id_contrat,C.datefin_contrat,C.view_fin,CL.nom_client,CL.email_client,CL.tel_client,CL.adresse_client
             FROM contrat AS C
             left JOIN client AS CL ON C.id_client = CL.id_client
             WHERE C.action_contrat = '1'
             AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))
+            ORDER BY C.view_fin DESC
             LIMIT 4";
+
+            $query_total = "SELECT COUNT(*)
+            FROM contrat AS C
+            left JOIN client AS CL ON C.id_client = CL.id_client
+            WHERE C.action_contrat = '1'
+            AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))";
         }else{
-            $query = "SELECT C.id_contrat,C.datefin_contrat,C.notification_contrat,CL.nom_client,CL.email_client,CL.tel_client,CL.adresse_client
+            $query = "SELECT C.id_contrat,C.datefin_contrat,C.view_fin,CL.nom_client,CL.email_client,CL.tel_client,CL.adresse_client
             FROM contrat AS C
             left JOIN client AS CL ON C.id_client=CL.id_client
             WHERE C.action_contrat = '1'
             AND C.id_agence = $id_agence
             AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))
+            ORDER BY C.view_fin DESC
             LIMIT 4";
+
+            $query_total = "SELECT COUNT(*)
+            FROM contrat AS C
+            left JOIN client AS CL ON C.id_client=CL.id_client
+            WHERE C.action_contrat = '1'
+            AND C.id_agence = $id_agence
+            AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))";
         }
         $result = mysqli_query($conn, $query);
+        $result_total = mysqli_query($conn, $query_total);
+        $row_total = mysqli_fetch_row($result_total);
+        $number_notif = $row_total[0] - 4;
         $output = '';
 
         if (mysqli_num_rows($result) > 0) {
@@ -83,10 +101,10 @@ function ContratNotification()
                 $str2 = " du client ";
                 $str3 = " se terminera bientôt";
 
-                if ($row['notification_contrat'] == 1) {
-                    $style = 'background-color: #F5F5F5;';
+                if ($row['view_fin'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
                 } else {
-                    $style = 'background-color: white;';
+                    $style = 'background-color: #E8E8E8;';
                 }
 
                 $output .= '
@@ -94,13 +112,17 @@ function ContratNotification()
                         <div class="border-bottom border-dark p-3" style="'. $style .'">
                             <div class="text-secondary">
                                 <a onClick="reply_click(this.id)" id="'.$row["id_contrat"].'" target="_blank" att="'.$row["id_contrat"].'" 
-                                    href="Liste_notifications_update.php?clicked_id='.$row["id_contrat"].'">'.$str1.$row["id_contrat"].''.$str2.''.$row["nom_client"] . '' . $str3 .'</a>
+                                    href="update_notification.php?id_contrat_fin='.$row["id_contrat"].'">'.$str1.$row["id_contrat"].''.$str2.''.$row["nom_client"] . '' . $str3 .'</a>
                             </div>
                         </div>
                     </li>
                     <li class="divider"></li>';
             }
-            $output .= ' <div > <a href="Liste_notifications.php"> Voir Plus </a> </div>';
+            if($number_notif > 0){
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notifications.php">Voir Tous ('.$number_notif.' autres)</a></div>';
+            }else{
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notifications.php">Voir Tous</a></div>';
+            }
         } else {
             $output .= '<li class="text-bold text-italic">Aucune notification trouvée</li>';
         }
@@ -110,14 +132,14 @@ function ContratNotification()
                 FROM contrat AS C
                 LEFT JOIN client AS CL ON C.id_client = CL.id_client
                 WHERE C.action_contrat = '1'
-                AND C.notification_contrat = '1'
+                AND C.view_fin = '1'
                 AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))"; 
         }else{
             $query_count = "SELECT COUNT(*) AS count
                 FROM contrat AS C
                 LEFT JOIN client AS CL ON C.id_client = CL.id_client
                 WHERE C.action_contrat = '1'
-                AND C.notification_contrat = '1'
+                AND C.view_fin = '1'
                 AND C.id_agence = $id_agence
                 AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))";
         }
@@ -125,20 +147,286 @@ function ContratNotification()
         $row = mysqli_fetch_row($result_count);
         $count = $row[0];
         $data = array(
-            'notification_contrat' => $output,
-            'unseen_notification' => $count
-        );
-        echo json_encode($data);
-    }else{
-        $output ="test";
-        $count = 0;
-        $data = array(
-            'notification_contrat' => $output,
-            'unseen_notification' => $count
+            'notification_fin_contrat' => $output,
+            'count_fin_contrat' => $count
         );
         echo json_encode($data);
     }
 }
+
+function notification_create_contrat()
+{
+    global $conn;
+    $id_agence = $_SESSION['Agence'];
+    
+    if (isset($_POST["view"])) {
+        if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+            $query = "SELECT C.id_contrat,C.date_created_contrat,C.view_create,CL.nom_client
+            FROM contrat AS C
+            left JOIN client AS CL ON C.id_client = CL.id_client
+            WHERE C.action_contrat = '1'
+            AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))
+            ORDER BY C.view_create DESC
+            LIMIT 4";
+
+            $query_total = "SELECT COUNT(*)
+            FROM contrat AS C
+            left JOIN client AS CL ON C.id_client = CL.id_client
+            WHERE C.action_contrat = '1'
+            AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))";
+        }else{
+            $query = "SELECT C.id_contrat,C.date_created_contrat,C.view_create,CL.nom_client
+            FROM contrat AS C
+            left JOIN client AS CL ON C.id_client=CL.id_client
+            WHERE C.action_contrat = '1'
+            AND C.id_agence = $id_agence
+            AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))
+            ORDER BY C.view_create DESC
+            LIMIT 4";
+
+            $query_total = "SELECT COUNT(*)
+            FROM contrat AS C
+            left JOIN client AS CL ON C.id_client=CL.id_client
+            WHERE C.action_contrat = '1'
+            AND C.id_agence = $id_agence
+            AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))";
+        }
+        $result = mysqli_query($conn, $query);
+        $result_total = mysqli_query($conn, $query_total);
+        $row_total = mysqli_fetch_row($result_total);
+        $number_notif = $row_total[0] - 4;
+        $output = '';
+
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_array($result)) {
+                $str1 = "Le client ";
+                $str2 = " a crée un contrat le ";
+
+                if ($row['view_create'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
+                } else {
+                    $style = 'background-color: #E8E8E8;';
+                }
+
+                $output .= '
+                    <li>
+                        <div class="border-bottom border-dark p-3" style="'. $style .'">
+                            <div class="text-secondary">
+                                <a onClick="reply_click(this.id)" id="'.$row["id_contrat"].'" target="_blank" att="'.$row["id_contrat"].'" 
+                                    href="update_notification.php?id_contrat_create='.$row["id_contrat"].'">'.$str1.$row["nom_client"].''.$str2.''.$row["date_created_contrat"] .'</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="divider"></li>';
+            }
+            if($number_notif > 0){
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notifications.php">Voir Tous ('.$number_notif.' autres)</a></div>';
+            }else{
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notifications.php">Voir Tous</a></div>';
+            }
+        } else {
+            $output .= '<li class="text-bold text-italic">Aucune notification trouvée</li>';
+        }
+
+        if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+            $query_count = "SELECT COUNT(*) AS count
+                FROM contrat AS C
+                LEFT JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND C.view_create = '1'
+                AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))";
+        }else{
+            $query_count = "SELECT COUNT(*) AS count
+                FROM contrat AS C
+                LEFT JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND C.view_create = '1'
+                AND C.id_agence = $id_agence
+                AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))";
+        }
+        $result_count = mysqli_query($conn, $query_count);
+        $row = mysqli_fetch_row($result_count);
+        $count = $row[0];
+        $data = array(
+            'notification_create_contrat' => $output,
+            'count_create_contrat' => $count
+        );
+        echo json_encode($data);
+    }
+}
+
+function view_notification_record()
+{
+    global $conn;
+    $id_agence = $_SESSION['Agence'];
+    $search = $_POST['querytype'];
+    $value = '<table class="table align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Le contrat</th>
+                <th>Client</th>
+                <th>Date</th>
+                <th>Etat</th>
+            </tr>
+        </thead>
+		<tbody>';
+        $i = 1;
+        if($search == "0"){
+            if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+                $query_create = "SELECT C.id_contrat,C.date_created_contrat,C.view_create,CL.nom_client
+                FROM contrat AS C
+                left JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))
+                ORDER BY C.view_create DESC";
+            }else{
+                $query_create = "SELECT C.id_contrat,C.date_created_contrat,C.view_create,CL.nom_client
+                FROM contrat AS C
+                left JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND C.id_agence = $id_agence
+                AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))
+                ORDER BY C.view_create DESC";
+            }
+            
+            $result_create = mysqli_query($conn, $query_create);
+            $i = 1;
+            while ($row = mysqli_fetch_assoc($result_create)) {
+                if ($row['view_create'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
+                } else {
+                    $style = 'background-color: #E8E8E8;';
+                }
+                $etat = "CREATION";
+                $class = "etat etatactif";
+                $value .= '<tr style="'.$style.'">
+		    		<td>' . $i . '</td>
+		    		<td><a href="fpdf/contratlocation.php?N='.$row["id_contrat"].'">'."Contrat N°".$row["id_contrat"].'</a></td>
+		    		<td>' . $row['nom_client'] . '</td>
+                    <td>' . $row['date_created_contrat'] . '</td>
+                    <td style="height: 70px;"><center><div class="'.$class.'">' . $etat . '</div></center></td>
+                </tr>';
+                $i += 1;
+            }
+
+            if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+                $query_fin = "SELECT C.id_contrat,C.datefin_contrat,C.view_fin,CL.nom_client
+                FROM contrat AS C
+                left JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))
+                ORDER BY C.view_fin DESC";
+            }else{
+                $query_fin = "SELECT C.id_contrat,C.datefin_contrat,C.view_fin,CL.nom_client
+                FROM contrat AS C
+                left JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND C.id_agence = $id_agence
+                AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))
+                ORDER BY C.view_fin DESC";
+            }
+            
+            $result_fin = mysqli_query($conn, $query_fin);
+            while ($row_fin = mysqli_fetch_assoc($result_fin)) {
+                if ($row_fin['view_fin'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
+                } else {
+                    $style = 'background-color: #E8E8E8;';
+                }
+                $etat = "Fin";
+                $class = "etat etatinactif";
+                $value .= '<tr style="'.$style.'">
+		    		<td>' . $i . '</td>
+		    		<td><a href="fpdf/contratlocation.php?N='.$row_fin["id_contrat"].'">'."Contrat N°".$row_fin["id_contrat"].'</a></td>
+		    		<td>' . $row_fin['nom_client'] . '</td>
+                    <td>' . $row_fin['datefin_contrat'] . '</td>
+                    <td style="height: 70px;"><center><div class="'.$class.'">' . $etat . '</div></center></td>
+                </tr>';
+                $i += 1;
+            }
+        } else if ($search == "1"){
+
+            if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+                $query_create = "SELECT C.id_contrat,C.date_created_contrat,C.view_create,CL.nom_client
+                FROM contrat AS C
+                left JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND C.view_create = '1'
+                AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))
+                ORDER BY C.view_create DESC";
+            }else{
+                $query_create = "SELECT C.id_contrat,C.date_created_contrat,C.view_create,CL.nom_client
+                FROM contrat AS C
+                left JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND C.view_create = '1'
+                AND C.id_agence = $id_agence
+                AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))
+                ORDER BY C.view_create DESC";
+            }
+            
+            $result_create = mysqli_query($conn, $query_create);
+            while ($row = mysqli_fetch_assoc($result_create)) {
+                if ($row['view_create'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
+                } else {
+                    $style = 'background-color: #E8E8E8;';
+                }
+                $etat = "CREATION";
+                $class = "etat etatactif";
+                $value .= '<tr style="'.$style.'">
+                    <td>' . $i . '</td>
+                    <td><a href="fpdf/contratlocation.php?N='.$row["id_contrat"].'">'."Contrat N°".$row["id_contrat"].'</a></td>
+                    <td>' . $row['nom_client'] . '</td>
+                    <td>' . $row['date_created_contrat'] . '</td>
+                    <td style="height: 70px;"><center><div class="'.$class.'">' . $etat . '</div></center></td>
+                </tr>';
+                $i += 1;
+            }
+        } else if ($search == "2"){
+
+            if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+                $query_fin = "SELECT C.id_contrat,C.datefin_contrat,C.view_fin,CL.nom_client
+                FROM contrat AS C
+                left JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))
+                ORDER BY C.view_fin DESC";
+            }else{
+                $query_fin = "SELECT C.id_contrat,C.datefin_contrat,C.view_fin,CL.nom_client
+                FROM contrat AS C
+                left JOIN client AS CL ON C.id_client = CL.id_client
+                WHERE C.action_contrat = '1'
+                AND C.id_agence = $id_agence
+                AND (DATE(NOW()) BETWEEN DATE_SUB(C.datefin_contrat, INTERVAL 7 DAY) AND DATE_SUB(C.datefin_contrat, INTERVAL 0 DAY))
+                ORDER BY C.view_fin DESC";
+            }
+            
+            $result_fin = mysqli_query($conn, $query_fin);
+            while ($row_fin = mysqli_fetch_assoc($result_fin)) {
+                if ($row_fin['view_fin'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
+                } else {
+                    $style = 'background-color: #E8E8E8;';
+                }
+                $etat = "Fin";
+                $class = "etat etatinactif";
+                $value .= '<tr style="'.$style.'">
+                    <td>' . $i . '</td>
+                    <td><a href="fpdf/contratlocation.php?N='.$row_fin["id_contrat"].'">'."Contrat N°".$row_fin["id_contrat"].'</a></td>
+                    <td>' . $row_fin['nom_client'] . '</td>
+                    <td>' . $row_fin['datefin_contrat'] . '</td>
+                    <td style="height: 70px;"><center><div class="'.$class.'">' . $etat . '</div></center></td>
+                </tr>';
+                $i += 1;
+            }
+        }
+        $value .= '</tbody>';
+    echo $value;
+}
+
+// Agence
 
 function display_agence_record()
 {
@@ -2297,6 +2585,7 @@ function searchContratArchive()
         display_contrat_archive_record();
     }
 }
+
 // Contrat Historique
 
 function display_contrat_historique_record()
@@ -2482,5 +2771,544 @@ function searchContratHistorique()
         echo $value;
     } else {
         display_contrat_historique_record();
+    }
+} 
+
+// Entretien
+
+function display_entretien_record()
+{
+    global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
+    
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">Date Début</th>
+            <th class="border-top-0">Date Fin</th>
+            <th class="border-top-0">Prix Entretien</th>
+            <th class="border-top-0">Pimm Voiture</th>
+            <th class="border-top-0">Marque Voiture</th>
+            <th class="border-top-0">Actions</th>      
+        </tr>
+    </thead>
+    <tbody>';
+    if($id_role == 2){
+        $query = "SELECT * 
+        FROM entretien_voiture as E 
+        LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+        LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+        WHERE action_entretien = '1'
+        AND datefin_entretien >= DATE(NOW())
+        AND V.id_agence = $id_agence
+        ORDER BY id_entretien ASC";
+    }else{
+        $query = "SELECT * 
+        FROM entretien_voiture as E 
+        LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+        LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+        WHERE action_entretien = '1'
+        AND datefin_entretien >= DATE(NOW())
+        ORDER BY id_entretien ASC";
+    }
+    $result = mysqli_query($conn, $query);
+    $i = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
+        $value .= '<tr>
+            <td>' . $i . '</td>
+            <td>' . $row['datedebut_entretien'] . '</td>
+            <td>' . $row['datefin_entretien'] . '</td>
+            <td>' . $row['prix_entretien'] . '</td>
+            <td>' . $row['pimm_voiture'] . '</td>
+            <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
+            <td>
+                <div class="btn-group" role="group">
+                    <button type="button" title="Modifier l\'entretien" class="btn" style="font-size: 2px;" id="btn-edit-entretien" data-id=' . $row['id_entretien'] . '>
+                    <i class="lni lni-pencil-alt iconaction"></i></button>
+                    <button type="button" title="Supprimer l\'entretien" class="btn" style="font-size: 2px;" id="btn-delete-entretien" data-id1=' . $row['id_entretien'] . '>
+                    <i class="lni lni-trash iconaction"></i></button>
+                </div>
+            </td>
+        </tr>';
+        $i += 1;  
+    }
+    $value .= '</table>';
+    echo json_encode(['status' => 'success', 'html' => $value]);
+}
+
+function searchEntretien()
+{
+    global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
+
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">Date Début</th>
+            <th class="border-top-0">Date Fin</th>
+            <th class="border-top-0">Prix Entretien</th>
+            <th class="border-top-0">Pimm Voiture</th>
+            <th class="border-top-0">Marque Voiture</th>
+            <th class="border-top-0">Actions</th>        
+        </tr>
+    </thead>
+    <tbody>';
+    if (isset($_POST['query'])) {
+        $search = $_POST['query'];
+        if($id_role == 2){
+            $query = ("SELECT * 
+            FROM entretien_voiture as E 
+            LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+            LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            WHERE action_entretien = '1'
+            AND datefin_entretien >= DATE(NOW())
+            AND V.id_agence = $id_agence
+            AND (datedebut_entretien LIKE ('%" . $search . "%')
+                    OR datefin_entretien LIKE ('%" . $search . "%') 
+                    OR prix_entretien LIKE ('%" . $search . "%')       
+                    OR pimm_voiture LIKE ('%" . $search . "%')
+                    OR marque LIKE ('%" . $search . "%')
+                    OR model LIKE ('%" . $search . "%'))
+                    ORDER BY id_entretien ASC");
+        }else{
+            $query = ("SELECT * 
+            FROM entretien_voiture as E 
+            LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+            LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            WHERE action_entretien = '1'
+            AND datefin_entretien >= DATE(NOW())
+            AND (datedebut_entretien LIKE ('%" . $search . "%')
+                    OR datefin_entretien LIKE ('%" . $search . "%') 
+                    OR prix_entretien LIKE ('%" . $search . "%')       
+                    OR pimm_voiture LIKE ('%" . $search . "%')
+                    OR marque LIKE ('%" . $search . "%')
+                    OR model LIKE ('%" . $search . "%'))
+                    ORDER BY id_entretien ASC");
+        }
+        $result = mysqli_query($conn, $query);
+        $i = 1;
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $value .= '<tr>
+                    <td>' . $i . '</td>
+                    <td>' . $row['datedebut_entretien'] . '</td>
+                    <td>' . $row['datefin_entretien'] . '</td>
+                    <td>' . $row['prix_entretien'] . '</td>
+                    <td>' . $row['pimm_voiture'] . '</td>
+                    <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <button type="button" title="Modifier l\'entretien" class="btn" style="font-size: 2px;" id="btn-edit-entretien" data-id=' . $row['id_entretien'] . '>
+                            <i class="lni lni-pencil-alt iconaction"></i></button>
+                            <button type="button" title="Supprimer l\'entretien" class="btn" style="font-size: 2px;" id="btn-delete-entretien" data-id1=' . $row['id_entretien'] . '>
+                            <i class="lni lni-trash iconaction"></i></button>
+                        </div>
+                    </td>
+                </tr>';
+                $i += 1; 
+            }
+            $value .= '</tbody>';
+        } else {
+            $value = '<table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Aucune donnée correspond à votre recherche!</td>
+            </tr>
+            </tbody>';
+        }
+        echo $value;
+    } else {
+        display_entretien_record();
+    }
+}
+
+function InsertEntretien()
+{
+    global $conn;
+    global $msg_insert_succés;
+
+    $DateDebutEntretien = $_POST['DateDebutEntretien'];
+    $DateFinEntretien = $_POST['DateFinEntretien'];
+    $prixentretien = $_POST['prixentretien'];
+    $voiture_entretien = $_POST['voiture_entretien'];
+   
+    $date = date('Y-m-d H:i:s');
+    $query = "INSERT INTO entretien_voiture(id_voiture,datedebut_entretien,datefin_entretien,prix_entretien,date_created_entretien,date_updated_entretien) 
+            VALUES ('$voiture_entretien','$DateDebutEntretien','$DateFinEntretien','$prixentretien','$date','$date') ";
+    $result = mysqli_query($conn, $query);
+    if ($result) {
+        echo "<div class='text-checked'>L'entretien $msg_insert_succés</div>";
+    } else {
+        echo "<div class='text-echec'>Vous avez rencontré un problème lors de l'ajout du voiture</div>";
+    }  
+}
+
+function get_entretien_record()
+{
+    global $conn;
+    $id_entretien = $_POST['id_entretien'];
+    $query = "SELECT *
+        FROM entretien_voiture
+        WHERE action_entretien = '1'
+        AND id_entretien='$id_entretien'";
+    $result = mysqli_query($conn, $query);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $entretien_data = [];
+        $entretien_data[0] = $row['id_entretien'];
+        $entretien_data[1] = $row['datedebut_entretien'];
+        $entretien_data[2] = $row['datefin_entretien'];
+        $entretien_data[3] = $row['prix_entretien'];  
+    }
+    echo json_encode($entretien_data);
+}
+
+function update_entretien_value()
+{
+    global $conn;
+    global $msg_update_succés;
+    global $msg_update_echec;
+
+    $up_entretienid = $_POST["up_entretienid"];
+    $up_DateDebutEntretien = $_POST["up_DateDebutEntretien"];
+    $up_DateFinEntretien = $_POST["up_DateFinEntretien"];
+    $up_prixentretien = $_POST["up_prixentretien"];
+    
+    $date = date('Y-m-d H:i:s');
+    $update_query = "UPDATE entretien_voiture 
+        SET 
+            datedebut_entretien = '$up_DateDebutEntretien',
+            datefin_entretien = '$up_DateFinEntretien',
+            prix_entretien = '$up_prixentretien',
+            date_updated_entretien = '$date'
+        WHERE id_entretien = $up_entretienid";
+    $update_result = mysqli_query($conn, $update_query);
+    if (!$update_result) {
+        echo "<div class='text-echec'>$msg_update_echec l'entretien !</div>";
+        return;
+    }
+    echo "<div class='text-checked'>L'entretien $msg_update_succés</div>";
+    return;
+}
+
+function delete_entretien_record()
+{
+    global $conn;
+    global $msg_delete_succés;
+    global $msg_delete_echec;
+
+    $Del_ID = $_POST['id_entretien'];
+    $date = date('Y-m-d H:i:s');
+    $query = "UPDATE entretien_voiture 
+                SET 
+                    action_entretien = '0',
+                    date_updated_entretien='$date' 
+                WHERE id_entretien='$Del_ID'";
+    $result = mysqli_query($conn, $query);
+
+    if ($result) {
+        echo "<div class='text-checked'>L'entretien $msg_delete_succés</div>";
+    } else {
+        echo "<div class='text-echec'>$msg_delete_echec l'entretien !</div>";
+    }
+}
+
+// Entretien Archive
+
+function display_entretien_archive_record()
+{
+    global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
+    
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">Date Début</th>
+            <th class="border-top-0">Date Fin</th>
+            <th class="border-top-0">Prix Entretien</th>
+            <th class="border-top-0">Pimm Voiture</th>
+            <th class="border-top-0">Marque Voiture</th>     
+        </tr>
+    </thead>
+    <tbody>';
+    if($id_role == 2){
+        $query = "SELECT * 
+        FROM entretien_voiture as E 
+        LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+        LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+        WHERE action_entretien = '1'
+        AND datefin_entretien < DATE(NOW())
+        AND V.id_agence = $id_agence
+        ORDER BY id_entretien ASC";
+    }else{
+        $query = "SELECT * 
+        FROM entretien_voiture as E 
+        LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+        LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+        WHERE action_entretien = '1'
+        AND datefin_entretien < DATE(NOW())
+        ORDER BY id_entretien ASC";
+    }
+    $result = mysqli_query($conn, $query);
+    $i = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
+        $value .= '<tr>
+            <td>' . $i . '</td>
+            <td>' . $row['datedebut_entretien'] . '</td>
+            <td>' . $row['datefin_entretien'] . '</td>
+            <td>' . $row['prix_entretien'] . '</td>
+            <td>' . $row['pimm_voiture'] . '</td>
+            <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
+        </tr>';
+        $i += 1;  
+    }
+    $value .= '</table>';
+    echo json_encode(['status' => 'success', 'html' => $value]);
+}
+
+function searchEntretienArchive()
+{
+    global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
+
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">Date Début</th>
+            <th class="border-top-0">Date Fin</th>
+            <th class="border-top-0">Prix Entretien</th>
+            <th class="border-top-0">Pimm Voiture</th>
+            <th class="border-top-0">Marque Voiture</th>      
+        </tr>
+    </thead>
+    <tbody>';
+    if (isset($_POST['query'])) {
+        $search = $_POST['query'];
+        if($id_role == 2){
+            $query = ("SELECT * 
+            FROM entretien_voiture as E 
+            LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+            LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            WHERE action_entretien = '1'
+            AND datefin_entretien < DATE(NOW())
+            AND V.id_agence = $id_agence
+            AND (datedebut_entretien LIKE ('%" . $search . "%')
+                    OR datefin_entretien LIKE ('%" . $search . "%') 
+                    OR prix_entretien LIKE ('%" . $search . "%')       
+                    OR pimm_voiture LIKE ('%" . $search . "%')
+                    OR marque LIKE ('%" . $search . "%')
+                    OR model LIKE ('%" . $search . "%'))
+                    ORDER BY id_entretien ASC");
+        }else{
+            $query = ("SELECT * 
+            FROM entretien_voiture as E 
+            LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+            LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            WHERE action_entretien = '1'
+            AND datefin_entretien < DATE(NOW())
+            AND (datedebut_entretien LIKE ('%" . $search . "%')
+                    OR datefin_entretien LIKE ('%" . $search . "%') 
+                    OR prix_entretien LIKE ('%" . $search . "%')       
+                    OR pimm_voiture LIKE ('%" . $search . "%')
+                    OR marque LIKE ('%" . $search . "%')
+                    OR model LIKE ('%" . $search . "%'))
+                    ORDER BY id_entretien ASC");
+        }
+        $result = mysqli_query($conn, $query);
+        $i = 1;
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $value .= '<tr>
+                    <td>' . $i . '</td>
+                    <td>' . $row['datedebut_entretien'] . '</td>
+                    <td>' . $row['datefin_entretien'] . '</td>
+                    <td>' . $row['prix_entretien'] . '</td>
+                    <td>' . $row['pimm_voiture'] . '</td>
+                    <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
+                </tr>';
+                $i += 1; 
+            }
+            $value .= '</tbody>';
+        } else {
+            $value = '<table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Aucune donnée correspond à votre recherche!</td>
+            </tr>
+            </tbody>';
+        }
+        echo $value;
+    } else {
+        display_entretien_archive_record();
+    }
+}
+
+// Entretien Historique
+
+function display_entretien_historique_record()
+{
+    global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
+
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">Date Début Entretien</th>
+            <th class="border-top-0">Date Fin Entretien</th>
+            <th class="border-top-0">Pimm Voiture</th>
+            <th class="border-top-0">Action</th>
+            <th class="border-top-0">Date Action</th>         
+        </tr>
+    </thead>
+    <tbody>';
+    if($id_role == 2){
+        $query = "SELECT *
+        FROM entretien_voiture as E 
+        LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+        LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+        WHERE V.id_agence = $id_agence
+        ORDER BY id_entretien ASC";
+    }else{
+        $query = "SELECT * 
+        FROM entretien_voiture as E 
+        LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+        LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+        ORDER BY id_entretien ASC";
+    }
+    $result = mysqli_query($conn, $query);
+    $i = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
+        $class = "etat etatactif";
+        $value .= '<tr>
+            <td>' . $i . '</td>
+            <td>' . $row['datedebut_entretien'] . '</td>
+            <td>' . $row['datefin_entretien'] . '</td>
+            <td>' . $row['pimm_voiture'] . '</td>
+            <td style="height: 70px;"><center><div class="'.$class.'">  AJOUT </div></center></td>
+            <td>' . $row['date_created_entretien'] . '</td>
+        </tr>';
+        $i += 1;  
+        if($row['action_entretien'] == 0){
+            $class = "etatL etatinactif"; 
+            $value .= '<tr>
+                <td>' . $i . '</td>
+                <td>' . $row['datedebut_entretien'] . '</td>
+                <td>' . $row['datefin_entretien'] . '</td>
+                <td>' . $row['pimm_voiture'] . '</td>
+                <td style="height: 70px;"><center><div class="'.$class.'">  SUPPRESSION </div></center></td>
+                <td>' . $row['date_updated_entretien'] . '</td>
+            </tr>';
+            $i += 1;  
+        }
+    }
+    $value .= '</table>';
+    echo json_encode(['status' => 'success', 'html' => $value]);
+}
+
+function searchEntretienHistorique()
+{
+    global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">Date Début Entretien</th>
+            <th class="border-top-0">Date Fin Entretien</th>
+            <th class="border-top-0">Pimm Voiture</th>
+            <th class="border-top-0">Action</th>
+            <th class="border-top-0">Date Action</th>          
+        </tr>
+    </thead>
+    <tbody>';
+
+    if (isset($_POST['query'])) {
+        $search = $_POST['query'];
+        if($id_role == 2){
+            $query = ("SELECT *
+            FROM entretien_voiture as E 
+            LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+            LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            WHERE V.id_agence = $id_agence
+            AND (datedebut_entretien LIKE ('%" . $search . "%')
+                OR datefin_entretien LIKE ('%" . $search . "%')
+                OR pimm_voiture LIKE ('%" . $search . "%')
+                OR date_created_entretien LIKE ('%" . $search . "%'))
+                ORDER BY id_entretien ASC"); 
+        }else{
+            $query = ("SELECT * 
+            FROM entretien_voiture as E 
+            LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
+            LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            WHERE (datedebut_entretien LIKE ('%" . $search . "%')
+                OR datefin_entretien LIKE ('%" . $search . "%')
+                OR pimm_voiture LIKE ('%" . $search . "%')
+                OR date_created_entretien LIKE ('%" . $search . "%'))
+                ORDER BY id_entretien ASC");
+        }
+        $result = mysqli_query($conn, $query);
+        $i = 1;
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $class = "etat etatactif";
+                $value .= '<tr>
+                    <td>' . $i . '</td>
+                    <td>' . $row['datedebut_entretien'] . '</td>
+                    <td>' . $row['datefin_entretien'] . '</td>
+                    <td>' . $row['pimm_voiture'] . '</td>
+                    <td style="height: 70px;"><center><div class="'.$class.'">  AJOUT </div></center></td>
+                    <td>' . $row['date_created_entretien'] . '</td>
+                </tr>';
+                $i += 1;  
+                if($row['action_entretien'] == 0){
+                    $class = "etatL etatinactif"; 
+                    $value .= '<tr>
+                        <td>' . $i . '</td>
+                        <td>' . $row['datedebut_entretien'] . '</td>
+                        <td>' . $row['datefin_entretien'] . '</td>
+                        <td>' . $row['pimm_voiture'] . '</td>
+                        <td style="height: 70px;"><center><div class="'.$class.'">  SUPPRESSION </div></center></td>
+                        <td>' . $row['date_updated_entretien'] . '</td>
+                    </tr>';
+                    $i += 1;  
+                } 
+            }
+            $value .= '</tbody>';
+        } else {
+            $value = '<table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Aucune donnée correspond à votre recherche!</td>
+            </tr>
+            </tbody>';
+        }
+        echo $value;
+    } else {
+        display_entretien_historique_record();
     }
 } 

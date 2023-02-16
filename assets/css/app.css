@@ -34,7 +34,7 @@ body {
 
 
 
-	font-size: 14px;
+	font-size: 13px;
 
 	color: #707070;
 
@@ -4647,11 +4647,11 @@ input::placeholder {
 .dropdown-large .dropdown-menu {
 
 
-	width: 360px;
+	width: 290px;
 
+	height: 350px;
 
 	border: 0;
-
 
 	padding: 0rem 0;
 
@@ -4746,7 +4746,9 @@ input::placeholder {
 	background-clip: border-box;
 
 
-	background: linear-gradient(94.22deg, #BF1616 -7.43%, rgba(191, 22, 22, 0) 98.56%);
+	background: #FFFFFF;
+
+	box-shadow: 0px 5px 11px #0000001A;
 
 
 	text-align: left;
@@ -4857,7 +4859,7 @@ input::placeholder {
 .dropdown-large .msg-info {
 
 
-	font-size: 13px;
+	font-size: 11px;
 
 
 	margin-bottom: 0;
@@ -5564,6 +5566,15 @@ input::placeholder {
 	display: inline-block;
 }
 
+#divnotif {
+	font-size: 10px;
+	opacity: 0.42;
+	position: absolute;
+	right: 5%;
+	top: 5%;
+	display: inline-block;
+}
+
 .table>tbody {
 	border: 0 !important
 }
@@ -5580,6 +5591,26 @@ thead {
 	color: white;
 	background-color: #D71218;
 }
+
+/* Search box notification */
+
+.box select {
+	background-color: #EAE6E6;
+	color: #171717;
+	padding: 5px;
+	border: none;
+	font-size: 12px;
+	outline: none; 
+  }
+  
+  .box::before {
+	content: "\f13a";
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	font-size: 14px;
+  }
 
 /* Responsive */
 
