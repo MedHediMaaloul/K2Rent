@@ -352,7 +352,6 @@ function view_notification_record()
                 FROM contrat AS C
                 left JOIN client AS CL ON C.id_client = CL.id_client
                 WHERE C.action_contrat = '1'
-                AND C.view_create = '1'
                 AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))
                 ORDER BY C.view_create DESC";
             }else{
@@ -360,7 +359,6 @@ function view_notification_record()
                 FROM contrat AS C
                 left JOIN client AS CL ON C.id_client = CL.id_client
                 WHERE C.action_contrat = '1'
-                AND C.view_create = '1'
                 AND C.id_agence = $id_agence
                 AND (C.date_created_contrat BETWEEN DATE_SUB(DATE(NOW()), INTERVAL 2 DAY) AND DATE_SUB(DATE(NOW()), INTERVAL -2 DAY))
                 ORDER BY C.view_create DESC";
