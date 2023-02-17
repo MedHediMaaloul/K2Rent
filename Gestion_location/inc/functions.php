@@ -3365,3 +3365,70 @@ function searchEntretienHistorique()
         display_entretien_historique_record();
     }
 } 
+// Planing contrat record
+
+function viewPlaningContratRecord()
+{    global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
+    $data_planing=array();
+
+    if($id_role == "2"){
+        $query = "SELECT V.pimm_voiture AS title ,C.datedebut_contrat AS start ,DATE_ADD(C.datefin_contrat, INTERVAL 1 DAY) AS end 
+        FROM contrat as C 
+        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+        WHERE C.action_contrat='1'
+        AND C.id_agence='$id_agence'";
+    }else{
+        $query = "SELECT V.pimm_voiture AS title ,C.datedebut_contrat AS start ,DATE_ADD(C.datefin_contrat, INTERVAL 1 DAY) AS end 
+        FROM contrat as C 
+        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+        WHERE C.action_contrat='1'";
+    }
+    $result = mysqli_query($conn, $query);
+    while ($row = mysqli_fetch_assoc($result)){
+        $data_planing[]=$row;
+    }
+    echo json_encode($data_planing);
+}
+
+// Planing contrat record by day
+
+
+function viewPlanningContratByDay(){
+    global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
+    $value = '<ul style="margin-left: 10%;" >';
+
+   $date= $_POST['date'];
+    if($id_role == "2"){
+        $query = "SELECT * 
+        FROM contrat AS C
+        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+        WHERE C.action_contrat='1'
+        AND C.id_agence='$id_agence'
+        AND  C.datedebut_contrat <='$date' 
+        AND C.datefin_contrat >='$date' ";
+    }else{
+        $query = "SELECT * 
+        FROM contrat AS C
+        LEFT JOIN voiture AS V on V.id_voiture = C.id_voiture
+        WHERE C.action_contrat='1'
+        AND  C.datedebut_contrat <='$date' 
+        AND C.datefin_contrat >='$date' ";
+    }
+    
+         $result = mysqli_query($conn, $query);
+         if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $value.="<li>CONTRAT DE LOCATION N°{$row['id_contrat']} - {$row['pimm_voiture']} </li>";
+
+            }}
+            else{
+                $value="<div class=' alert alert-danger' role='alert' style='text-align:center;'>Aucun Contrat trouvé ! </div>";
+
+            }
+            echo $value;
+
+}

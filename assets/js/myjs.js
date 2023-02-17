@@ -63,6 +63,7 @@ $(document).ready(function () {
   searchContratHistorique();
   // Download Contrat
   get_contrat_pdf();
+<<<<<<< HEAD
   // Entretien
   view_entretien_record();
   searchEntretien();
@@ -77,6 +78,10 @@ $(document).ready(function () {
   // Entretien Historique
   view_entretien_historique_record();
   searchEntretienHistorique();
+=======
+  // Planing
+  view_planing_contrat_record();
+>>>>>>> malekmoslah-S2
 });
 
 function ReloadButtonExit() {
@@ -1029,7 +1034,7 @@ function insert_voiture_Record() {
         .addClass("alert alert-danger")
         .html("Veuillez vérifier le nombre de place du voiture !");
     } else {
-      if(voitureagence == null){
+      if (voitureagence == null) {
         voitureagence = 0;
       }
       var form_data = new FormData();
@@ -1796,6 +1801,7 @@ function get_contrat_pdf() {
   });
 }
 
+<<<<<<< HEAD
 // Entretien 
 
 function view_entretien_record() {
@@ -2096,3 +2102,116 @@ function searchEntretienHistorique() {
     });
   });
 }
+=======
+// Planing
+
+function view_planing_contrat_record() {
+  $.ajax({
+    type: "GET",
+    url: "viewPlaningContratRecord.php",
+    success: function (data) {
+      var $calendarEl = $('#calendar');
+      var calendar = new FullCalendar.Calendar($calendarEl[0], {
+
+        headerToolbar: {
+          left: 'title',
+          right: 'listDay,listWeek,dayGridMonth,multiMonthYear prev,today,next'
+        },
+        navLinks: true,
+        selectMirror: true,
+        locale: "fr",
+        editable: true,
+        // views: {
+        //   day: {
+        //     titleFormat: 'dddd D MMMM [De] YYYY',
+
+        //   },
+        //   week: {
+        //     titleFormat: '[Semaine] W [De] MMMM YYYY',
+        //   },
+        // },
+        buttonText: {
+          listDay: 'Jour',
+          listWeek: 'Semaine',
+          today: 'Aujourd\'hui',
+          dayGridMonth: 'Mois',
+          prev: 'Précedent',
+          next: 'Suivant',
+          multiMonthYear: 'Année'
+        },
+
+        events: JSON.parse(data),
+        eventColor: '#378006',
+
+
+      });
+      $(document).on("click", "#ConsulterContrat", function () {
+        var parent = $(this).prev();
+        var datecontrat = parent.children("a").attr("title");
+        var datecontrat = datecontrat.split(" ");
+        date_contrat_title = "Contrat " + datecontrat[2] + " " + datecontrat[3] + " " + datecontrat[4];
+        switch (datecontrat[3]) {
+          case "janvier":
+            datecontrat[3] = '01';
+            break;
+          case "février":
+            datecontrat[3] = '02';
+            break;
+          case "mars":
+            datecontrat[3] = '03';
+            break;
+          case "avril":
+            datecontrat[3] = '04';
+            break;
+          case "mai":
+            datecontrat[3] = '05';
+            break;
+          case "juin":
+            datecontrat[3] = '06';
+            break;
+          case "juillet":
+            datecontrat[3] = '07';
+            break;
+          case "août":
+            datecontrat[3] = '08';
+            break;
+          case "septembre":
+            datecontrat[3] = '09';
+            break;
+          case "octobre":
+            datecontrat[3] = '10';
+            break;
+          case "novembre":
+            datecontrat[3] = '11';
+            break;
+          case "décembre":
+            datecontrat[3] = '12';
+        }
+        if (datecontrat[2] < 10) {
+          var date_contrat = datecontrat[4].concat("-", datecontrat[3]).concat("-0", datecontrat[2]);
+        }
+        else {
+          var date_contrat = datecontrat[4].concat("-", datecontrat[3]).concat("-", datecontrat[2]);
+
+        }
+        $.ajax({
+          url: "viewPlanningContratByDay.php",
+          method: "post",
+          data: {
+            date: date_contrat
+          },
+
+          success: function (data) {
+            $("#PlanningContratDayListe").html(data);
+            $("#ModalTitleContratByDay").html(date_contrat_title);
+            $('#ContratListePopup').modal('toggle');
+          },
+        });
+
+
+      });
+      calendar.render();
+    }
+  });
+}
+>>>>>>> malekmoslah-S2
