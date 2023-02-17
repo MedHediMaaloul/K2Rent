@@ -1801,7 +1801,6 @@ function get_contrat_pdf() {
   });
 }
 
-<<<<<<< HEAD
 // Entretien 
 
 function view_entretien_record() {
@@ -2102,7 +2101,6 @@ function searchEntretienHistorique() {
     });
   });
 }
-=======
 // Planing
 
 function view_planing_contrat_record() {
@@ -2121,15 +2119,6 @@ function view_planing_contrat_record() {
         selectMirror: true,
         locale: "fr",
         editable: true,
-        // views: {
-        //   day: {
-        //     titleFormat: 'dddd D MMMM [De] YYYY',
-
-        //   },
-        //   week: {
-        //     titleFormat: '[Semaine] W [De] MMMM YYYY',
-        //   },
-        // },
         buttonText: {
           listDay: 'Jour',
           listWeek: 'Semaine',
@@ -2139,11 +2128,8 @@ function view_planing_contrat_record() {
           next: 'Suivant',
           multiMonthYear: 'Année'
         },
-
         events: JSON.parse(data),
         eventColor: '#378006',
-
-
       });
       $(document).on("click", "#ConsulterContrat", function () {
         var parent = $(this).prev();
@@ -2192,7 +2178,6 @@ function view_planing_contrat_record() {
         }
         else {
           var date_contrat = datecontrat[4].concat("-", datecontrat[3]).concat("-", datecontrat[2]);
-
         }
         $.ajax({
           url: "viewPlanningContratByDay.php",
@@ -2207,11 +2192,8 @@ function view_planing_contrat_record() {
             $('#ContratListePopup').modal('toggle');
           },
         });
-
-
       });
       calendar.render();
     }
   });
 }
->>>>>>> malekmoslah-S2
