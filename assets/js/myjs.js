@@ -63,7 +63,6 @@ $(document).ready(function () {
   searchContratHistorique();
   // Download Contrat
   get_contrat_pdf();
-<<<<<<< HEAD
   // Entretien
   view_entretien_record();
   searchEntretien();
@@ -78,10 +77,8 @@ $(document).ready(function () {
   // Entretien Historique
   view_entretien_historique_record();
   searchEntretienHistorique();
-=======
   // Planing
   view_planing_contrat_record();
->>>>>>> malekmoslah-S2
 });
 
 function ReloadButtonExit() {
