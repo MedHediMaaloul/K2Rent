@@ -16,14 +16,15 @@
 	<!-- Bootstrap CSS -->
 	<link href="assets/css/bootstrap.min.css" rel="stylesheet">
 	<link href="assets/css/bootstrap-extended.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet">
+	<!-- <link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet"> -->
+	<link href='https://fonts.googleapis.com/css?family=Rajdhani' rel='stylesheet'>
 	<link href="https://fonts.cdnfonts.com/css/bambino-2" rel="stylesheet">
 	<link href="assets/css/app.css" rel="stylesheet">
 	<link href="assets/css/icons.css" rel="stylesheet">
 	<link rel="stylesheet" href="app.css">
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 	<!-- calendar css -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css" />
+	<link href="assets/css/calendar.css" rel="stylesheet">
 	<!-- Theme Style CSS -->
 	<link rel="stylesheet" href="assets/css/dark-theme.css" />
 	<link rel="stylesheet" href="assets/css/semi-dark.css" />
@@ -143,7 +144,12 @@
 								<div class="dropdown-menu dropdown-menu-end">
 									<a href="javascript:;">
 										<div class="msg-header">
-											<p class="msg-header-title">Contrats qui prendront fin</p>
+											<div id="div1">
+												<p class="msg-header-title">Contrats qui prendront fin</p>
+											</div>
+											<div id="divnotif">
+												<p id="count_contrat_fin_not_vue"></p>
+											</div>
 										</div>
 									</a>
 									<div class="header-message-list">
@@ -154,17 +160,22 @@
 
 							<li class="nav-item dropdown dropdown-large" style="margin-left: -29px;">
 								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-									<span id="count_contrat_fin" class="alert-count"></span>
+									<span id="count_contrat_crée" class="alert-count"></span>
 									<img src="assets/images/img_menu/CreateContrat.png" width="50px" height="50px">
 								</a>
 								<div class="dropdown-menu dropdown-menu-end">
 									<a href="javascript:;">
 										<div class="msg-header">
-											<p class="msg-header-title">Contrats crées</p>
+											<div id="div1">
+												<p class="msg-header-title">Contrats crées</p>
+											</div>
+											<div id="divnotif">
+												<p id="count_contrat_crée_not_vue"></p>
+											</div>
 										</div>
 									</a>
 									<div class="header-notifications-list">
-										<p class="msg-info" id=""></p>
+										<p class="msg-info px-0" id="contrat_crée"></p>
 									</div>
 							
 								</div>

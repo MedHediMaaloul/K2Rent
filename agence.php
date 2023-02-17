@@ -362,7 +362,7 @@ if ((($_SESSION['Role']) == "0")) {
                                     $query = "SELECT * FROM agence where id_agence != 0 AND action_agence = '1' ORDER BY id_agence ASC";
                                     $result = mysqli_query($conn, $query);
                                     ?>
-                                    <label class="col-md-12 p-0"> Agence*</label>
+                                    <label class="col-md-12 p-0"> Agence<span class="text-danger">*</span></label>
                                     <div class="col-md-12 border-bottom p-0">
                                         <select id="IdAgence" name="IdAgence" placeholder="agence" class="form-control p-0 border-0" required>
                                             <?php
@@ -378,7 +378,7 @@ if ((($_SESSION['Role']) == "0")) {
                                     </div>
                                 </div>
                                 <div class="form-group mb-2">
-                                    <label class="col-md-12 p-0"> Horaire </label>
+                                    <label class="col-md-12 p-0"> Horaire<span class="text-danger">*</span></label>
                                     <div class="table-responsive">
                                         <table class="table" id="dynamic_fieldH">
                                             <tr>

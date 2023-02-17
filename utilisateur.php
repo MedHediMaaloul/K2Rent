@@ -132,8 +132,8 @@ if ((($_SESSION['Role']) == "0")) {
                                     <label class="col-md-12 p-0">Etat<span class="text-danger">*</span></label>
                                     <div class="col-md-12 border-bottom p-0">
                                         <select name="duree" id="updateuseretat" class="form-control p-0 border-0">
-                                            <option value="T">Active</option>
-                                            <option value="F">désactiver</option>
+                                            <option value="T">ACTIF</option>
+                                            <option value="F">INACTIF</option>
                                         </select>
                                     </div>
                                 </div>
@@ -228,7 +228,7 @@ if ((($_SESSION['Role']) == "0")) {
 								<div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Rôle<span class="text-danger">*</span></label>
                                     <select id="roletype" name="roletype" onchange="selectrole(this.value)" placeholder="roletype" class="form-control p-0 border-0" required="">
-                                        <option value="Selectionner" disabled selected> Selectionner Le Role</option>
+                                        <option value="" disabled selected> Selectionner Le Role</option>
                                         <option value="1">Admin</option>
                                         <option value="2">Agent</option>
                                     </select>

@@ -225,13 +225,13 @@ if (!isset($_SESSION['Login'])) {
                                 </div>
 
                                 <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Carte grise<span class="text-danger">*</span></label>
+                                    <label class="col-md-12 p-0">Carte grise</label>
                                     <div class="col-md-12 border-bottom p-0">
                                         <input type="file" id="up_voiturecartegrise" class="form-control p-0 border-0">
                                     </div>
                                 </div>
                                 <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Assurance<span class="text-danger">*</span></label>
+                                    <label class="col-md-12 p-0">Assurance</label>
                                     <div class="col-md-12 border-bottom p-0">
                                         <input type="file" id="up_voitureassurance" class="form-control p-0 border-0">
                                     </div>
