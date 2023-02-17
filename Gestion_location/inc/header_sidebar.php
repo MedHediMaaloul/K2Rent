@@ -16,7 +16,8 @@
 	<!-- Bootstrap CSS -->
 	<link href="assets/css/bootstrap.min.css" rel="stylesheet">
 	<link href="assets/css/bootstrap-extended.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet">
+	<!-- <link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet"> -->
+	<link href='https://fonts.googleapis.com/css?family=Rajdhani' rel='stylesheet'>
 	<link href="https://fonts.cdnfonts.com/css/bambino-2" rel="stylesheet">
 	<link href="assets/css/app.css" rel="stylesheet">
 	<link href="assets/css/icons.css" rel="stylesheet">

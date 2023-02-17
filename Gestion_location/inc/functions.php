@@ -2779,20 +2779,24 @@ function display_entretien_record()
     global $conn;
     $id_role = $_SESSION['Role'];
     $id_agence = $_SESSION['Agence'];
-    
+
     $value = '<table class="table table-striped align-middle">
-    <thead>
-        <tr>
-            <th class="border-top-0">#</th>
-            <th class="border-top-0">Date Début</th>
-            <th class="border-top-0">Date Fin</th>
-            <th class="border-top-0">Prix Entretien</th>
-            <th class="border-top-0">Pimm Voiture</th>
-            <th class="border-top-0">Marque Voiture</th>
-            <th class="border-top-0">Actions</th>      
-        </tr>
-    </thead>
+        <thead>
+            <tr>
+                <th class="border-top-0">#</th>
+                <th class="border-top-0">Date Début</th>
+                <th class="border-top-0">Date Fin</th>
+                <th class="border-top-0">Prix Entretien</th>
+                <th class="border-top-0">Pimm Voiture</th>
+                <th class="border-top-0">Marque Voiture</th>';
+                if($id_agence ==0){
+                    $value .= '<th class="border-top-0">Agence</th>';
+                }
+                $value .= '<th class="border-top-0">Actions</th>      
+            </tr>
+        </thead>
     <tbody>';
+
     if($id_role == 2){
         $query = "SELECT * 
         FROM entretien_voiture as E 
@@ -2807,6 +2811,7 @@ function display_entretien_record()
         FROM entretien_voiture as E 
         LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
         LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+        LEFT JOIN agence AS A on V.id_agence = A.id_agence
         WHERE action_entretien = '1'
         AND datefin_entretien >= DATE(NOW())
         ORDER BY id_entretien ASC";
@@ -2820,8 +2825,11 @@ function display_entretien_record()
             <td>' . $row['datefin_entretien'] . '</td>
             <td>' . $row['prix_entretien'] . '</td>
             <td>' . $row['pimm_voiture'] . '</td>
-            <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
-            <td>
+            <td>' . $row['marque'] . ' ' . $row['model'] . '</td>';
+            if($id_agence == 0){
+                $value .= '<td>' . $row['nom_agence'] . '</td>';
+            }
+            $value .= '<td>
                 <div class="btn-group" role="group">
                     <button type="button" title="Modifier l\'entretien" class="btn" style="font-size: 2px;" id="btn-edit-entretien" data-id=' . $row['id_entretien'] . '>
                     <i class="lni lni-pencil-alt iconaction"></i></button>
@@ -2843,18 +2851,22 @@ function searchEntretien()
     $id_agence = $_SESSION['Agence'];
 
     $value = '<table class="table table-striped align-middle">
-    <thead>
-        <tr>
-            <th class="border-top-0">#</th>
-            <th class="border-top-0">Date Début</th>
-            <th class="border-top-0">Date Fin</th>
-            <th class="border-top-0">Prix Entretien</th>
-            <th class="border-top-0">Pimm Voiture</th>
-            <th class="border-top-0">Marque Voiture</th>
-            <th class="border-top-0">Actions</th>        
-        </tr>
-    </thead>
+        <thead>
+            <tr>
+                <th class="border-top-0">#</th>
+                <th class="border-top-0">Date Début</th>
+                <th class="border-top-0">Date Fin</th>
+                <th class="border-top-0">Prix Entretien</th>
+                <th class="border-top-0">Pimm Voiture</th>
+                <th class="border-top-0">Marque Voiture</th>';
+                if($id_agence ==0){
+                    $value .= '<th class="border-top-0">Agence</th>';
+                }
+                $value .= '<th class="border-top-0">Actions</th>      
+            </tr>
+        </thead>
     <tbody>';
+
     if (isset($_POST['query'])) {
         $search = $_POST['query'];
         if($id_role == 2){
@@ -2877,6 +2889,7 @@ function searchEntretien()
             FROM entretien_voiture as E 
             LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
             LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            LEFT JOIN agence AS A on V.id_agence = A.id_agence
             WHERE action_entretien = '1'
             AND datefin_entretien >= DATE(NOW())
             AND (datedebut_entretien LIKE ('%" . $search . "%')
@@ -2884,7 +2897,8 @@ function searchEntretien()
                     OR prix_entretien LIKE ('%" . $search . "%')       
                     OR pimm_voiture LIKE ('%" . $search . "%')
                     OR marque LIKE ('%" . $search . "%')
-                    OR model LIKE ('%" . $search . "%'))
+                    OR model LIKE ('%" . $search . "%')
+                    OR nom_agence LIKE ('%" . $search . "%'))
                     ORDER BY id_entretien ASC");
         }
         $result = mysqli_query($conn, $query);
@@ -2892,21 +2906,24 @@ function searchEntretien()
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $value .= '<tr>
-                    <td>' . $i . '</td>
-                    <td>' . $row['datedebut_entretien'] . '</td>
-                    <td>' . $row['datefin_entretien'] . '</td>
-                    <td>' . $row['prix_entretien'] . '</td>
-                    <td>' . $row['pimm_voiture'] . '</td>
-                    <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
-                    <td>
-                        <div class="btn-group" role="group">
-                            <button type="button" title="Modifier l\'entretien" class="btn" style="font-size: 2px;" id="btn-edit-entretien" data-id=' . $row['id_entretien'] . '>
-                            <i class="lni lni-pencil-alt iconaction"></i></button>
-                            <button type="button" title="Supprimer l\'entretien" class="btn" style="font-size: 2px;" id="btn-delete-entretien" data-id1=' . $row['id_entretien'] . '>
-                            <i class="lni lni-trash iconaction"></i></button>
-                        </div>
-                    </td>
-                </tr>';
+                <td>' . $i . '</td>
+                <td>' . $row['datedebut_entretien'] . '</td>
+                <td>' . $row['datefin_entretien'] . '</td>
+                <td>' . $row['prix_entretien'] . '</td>
+                <td>' . $row['pimm_voiture'] . '</td>
+                <td>' . $row['marque'] . ' ' . $row['model'] . '</td>';
+                if($id_agence == 0){
+                    $value .= '<td>' . $row['nom_agence'] . '</td>';
+                }
+                $value .= '<td>
+                    <div class="btn-group" role="group">
+                        <button type="button" title="Modifier l\'entretien" class="btn" style="font-size: 2px;" id="btn-edit-entretien" data-id=' . $row['id_entretien'] . '>
+                        <i class="lni lni-pencil-alt iconaction"></i></button>
+                        <button type="button" title="Supprimer l\'entretien" class="btn" style="font-size: 2px;" id="btn-delete-entretien" data-id1=' . $row['id_entretien'] . '>
+                        <i class="lni lni-trash iconaction"></i></button>
+                    </div>
+                </td>
+            </tr>';
                 $i += 1; 
             }
             $value .= '</tbody>';
@@ -3028,17 +3045,21 @@ function display_entretien_archive_record()
     $id_agence = $_SESSION['Agence'];
     
     $value = '<table class="table table-striped align-middle">
-    <thead>
-        <tr>
-            <th class="border-top-0">#</th>
-            <th class="border-top-0">Date Début</th>
-            <th class="border-top-0">Date Fin</th>
-            <th class="border-top-0">Prix Entretien</th>
-            <th class="border-top-0">Pimm Voiture</th>
-            <th class="border-top-0">Marque Voiture</th>     
-        </tr>
-    </thead>
+        <thead>
+            <tr>
+                <th class="border-top-0">#</th>
+                <th class="border-top-0">Date Début</th>
+                <th class="border-top-0">Date Fin</th>
+                <th class="border-top-0">Prix Entretien</th>
+                <th class="border-top-0">Pimm Voiture</th>
+                <th class="border-top-0">Marque Voiture</th>';
+                if($id_agence ==0){
+                    $value .= '<th class="border-top-0">Agence</th>';
+                }
+            $value .= '</tr>
+        </thead>
     <tbody>';
+
     if($id_role == 2){
         $query = "SELECT * 
         FROM entretien_voiture as E 
@@ -3053,6 +3074,7 @@ function display_entretien_archive_record()
         FROM entretien_voiture as E 
         LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
         LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+        LEFT JOIN agence AS A on V.id_agence = A.id_agence
         WHERE action_entretien = '1'
         AND datefin_entretien < DATE(NOW())
         ORDER BY id_entretien ASC";
@@ -3066,8 +3088,11 @@ function display_entretien_archive_record()
             <td>' . $row['datefin_entretien'] . '</td>
             <td>' . $row['prix_entretien'] . '</td>
             <td>' . $row['pimm_voiture'] . '</td>
-            <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
-        </tr>';
+            <td>' . $row['marque'] . ' ' . $row['model'] . '</td>';
+            if($id_agence == 0){
+                $value .= '<td>' . $row['nom_agence'] . '</td>';
+            }
+        $value .= '</tr>';
         $i += 1;  
     }
     $value .= '</table>';
@@ -3081,17 +3106,21 @@ function searchEntretienArchive()
     $id_agence = $_SESSION['Agence'];
 
     $value = '<table class="table table-striped align-middle">
-    <thead>
-        <tr>
-            <th class="border-top-0">#</th>
-            <th class="border-top-0">Date Début</th>
-            <th class="border-top-0">Date Fin</th>
-            <th class="border-top-0">Prix Entretien</th>
-            <th class="border-top-0">Pimm Voiture</th>
-            <th class="border-top-0">Marque Voiture</th>      
-        </tr>
-    </thead>
+        <thead>
+            <tr>
+                <th class="border-top-0">#</th>
+                <th class="border-top-0">Date Début</th>
+                <th class="border-top-0">Date Fin</th>
+                <th class="border-top-0">Prix Entretien</th>
+                <th class="border-top-0">Pimm Voiture</th>
+                <th class="border-top-0">Marque Voiture</th>';
+                if($id_agence ==0){
+                    $value .= '<th class="border-top-0">Agence</th>';
+                }
+            $value .= '</tr>
+        </thead>
     <tbody>';
+
     if (isset($_POST['query'])) {
         $search = $_POST['query'];
         if($id_role == 2){
@@ -3114,6 +3143,7 @@ function searchEntretienArchive()
             FROM entretien_voiture as E 
             LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
             LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            LEFT JOIN agence AS A on V.id_agence = A.id_agence
             WHERE action_entretien = '1'
             AND datefin_entretien < DATE(NOW())
             AND (datedebut_entretien LIKE ('%" . $search . "%')
@@ -3121,7 +3151,8 @@ function searchEntretienArchive()
                     OR prix_entretien LIKE ('%" . $search . "%')       
                     OR pimm_voiture LIKE ('%" . $search . "%')
                     OR marque LIKE ('%" . $search . "%')
-                    OR model LIKE ('%" . $search . "%'))
+                    OR model LIKE ('%" . $search . "%')
+                    OR nom_agence LIKE ('%" . $search . "%'))
                     ORDER BY id_entretien ASC");
         }
         $result = mysqli_query($conn, $query);
@@ -3134,8 +3165,11 @@ function searchEntretienArchive()
                     <td>' . $row['datefin_entretien'] . '</td>
                     <td>' . $row['prix_entretien'] . '</td>
                     <td>' . $row['pimm_voiture'] . '</td>
-                    <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
-                </tr>';
+                    <td>' . $row['marque'] . ' ' . $row['model'] . '</td>';
+                    if($id_agence == 0){
+                        $value .= '<td>' . $row['nom_agence'] . '</td>';
+                    }
+                $value .= '</tr>';
                 $i += 1; 
             }
             $value .= '</tbody>';
@@ -3172,8 +3206,11 @@ function display_entretien_historique_record()
             <th class="border-top-0">#</th>
             <th class="border-top-0">Date Début Entretien</th>
             <th class="border-top-0">Date Fin Entretien</th>
-            <th class="border-top-0">Pimm Voiture</th>
-            <th class="border-top-0">Action</th>
+            <th class="border-top-0">Pimm Voiture</th>';
+            if($id_agence ==0){
+                $value .= '<th class="border-top-0">Agence</th>';
+            }
+            $value .= '<th class="border-top-0">Action</th>
             <th class="border-top-0">Date Action</th>         
         </tr>
     </thead>
@@ -3190,6 +3227,7 @@ function display_entretien_historique_record()
         FROM entretien_voiture as E 
         LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
         LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+        LEFT JOIN agence AS A on V.id_agence = A.id_agence
         ORDER BY id_entretien ASC";
     }
     $result = mysqli_query($conn, $query);
@@ -3200,8 +3238,11 @@ function display_entretien_historique_record()
             <td>' . $i . '</td>
             <td>' . $row['datedebut_entretien'] . '</td>
             <td>' . $row['datefin_entretien'] . '</td>
-            <td>' . $row['pimm_voiture'] . '</td>
-            <td style="height: 70px;"><center><div class="'.$class.'">  AJOUT </div></center></td>
+            <td>' . $row['pimm_voiture'] . '</td>';
+            if($id_agence == 0){
+                $value .= '<td>' . $row['nom_agence'] . '</td>';
+            }
+            $value .= '<td style="height: 70px;"><center><div class="'.$class.'">  AJOUT </div></center></td>
             <td>' . $row['date_created_entretien'] . '</td>
         </tr>';
         $i += 1;  
@@ -3211,8 +3252,11 @@ function display_entretien_historique_record()
                 <td>' . $i . '</td>
                 <td>' . $row['datedebut_entretien'] . '</td>
                 <td>' . $row['datefin_entretien'] . '</td>
-                <td>' . $row['pimm_voiture'] . '</td>
-                <td style="height: 70px;"><center><div class="'.$class.'">  SUPPRESSION </div></center></td>
+                <td>' . $row['pimm_voiture'] . '</td>';
+                if($id_agence == 0){
+                    $value .= '<td>' . $row['nom_agence'] . '</td>';
+                }
+                $value .= '<td style="height: 70px;"><center><div class="'.$class.'">  SUPPRESSION </div></center></td>
                 <td>' . $row['date_updated_entretien'] . '</td>
             </tr>';
             $i += 1;  
@@ -3233,8 +3277,11 @@ function searchEntretienHistorique()
             <th class="border-top-0">#</th>
             <th class="border-top-0">Date Début Entretien</th>
             <th class="border-top-0">Date Fin Entretien</th>
-            <th class="border-top-0">Pimm Voiture</th>
-            <th class="border-top-0">Action</th>
+            <th class="border-top-0">Pimm Voiture</th>';
+            if($id_agence ==0){
+                $value .= '<th class="border-top-0">Agence</th>';
+            }
+            $value .= '<th class="border-top-0">Action</th>
             <th class="border-top-0">Date Action</th>          
         </tr>
     </thead>
@@ -3258,10 +3305,12 @@ function searchEntretienHistorique()
             FROM entretien_voiture as E 
             LEFT JOIN voiture AS V on E.id_voiture = V.id_voiture
             LEFT JOIN marque_voiture AS MM on V.id_marquemodel = MM.id_marquevoiture
+            LEFT JOIN agence AS A on V.id_agence = A.id_agence
             WHERE (datedebut_entretien LIKE ('%" . $search . "%')
                 OR datefin_entretien LIKE ('%" . $search . "%')
                 OR pimm_voiture LIKE ('%" . $search . "%')
-                OR date_created_entretien LIKE ('%" . $search . "%'))
+                OR date_created_entretien LIKE ('%" . $search . "%')
+                OR nom_agence LIKE ('%" . $search . "%'))
                 ORDER BY id_entretien ASC");
         }
         $result = mysqli_query($conn, $query);
@@ -3273,8 +3322,11 @@ function searchEntretienHistorique()
                     <td>' . $i . '</td>
                     <td>' . $row['datedebut_entretien'] . '</td>
                     <td>' . $row['datefin_entretien'] . '</td>
-                    <td>' . $row['pimm_voiture'] . '</td>
-                    <td style="height: 70px;"><center><div class="'.$class.'">  AJOUT </div></center></td>
+                    <td>' . $row['pimm_voiture'] . '</td>';
+                    if($id_agence == 0){
+                        $value .= '<td>' . $row['nom_agence'] . '</td>';
+                    }
+                    $value .= '<td style="height: 70px;"><center><div class="'.$class.'">  AJOUT </div></center></td>
                     <td>' . $row['date_created_entretien'] . '</td>
                 </tr>';
                 $i += 1;  
@@ -3284,8 +3336,11 @@ function searchEntretienHistorique()
                         <td>' . $i . '</td>
                         <td>' . $row['datedebut_entretien'] . '</td>
                         <td>' . $row['datefin_entretien'] . '</td>
-                        <td>' . $row['pimm_voiture'] . '</td>
-                        <td style="height: 70px;"><center><div class="'.$class.'">  SUPPRESSION </div></center></td>
+                        <td>' . $row['pimm_voiture'] . '</td>';
+                        if($id_agence == 0){
+                            $value .= '<td>' . $row['nom_agence'] . '</td>';
+                        }
+                        $value .= '<td style="height: 70px;"><center><div class="'.$class.'">  SUPPRESSION </div></center></td>
                         <td>' . $row['date_updated_entretien'] . '</td>
                     </tr>';
                     $i += 1;  
