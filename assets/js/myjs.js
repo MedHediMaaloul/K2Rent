@@ -2098,6 +2098,7 @@ function searchEntretienHistorique() {
     });
   });
 }
+
 // Planing
 
 function view_planing_contrat_record() {
@@ -2107,7 +2108,6 @@ function view_planing_contrat_record() {
     success: function (data) {
       var $calendarEl = $('#calendar');
       var calendar = new FullCalendar.Calendar($calendarEl[0], {
-
         headerToolbar: {
           left: 'title',
           right: 'listDay,listWeek,dayGridMonth,multiMonthYear prev,today,next'
@@ -2126,8 +2126,10 @@ function view_planing_contrat_record() {
           multiMonthYear: 'Année'
         },
         events: JSON.parse(data),
-        eventColor: '#378006',
+        eventColor: '#FEE2E9',
+        eventTextColor: '#171717',
       });
+      
       $(document).on("click", "#ConsulterContrat", function () {
         var parent = $(this).prev();
         var datecontrat = parent.children("a").attr("title");
@@ -2182,7 +2184,6 @@ function view_planing_contrat_record() {
           data: {
             date: date_contrat
           },
-
           success: function (data) {
             $("#PlanningContratDayListe").html(data);
             $("#ModalTitleContratByDay").html(date_contrat_title);

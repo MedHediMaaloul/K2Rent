@@ -7369,7 +7369,7 @@ var FullCalendar = (function (exports) {
                 let range = computeRange(props);
                 let text = typeof moreLinkText === 'function' // TODO: eventually use formatWithOrdinals
                     ? moreLinkText.call(calendarApi, moreCnt)
-                    : `+${moreCnt} ${moreLinkText}`;
+                    : `${moreCnt} autres...`;
                 let hint = formatWithOrdinals(options.moreLinkHint, [moreCnt], text);
                 let renderProps = {
                     num: moreCnt,
@@ -7729,7 +7729,7 @@ var FullCalendar = (function (exports) {
                     : `This ${buttonText}`;
             },
         }, viewHint: '$0 view', navLinkHint: 'Go to $0', moreLinkHint(eventCnt) {
-            return `Show ${eventCnt} more event${eventCnt === 1 ? '' : 's'}`;
+            return `Voir ${eventCnt} autre${eventCnt === 1 ? '' : 's'}`;
         }
     });
     function organizeRawLocales(explicitRawLocales) {
