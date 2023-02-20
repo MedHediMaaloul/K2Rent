@@ -3401,7 +3401,7 @@ function display_planning_liste_contrat_record()
     $id_agence = $_SESSION['Agence'];
     $date= $_POST['date'];
 
-    $value = '<ul style="margin-left: 10%;" >';
+    $value = '<ul style="margin-left: 18%; margin-top: 2%;" >';
 
     if($id_role == "2"){
         $query = "SELECT * 

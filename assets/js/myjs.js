@@ -2116,6 +2116,8 @@ function view_planing_contrat_record() {
         selectMirror: true,
         locale: "fr",
         editable: true,
+        height: "auto",
+        fixedWeekCount: false,
         buttonText: {
           listDay: 'Jour',
           listWeek: 'Semaine',
@@ -2131,8 +2133,8 @@ function view_planing_contrat_record() {
       });
       
       $(document).on("click", "#ConsulterContrat", function () {
-        var parent = $(this).prev();
-        var datecontrat = parent.children("a").attr("title");
+        var parent = $(this).next();
+         var datecontrat = parent.attr("title");
         var datecontrat = datecontrat.split(" ");
         date_contrat_title = "Contrat " + datecontrat[2] + " " + datecontrat[3] + " " + datecontrat[4];
         switch (datecontrat[3]) {
