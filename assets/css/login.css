@@ -1,0 +1,294 @@
+* {
+	margin: 0px;
+	padding: 0px;
+	font-family: 'Rajdhani';
+	font-style: normal;
+
+}
+
+html,
+body {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+#conatinerLogin{
+	height: 100%;
+	width: 100%;
+}
+#containerBody {
+	display: grid;
+	height: 100%;
+	grid-template-columns:58%;
+	background: #000000;
+justify-content: end;
+}
+
+#voiture {
+	width: 487px;
+	height: 304px;
+}
+
+#VehiculeIcon {
+	position: absolute;
+	left: 23.3%;
+	top: 32%;
+	z-index: 2;
+	width: 600px;
+	height: 300px;
+	transition: 1.5s;
+	transform-origin:right ;
+}
+#rightContainer {
+	height: 100%;
+	background: #E5E5E5;
+	display: grid;
+	align-content: center;
+	justify-content: center;
+	grid-template-columns: min-content;
+	transition: 1.5s;
+	transform-origin: right;
+}
+#vector {
+	position: absolute;
+	width: 519.5px;
+	height: 22px;
+	top:64%;
+	right: 40.5%;
+	bottom: 285px;
+	z-index: -1;
+}
+
+#VecIcon {
+	margin-bottom: 10px
+}
+
+input {
+	box-sizing: border-box;
+	width: 500px;
+	height: 65px;
+	margin-top: 6px;
+	background: #FFFFFF;
+	border-radius: 3px;
+font-weight: 700;
+	font-size: 18px;
+	line-height: 18px;
+	border-color: transparent !important;
+	padding: 10px;
+}
+input:hover {
+	border: 2px solid black !important;
+}
+
+#form {
+	height: fit-content;
+	width: fit-content;
+	margin-bottom: 20px;
+}
+
+h1 {
+	display: initial;
+	font-weight: 700;
+	font-size: 33px;
+	line-height: 38px;
+}
+
+h2 {
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 18px;
+	color: #6C6C6C;
+	margin-bottom: 27px;
+}
+label {
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 18px;
+	color: #343434;
+	margin-bottom:1px !important;
+}
+#loading{
+	width: 112px;
+	height: 38px;
+	position: absolute;
+left: 50%;
+top: 50%;
+font-weight: 700;
+font-size: 30px;
+line-height: 38px;
+color: #BF1616;
+transform: translate(-50%, -50%); 
+}
+::placeholder { 
+font-size: 18px;
+line-height: 18px;
+}
+::-ms-input-placeholder { 
+font-size: 18px;
+line-height: 18px;
+}
+#SubmitLogin{ 
+	margin-top: 14px;
+	background: #BF1616;
+	color:#FFFFFF;
+}
+#SubmitLogin:hover{
+	border: 2px solid black !important;
+	cursor: pointer;
+}
+.obligatoire {
+	margin-top: 10px;
+	color: red;
+	font-size: 15px;
+  }
+  #oops{
+	gap:27%;
+	display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+	position: absolute;
+	z-index: 5;
+	height: 100%;
+	width: 100%;
+	background: black;
+	transition: 1.5s;
+	transform-origin:left ;
+  }
+  #oopsText{
+	font-size: 70px;
+	line-height: 82px;
+	color: #BF1616;height: 82px;
+  }
+  #descativerText{
+	font-size: 46px;
+	height: 46px;
+	line-height: 46px;
+	color: #FFFFFF;
+  }
+  @media (width:1792px){
+	#VehiculeIcon{
+	left: 22%;
+	}
+	input {
+		width: 450px;
+		height: 60px;
+  }
+  #form {
+	margin-bottom: 45px;
+}
+#oopsText{
+	font-size: 65px;
+}
+#descativerText{
+	font-size: 43px;
+}
+}
+@media (width:2560px){
+	#VehiculeIcon{
+	left: 22.9%;
+	}
+	input {
+		width: 330px;
+		height: 47px;
+  }
+  #oopsText{
+	font-size: 44px;
+}
+#descativerText{
+	font-size: 26px;
+}
+}
+@media (width:1680px){
+	#VehiculeIcon{
+	left: 20.7%;
+	}
+	input {
+		width: 400px;
+		height: 55px;
+  }
+  #form {
+	margin-bottom: 60px;
+}
+#oopsText{
+	font-size: 60px;
+}
+#descativerText{
+	font-size: 40px;
+}
+}
+@media (width:1600px){
+	#VehiculeIcon{
+	left: 19.6%;
+	}
+	input {
+		width: 400px;
+		height: 55px;
+  }
+  #oopsText{
+	font-size: 60px;
+}
+#descativerText{
+	font-size: 40px;
+}
+}
+@media (width:1536px){
+	#VehiculeIcon{
+	left: 18.65%;
+	}
+	input {
+		width: 370px;
+		height: 52px;
+  }
+  #oopsText{
+	font-size: 50px;
+}
+#descativerText{
+	font-size: 34px;
+}
+}
+@media (width:1440px){
+	#VehiculeIcon{
+	left: 17.1%;
+	}
+	input {
+		width: 350px;
+		height: 50px;
+  }
+  #oopsText{
+	font-size: 47px;
+}
+#descativerText{
+	font-size: 31px;
+}
+}
+@media (width:1366px){
+	#VehiculeIcon{
+	left: 15.8%;
+	}
+	input {
+		width: 300;
+		height: 44px;
+  }
+  #oopsText{
+	font-size: 41px;
+}
+#descativerText{
+	font-size: 24px;
+}
+}
+@media (width:1280px){
+	#VehiculeIcon{
+	left: 13.99%;
+	}
+	input {
+		width: 280px;
+		height: 41px;
+  }
+  #oopsText{
+	font-size: 33px;
+}
+#descativerText{
+	font-size: 22px;
+}
+}
