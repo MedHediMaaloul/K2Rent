@@ -18,8 +18,8 @@
     <div id="oops" hidden>
         <img style="width: 95px;height: 53px; margin-top:5%;" src="assets/images/login/k2rent.png" alt="">
         <div style="text-align: center;font-weight: 700;">
-            <div style="font-size: 83px;line-height: 82px;color: #BF1616;height: 82px;"> Oops !</div>
-            <div style="height: 46px;font-size: 46px;line-height: 46px;color: #FFFFFF;">Vore compte est désactivé !
+            <div id="oopsText" > &nbsp;Oops !</div>
+            <div id="descativerText">Votre compte est désactivé !
             </div>
         </div>
     </div>

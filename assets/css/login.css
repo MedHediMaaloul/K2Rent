@@ -74,7 +74,7 @@ font-weight: 700;
 	font-size: 18px;
 	line-height: 18px;
 	border-color: transparent !important;
-	padding: 5px;
+	padding: 10px;
 }
 input:hover {
 	border: 2px solid black !important;
@@ -142,7 +142,7 @@ line-height: 18px;
 	font-size: 15px;
   }
   #oops{
-	gap:32%;
+	gap:27%;
 	display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -155,6 +155,17 @@ line-height: 18px;
 	transition: 1.5s;
 	transform-origin:left ;
   }
+  #oopsText{
+	font-size: 70px;
+	line-height: 82px;
+	color: #BF1616;height: 82px;
+  }
+  #descativerText{
+	font-size: 46px;
+	height: 46px;
+	line-height: 46px;
+	color: #FFFFFF;
+  }
   @media (width:1792px){
 	#VehiculeIcon{
 	left: 22%;
@@ -165,6 +176,27 @@ line-height: 18px;
   }
   #form {
 	margin-bottom: 45px;
+}
+#oopsText{
+	font-size: 65px;
+}
+#descativerText{
+	font-size: 43px;
+}
+}
+@media (width:2560px){
+	#VehiculeIcon{
+	left: 22.9%;
+	}
+	input {
+		width: 330px;
+		height: 47px;
+  }
+  #oopsText{
+	font-size: 44px;
+}
+#descativerText{
+	font-size: 26px;
 }
 }
 @media (width:1680px){
@@ -178,7 +210,12 @@ line-height: 18px;
   #form {
 	margin-bottom: 60px;
 }
-
+#oopsText{
+	font-size: 60px;
+}
+#descativerText{
+	font-size: 40px;
+}
 }
 @media (width:1600px){
 	#VehiculeIcon{
@@ -188,31 +225,70 @@ line-height: 18px;
 		width: 400px;
 		height: 55px;
   }
+  #oopsText{
+	font-size: 60px;
+}
+#descativerText{
+	font-size: 40px;
+}
 }
 @media (width:1536px){
 	#VehiculeIcon{
 	left: 18.65%;
 	}
 	input {
-		width: 400px;
-		height: 55px;
+		width: 370px;
+		height: 52px;
   }
+  #oopsText{
+	font-size: 50px;
+}
+#descativerText{
+	font-size: 34px;
+}
 }
 @media (width:1440px){
 	#VehiculeIcon{
 	left: 17.1%;
 	}
 	input {
-		width: 400px;
-		height: 55px;
+		width: 350px;
+		height: 50px;
   }
+  #oopsText{
+	font-size: 47px;
 }
-@media (width:2560px){
+#descativerText{
+	font-size: 31px;
+}
+}
+@media (width:1366px){
 	#VehiculeIcon{
-	left: 22.9%;
+	left: 15.8%;
 	}
 	input {
-		width: 400px;
-		height: 55px;
+		width: 300;
+		height: 44px;
   }
+  #oopsText{
+	font-size: 41px;
+}
+#descativerText{
+	font-size: 24px;
+}
+}
+@media (width:1280px){
+	#VehiculeIcon{
+	left: 13.99%;
+	}
+	input {
+		width: 280px;
+		height: 41px;
+  }
+  #oopsText{
+	font-size: 33px;
+}
+#descativerText{
+	font-size: 22px;
+}
 }
