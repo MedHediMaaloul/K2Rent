@@ -50,6 +50,43 @@ function localisation_Vehicule($id_voiture)
     return $nom_client;
 }
 
+// Login
+
+function login(){
+    global $conn;
+    $erreurlogin = '';
+    $erreurpassword = '';
+    $erreur = '';
+    $ressaye = '';
+    if (empty($_POST['login'])) {
+        $erreurlogin = "Login est obligatoire!";
+    } else if (empty($_POST['password'])){
+        $erreurpassword = "Mot de passe est obligatoire!";
+    }else {
+        $query = "SELECT * 
+					FROM user AS U ,role_user AS R ,agence AS A
+					WHERE U.role_user = R.id_roleuser
+					AND U.id_agence = A.id_agence
+					AND U.login_user='" . $_POST['login'] . "' and U.motdepasse_user='" . md5($_POST['password']) . "'";
+        $result = mysqli_query($conn, $query);
+        if ($row = mysqli_fetch_assoc($result)) {
+			if($row['etat_user'] == "F"){
+                echo json_encode (['status' => 'disable']);
+			}else{
+				$_SESSION['Nom'] = $row['nom_user'];
+				$_SESSION['Login'] = $row['login_user'];
+				$_SESSION['Role'] = $row['role_user'];
+				$_SESSION['RoleLabel'] = $row['label_roleuser'];
+				$_SESSION['Agence'] = $row['id_agence'];
+				$_SESSION['NomAgence'] = $row['nom_agence'];
+                echo json_encode (['status' => 'success']);
+			}
+        } else {
+            echo json_encode (['status' => 'failed']);
+        }
+    }
+}
+
 // Notification 
 
 function ContratNotification()
@@ -3401,7 +3438,7 @@ function display_planning_liste_contrat_record()
     $id_agence = $_SESSION['Agence'];
     $date= $_POST['date'];
 
-    $value = '<ul style="margin-left: 10%;" >';
+    $value = '<ul style="margin-left: 18%; margin-top: 2%;" >';
 
     if($id_role == "2"){
         $query = "SELECT * 

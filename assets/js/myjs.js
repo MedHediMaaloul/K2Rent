@@ -1,6 +1,9 @@
 $(document).ready(function () {
   ReloadButtonExit();
   ReloadButtonExitX();
+  // login
+  login();
+  //  Notification
   notification_fin_contrat();
   remove_notification_fin_contrat();
   notification_create_contrat();
@@ -125,6 +128,68 @@ function selectrole(data) {
   } else {
     $("#cont_UserAgence").hide();
   }
+}
+// Login
+
+function login(){
+  $('#SubmitLogin').click(function(){
+    var username=$("#login").val();
+    var password=$("#password").val();
+    var dataString = 'login='+username+'&password='+password;
+    $("#erreur").empty();
+    $("#obligatoireLogin").empty();
+    $("#obligatoirePassword").empty();
+    if (username == "" && password == "" ) {
+      $("#obligatoireLogin").html("Login est obligatoire!");
+      $("#obligatoirePassword").html("Password est obligatoire!");
+    } else if (username == "") {
+      $("#obligatoireLogin").html("Login est obligatoire!");
+    } else if (password == "") {
+      $("#obligatoirePassword").html("Mot de passe est obligatoire!");
+    } else {
+      $.ajax({
+      type: "POST",
+      url: "loginUser.php",
+      data: dataString,
+      cache: false,
+      success: function(data){
+        data = $.parseJSON(data);
+        if(data.status=="success"){
+          $('#rightContainer').css({'transform':'scaleX(0)','opacity':'0'});
+          $('#VehiculeIcon').css({'transform':'translate(240%, 0px)','opacity':'0'});
+          const loading = setTimeout(loadd, 1000);
+          function loadd() {
+            $('#loading').removeAttr('hidden');
+          }
+          const myTimeout = setTimeout(load, 1200);
+          function load() {
+            window.location.href = "dashboard.php";
+          }
+        } else if(data.status=="disable"){
+          $('#oops').removeAttr('hidden');
+          const loading = setTimeout(oppsError, 2000);
+          function oppsError() {
+            $('#oops').css({'transform':'scaleX(0)'});
+          }
+          $('#oops').removeAttr('hidden');
+          const myTimeout = setTimeout(closeError, 3000);
+          function closeError() {
+            $('#oops').attr("hidden",true);
+            $('#oops').css({'transform':'scaleX(1)'});
+          }
+        } else {
+          $("#erreur").html("<img src='assets/images/login/Subtract.png' > <span style='font-weight: 700;font-size: 15px;line-height: 15px;color: #BF1616;'>Login ou mot de passe incorrect !</span> <a href='' id='reessayer' style='font-weight: 600;font-size: 15px;line-height: 15px;color: #0071C4;'>Veuillez essayer à nouveau.</a>");
+          $(document).on("click", "#reessayer", function () {
+            $("#login").val('');
+            $("#password").val('');
+            $("#erreur").empty();
+          });
+        }
+      }
+      });
+      return false;
+    }
+  });
 }
 
 // Notification
@@ -2116,6 +2181,8 @@ function view_planing_contrat_record() {
         selectMirror: true,
         locale: "fr",
         editable: true,
+        height: "auto",
+        fixedWeekCount: false,
         buttonText: {
           listDay: 'Jour',
           listWeek: 'Semaine',
@@ -2131,8 +2198,8 @@ function view_planing_contrat_record() {
       });
       
       $(document).on("click", "#ConsulterContrat", function () {
-        var parent = $(this).prev();
-        var datecontrat = parent.children("a").attr("title");
+        var parent = $(this).next();
+         var datecontrat = parent.attr("title");
         var datecontrat = datecontrat.split(" ");
         date_contrat_title = "Contrat " + datecontrat[2] + " " + datecontrat[3] + " " + datecontrat[4];
         switch (datecontrat[3]) {
@@ -2195,3 +2262,4 @@ function view_planing_contrat_record() {
     }
   });
 }
+

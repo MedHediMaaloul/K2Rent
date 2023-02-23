@@ -1486,7 +1486,7 @@ var FullCalendar = (function (exports) {
         scrollTimeReset: true,
         slotMinTime: '00:00:00',
         slotMaxTime: '24:00:00',
-        showNonCurrentDates: true,
+        showNonCurrentDates: false,
         lazyFetching: true,
         startParam: 'start',
         endParam: 'end',
@@ -12059,20 +12059,20 @@ var FullCalendar = (function (exports) {
             }, (InnerContent, renderProps) => (h("div", { ref: props.innerElRef, className: "fc-daygrid-day-frame fc-scrollgrid-sync-innere", style: { minHeight: props.minHeight } },
                 props.showWeekNumber && (h(WeekNumberContainer, { elTag: "a", elClasses: ['fc-daygrid-week-number'], elAttrs: buildNavLinkAttrs(context, date, 'week'), date: date, defaultFormat: DEFAULT_WEEK_NUM_FORMAT$1 })),
                 !renderProps.isDisabled &&
-                    (props.showDayNumber || hasCustomDayCellContent(options) || props.forceDayTop) ? (h("div", { className: "fc-daygrid-day-tope" },
+                    (props.showDayNumber || hasCustomDayCellContent(options) || props.forceDayTop) ?  (h("div", { className: "fc-daygrid-day-tope" },
+                    (h("button", { className: "fc-daygrid-day-eventse", id: "ConsulterContrat", innerHTML: `&nbsp Consulter les contrats`,},
+                    props.fgContent,
+                    h("img", { className:"arrow-left",src:"assets/images/calendar/icon_button_list.png",style: { marginTop: props.moreMarginTop } },
+                        h(TableCellMoreLink, { allDayDate: date, singlePlacements: props.singlePlacements, moreCnt: props.moreCnt, alignmentElRef: rootElRef, alignGridTop: !props.showDayNumber, extraDateSpan: props.extraDateSpan, dateProfile: props.dateProfile, eventSelection: props.eventSelection, eventDrag: props.eventDrag, eventResize: props.eventResize, todayRange: props.todayRange })))),
                         h(InnerContent, {
                             elTag: "a", elClasses: [
                                 'fc-daygrid-day-numbere',
                                 isMonthStart && 'fc-daygrid-month-start',
                             ], elAttrs: Object.assign(Object.assign({}, buildNavLinkAttrs(context, date)), { id: state.dayNumberId })
-                        }))) : props.showDayNumber ? (
+                        },))) : props.showDayNumber ? (
                             // for creating correct amount of space (see issue #7162)
-                            h("div", { className: "fc-daygrid-day-top", style: { visibility: 'hidden' } },
+                            h("div", { className: "fc-daygrid-day-top", style: { visibility: 'hidden',height:'54px' } },
                                 h("a", { className: "fc-daygrid-day-number"}, "\u00A0"))) : undefined,
-                h("button", { className: "fc-daygrid-day-eventse", id: "ConsulterContrat", innerHTML: "Consulter les contrats", style: { width: '100%' } },
-                    props.fgContent,
-                    h("div", { className: "fc-daygrid-day-bottom", style: { marginTop: props.moreMarginTop } },
-                        h(TableCellMoreLink, { allDayDate: date, singlePlacements: props.singlePlacements, moreCnt: props.moreCnt, alignmentElRef: rootElRef, alignGridTop: !props.showDayNumber, extraDateSpan: props.extraDateSpan, dateProfile: props.dateProfile, eventSelection: props.eventSelection, eventDrag: props.eventDrag, eventResize: props.eventResize, todayRange: props.todayRange }))),
                 h("div", { className: "fc-daygrid-day-bg" }, props.bgContent)))));
         }
     }
