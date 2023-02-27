@@ -541,7 +541,7 @@ include('Gestion_location/inc/connect_db.php');
 						<button class="button-close" id="btn-close-x">X</button>
 					</div>
                     <div class="modal-body">
-                        <p id="message"></p>
+                        <p id="message_client"></p>
                         <form id="clientForm" autocomplete="off" class="form-horizontal form-material">
                             <div class="form-group mb-4">
                                 <label class="col-md-12 p-0">Nom<span class="text-danger">*</span></label>
@@ -641,7 +641,7 @@ include('Gestion_location/inc/connect_db.php');
 						<button class="button-close" id="btn-close-x">X</button>
 					</div>
                     <div class="modal-body">
-                        <p id="message"></p>
+                        <p id="message_marque"></p>
                         <form id="marquevoitureForm" autocomplete="off" class="form-horizontal form-material">
                             <div class="form-group mb-4">
                                 <label class="col-md-12 p-0">Marque<span class="text-danger">*</span></label>

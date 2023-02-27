@@ -96,7 +96,8 @@ if ((($_SESSION['Role']) == "0")) {
             </div>
             <!-- end Model alert suppression echec -->
 			<!-- Model suppression horaire agence -->
-			<div class="modal fade" id="deleteAgenceHeur" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            
+			<div class="modal fade" id="deleteAgenceHeur" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-mdb-backdrop="static"  >
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header" style="background: #D71218;">
@@ -107,7 +108,7 @@ if ((($_SESSION['Role']) == "0")) {
                             <p>Voulez-vous supprimer cet horaire ?</p>
 							<br>
 							<div style="float: right;">
-                            	<button class="buttonvalidate" id="btn-delete-agence-heur">Supprimer</button>
+                            	<button class="buttonvalidate" id="btn-delete-confirm-agence-heur">Supprimer</button>
                             	<button class="buttonechec" id="btn-close">Annuler</button>
 							</div>
                         </div>
@@ -354,7 +355,7 @@ if ((($_SESSION['Role']) == "0")) {
 							<button class="button-close" id="btn-close-x">X</button>
 						</div>
                         <div class="modal-body">
-                            <p id="message"></p>
+                            <p id="message_heure"></p>
                             <form id="agenceFormHeur" autocomplete="off" class="form-horizontal form-material">
                                 <div class="form-group mb-4">
                                     <?php

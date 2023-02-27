@@ -202,7 +202,7 @@ if (!isset($_SESSION['Login'])) {
 							<button class="button-close" id="btn-close-x">X</button>
 						</div>
                         <div class="modal-body">
-                            <p id="message"></p>
+                            <p id="message_client"></p>
                             <form id="clientForm" autocomplete="off" class="form-horizontal form-material">
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Nom<span class="text-danger">*</span></label>

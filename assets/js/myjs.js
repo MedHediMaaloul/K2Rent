@@ -304,6 +304,9 @@ function searchAgence() {
 
 function insertAgenceRecord() {
   $(document).on("click", "#show_form_agence", function () {
+    $("#message")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#Registration-Agence").modal("show");
   });
   $(document).on("click", "#btn-register-agence", function () {
@@ -371,6 +374,9 @@ function insertAgenceRecord() {
 
 function insertAgenceRecordHeur() {
   $(document).on("click", "#show_form_horaire_agence", function () {
+    $("#message_heure")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#Registration-Agence-Heur").modal("show");
   });
   $(document).on("click", "#btn-register-agence-heur", function () {
@@ -380,8 +386,12 @@ function insertAgenceRecordHeur() {
     var heurdebutH = $("#fetch-heurdebutH").val();
     var heurfinH = $("#fetch-heurfinH").val();
     if (IdAgence == null || jourH == null || heurdebutH == "" || heurfinH == "") {
-      $("#message").addClass("alert alert-danger").html("Veuillez remplir tous les champs obligatoires !");
-    } else {
+      $("#message_heure").addClass("alert alert-danger").html("Veuillez remplir tous les champs obligatoires !");
+    } 
+    else if(heurfinH <= heurdebutH) {
+      $("#message_heure").addClass("alert alert-danger").html("Heure de fin doit etre superieur à heure de debut !");
+    }
+    else {
       var form_data = new FormData();
       form_data.append("IdAgence", IdAgence);
       form_data.append("jourH", jourH);
@@ -446,6 +456,9 @@ function get_agence_record() {
 
 function update_agence_record() {
   $(document).on("click", "#btn_update_agence", function () {
+    $("#up_message")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#updateAgence").modal("show");
     $("#updateAgence").scrollTop(0);
     var up_idagence = $("#up_idagence").val();
@@ -538,7 +551,7 @@ function delete_agence_heur_record() {
   $(document).on("click", "#btn-delete-agence-heur", function () {
     var Delete_ID = $(this).attr("data-id4");
     $("#deleteAgenceHeur").modal("show");
-    $(document).on("click", "#btn-delete-agence-heur", function () {
+    $(document).on("click", "#btn-delete-confirm-agence-heur", function () {
       $.ajax({
         url: "delete_agence_heur.php",
         method: "post",
@@ -609,6 +622,9 @@ function searchUser() {
 
 function insertUserRecord() {
   $(document).on("click", "#show_form_user", function () {
+    $("#message")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#Registration-User").modal("show");
   });
   $(document).on("click", "#btn-register-user", function () {
@@ -695,6 +711,9 @@ function get_user_record() {
 
 function update_user_record() {
   $(document).on("click", "#btn_update_user", function () {
+    $("#up_message")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#updateUser").scrollTop(0);
     var updateuserID = $("#up_iduser").val();
     var updateuserName = $("#up_userName").val();
@@ -827,6 +846,9 @@ function searchClient() {
 
 function insertClientRecord() {
   $(document).on("click", "#show_form_client", function () {
+    $("#message_client")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#Registration-Client").modal("show");
   });
   $(document).on("click", "#btn-register-client", function () {
@@ -837,13 +859,12 @@ function insertClientRecord() {
     var ClientAdresse = $("#clientAdresse").val();
     var ClientCIN = $("#clientCIN").prop("files")[0];
     var ClientPermis = $("#clientPermis").prop("files")[0];
-
     if (ClientName == "" || ClientEmail == "" || ClientPhone == "" || ClientAdresse == "" || ClientCIN == null || ClientPermis == null) {
-      $("#message")
+      $("#message_client")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
     } else if (!isValidEmailAddress(ClientEmail)) {
-      $("#message")
+      $("#message_client")
         .addClass("alert alert-danger")
         .html("le champ « email » est invalide");
     } else {
@@ -918,6 +939,9 @@ function get_client_record() {
 
 function update_client_record() {
   $(document).on("click", "#btn_update", function () {
+    $("#up_message")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#updateClient").scrollTop(0);
     var up_idclient = $("#up_idclient").val();
     var up_clientName = $("#up_clientName").val();
@@ -1056,6 +1080,9 @@ function searchVoiture() {
 
 function insert_voiture_Record() {
   $(document).on("click", "#show_form_voiture", function () {
+    $("#message")
+    .removeClass("alert alert-danger")
+    .html("");  
     $("#Registration-Voiture").modal("show");
   });
   $(document).on("click", "#btn-register-voiture", function () {
@@ -1189,6 +1216,9 @@ function get_voiture_record() {
 
 function update_voiture_record() {
   $(document).on("click", "#btn_update_voiture", function () {
+    $("#up_message")
+    .removeClass("alert alert-danger")
+    .html("");  
     $("#updateVoiture").scrollTop(0);
     var up_voitureid = $("#up_voitureid").val();
     var up_voiturepimm1 = $("#up_voiturepimm1").val();
@@ -1352,6 +1382,9 @@ function searchMarqueVoiture() {
 
 function insert_marquevoiture_Record() {
   $(document).on("click", "#show_form_marquevoiture", function () {
+    $("#message_marque")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#Registration-MarqueVoiture").modal("show");
   });
   $(document).on("click", "#btn-register-marquevoiture", function () {
@@ -1361,7 +1394,7 @@ function insert_marquevoiture_Record() {
     var voitureprix = $("#voitureprix").val();
 
     if (voituremarque == "" || voituremodel == "" || voitureprix == "") {
-      $("#message")
+      $("#message_marque")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
     } else {
@@ -1430,6 +1463,9 @@ function get_marquevoiture_record() {
 
 function update_marquevoiture_record() {
   $(document).on("click", "#btn_update_marquevoiture", function () {
+    $("#up_message")
+        .removeClass("alert alert-danger")
+        .html("");
     $("#updateMarqueVoiture").scrollTop(0);
     var up_marquevoitureid = $("#up_marquevoitureid").val();
     var up_voituremarque = $("#up_voituremarque").val();
@@ -1578,6 +1614,9 @@ function get_agence_voiture() {
 
 function transfert_voiture_agence_record() {
   $(document).on("click", "#btn_update_agencevoiture", function () {
+    $("#up_message")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#updateagencevoiture").scrollTop(0);
     var up_idvoiture = $("#up_idvoiture").val();
     var up_voitureAgence = $("#up_voitureAgence").val();
@@ -1664,6 +1703,9 @@ function searchContrat() {
 
 function insert_contrat_Record() {
   $(document).on("click", "#show_form_contrat", function () {
+    $("#message")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#Registration-Contrat").modal("show");
   });
   $(document).on("click", "#btn-register-contrat", function () {
@@ -1914,6 +1956,9 @@ function afficher_voiture_agence() {
 
 function insert_entretien_Record() {
   $(document).on("click", "#show_form_entretien", function () {
+    $("#message")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#Registration-Entretien").modal("show");
   });
   $(document).on("click", "#btn-register-entretien", function () {
@@ -1998,6 +2043,9 @@ function get_entretien_record() {
 
 function update_entretien_record() {
   $(document).on("click", "#btn_update_entretien", function () {
+    $("#up_message")
+    .removeClass("alert alert-danger")
+    .html("");
     $("#updateEntretien").scrollTop(0);
     var up_entretienid = $("#up_entretienid").val();
     var up_DateDebutEntretien = $("#up_DateDebutEntretien").val();
