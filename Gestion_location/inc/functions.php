@@ -2825,7 +2825,8 @@ function display_entretien_record()
                 <th class="border-top-0">Date Fin</th>
                 <th class="border-top-0">Prix Entretien</th>
                 <th class="border-top-0">Pimm Voiture</th>
-                <th class="border-top-0">Marque Voiture</th>';
+                <th class="border-top-0">Marque Voiture</th>
+                <th class="border-top-0">Commentaire</th>';
                 if($id_agence ==0){
                     $value .= '<th class="border-top-0">Agence</th>';
                 }
@@ -2856,13 +2857,16 @@ function display_entretien_record()
     $result = mysqli_query($conn, $query);
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
+         
         $value .= '<tr>
             <td>' . $i . '</td>
             <td>' . $row['datedebut_entretien'] . '</td>
             <td>' . $row['datefin_entretien'] . '</td>
             <td>' . $row['prix_entretien'] . '</td>
             <td>' . $row['pimm_voiture'] . '</td>
-            <td>' . $row['marque'] . ' ' . $row['model'] . '</td>';
+            <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
+            <td>' . $row['commentaire'] . '</td>' ;
+           
             if($id_agence == 0){
                 $value .= '<td>' . $row['nom_agence'] . '</td>';
             }
@@ -2895,7 +2899,8 @@ function searchEntretien()
                 <th class="border-top-0">Date Fin</th>
                 <th class="border-top-0">Prix Entretien</th>
                 <th class="border-top-0">Pimm Voiture</th>
-                <th class="border-top-0">Marque Voiture</th>';
+                <th class="border-top-0">Marque Voiture</th>
+                <th class="border-top-0">Commentaire</th>';
                 if($id_agence ==0){
                     $value .= '<th class="border-top-0">Agence</th>';
                 }
@@ -2919,6 +2924,8 @@ function searchEntretien()
                     OR prix_entretien LIKE ('%" . $search . "%')       
                     OR pimm_voiture LIKE ('%" . $search . "%')
                     OR marque LIKE ('%" . $search . "%')
+                    OR blockage_voiture LIKE ('%" . $search . "%')
+                    OR commentaire LIKE ('%" . $search . "%')
                     OR model LIKE ('%" . $search . "%'))
                     ORDER BY id_entretien ASC");
         }else{
@@ -2934,6 +2941,7 @@ function searchEntretien()
                     OR prix_entretien LIKE ('%" . $search . "%')       
                     OR pimm_voiture LIKE ('%" . $search . "%')
                     OR marque LIKE ('%" . $search . "%')
+                    OR commentaire LIKE ('%" . $search . "%')
                     OR model LIKE ('%" . $search . "%')
                     OR nom_agence LIKE ('%" . $search . "%'))
                     ORDER BY id_entretien ASC");
@@ -2948,7 +2956,8 @@ function searchEntretien()
                 <td>' . $row['datefin_entretien'] . '</td>
                 <td>' . $row['prix_entretien'] . '</td>
                 <td>' . $row['pimm_voiture'] . '</td>
-                <td>' . $row['marque'] . ' ' . $row['model'] . '</td>';
+                <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
+                <td>' . $row['commentaire'] . '</td>';
                 if($id_agence == 0){
                     $value .= '<td>' . $row['nom_agence'] . '</td>';
                 }
@@ -2992,10 +3001,12 @@ function InsertEntretien()
     $DateFinEntretien = $_POST['DateFinEntretien'];
     $prixentretien = $_POST['prixentretien'];
     $voiture_entretien = $_POST['voiture_entretien'];
+    $blockageVoiture = $_POST['blockageVoiture'];
+    $commentaire = $_POST['commentaire'];
    
     $date = date('Y-m-d H:i:s');
-    $query = "INSERT INTO entretien_voiture(id_voiture,datedebut_entretien,datefin_entretien,prix_entretien,date_created_entretien,date_updated_entretien) 
-            VALUES ('$voiture_entretien','$DateDebutEntretien','$DateFinEntretien','$prixentretien','$date','$date') ";
+    $query = "INSERT INTO entretien_voiture(id_voiture,datedebut_entretien,datefin_entretien,blockage_voiture,commentaire,prix_entretien,date_created_entretien,date_updated_entretien) 
+            VALUES ('$voiture_entretien','$DateDebutEntretien','$DateFinEntretien','$blockageVoiture','$commentaire','$prixentretien','$date','$date') ";
     $result = mysqli_query($conn, $query);
     if ($result) {
         echo "<div class='text-checked'>L'entretien $msg_insert_succés</div>";
@@ -3018,7 +3029,10 @@ function get_entretien_record()
         $entretien_data[0] = $row['id_entretien'];
         $entretien_data[1] = $row['datedebut_entretien'];
         $entretien_data[2] = $row['datefin_entretien'];
-        $entretien_data[3] = $row['prix_entretien'];  
+        $entretien_data[3] = $row['blockage_voiture'];  
+        $entretien_data[4] = $row['commentaire'];  
+        $entretien_data[5] = $row['prix_entretien'];  
+
     }
     echo json_encode($entretien_data);
 }
@@ -3033,13 +3047,16 @@ function update_entretien_value()
     $up_DateDebutEntretien = $_POST["up_DateDebutEntretien"];
     $up_DateFinEntretien = $_POST["up_DateFinEntretien"];
     $up_prixentretien = $_POST["up_prixentretien"];
-    
+    $upblockageVoiture = $_POST["upblockageVoiture"];
+    $up_commentaire = $_POST["up_commentaire"];
     $date = date('Y-m-d H:i:s');
     $update_query = "UPDATE entretien_voiture 
         SET 
             datedebut_entretien = '$up_DateDebutEntretien',
             datefin_entretien = '$up_DateFinEntretien',
             prix_entretien = '$up_prixentretien',
+            blockage_voiture='$upblockageVoiture',
+            commentaire=' $up_commentaire',
             date_updated_entretien = '$date'
         WHERE id_entretien = $up_entretienid";
     $update_result = mysqli_query($conn, $update_query);
@@ -3056,7 +3073,6 @@ function delete_entretien_record()
     global $conn;
     global $msg_delete_succés;
     global $msg_delete_echec;
-
     $Del_ID = $_POST['id_entretien'];
     $date = date('Y-m-d H:i:s');
     $query = "UPDATE entretien_voiture 
@@ -3089,7 +3105,9 @@ function display_entretien_archive_record()
                 <th class="border-top-0">Date Fin</th>
                 <th class="border-top-0">Prix Entretien</th>
                 <th class="border-top-0">Pimm Voiture</th>
-                <th class="border-top-0">Marque Voiture</th>';
+                <th class="border-top-0">Marque Voiture</th>
+                <th class="border-top-0">Commentaire</th>';
+
                 if($id_agence ==0){
                     $value .= '<th class="border-top-0">Agence</th>';
                 }
@@ -3125,7 +3143,9 @@ function display_entretien_archive_record()
             <td>' . $row['datefin_entretien'] . '</td>
             <td>' . $row['prix_entretien'] . '</td>
             <td>' . $row['pimm_voiture'] . '</td>
-            <td>' . $row['marque'] . ' ' . $row['model'] . '</td>';
+            <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
+            <td>' . $row['commentaire'] . '</td>
+            ';
             if($id_agence == 0){
                 $value .= '<td>' . $row['nom_agence'] . '</td>';
             }
@@ -3150,7 +3170,9 @@ function searchEntretienArchive()
                 <th class="border-top-0">Date Fin</th>
                 <th class="border-top-0">Prix Entretien</th>
                 <th class="border-top-0">Pimm Voiture</th>
-                <th class="border-top-0">Marque Voiture</th>';
+                <th class="border-top-0">Marque Voiture</th>
+                <th class="border-top-0">Commentaire</th>';
+
                 if($id_agence ==0){
                     $value .= '<th class="border-top-0">Agence</th>';
                 }
@@ -3173,6 +3195,7 @@ function searchEntretienArchive()
                     OR prix_entretien LIKE ('%" . $search . "%')       
                     OR pimm_voiture LIKE ('%" . $search . "%')
                     OR marque LIKE ('%" . $search . "%')
+                    OR commentaire LIKE ('%" . $search . "%')
                     OR model LIKE ('%" . $search . "%'))
                     ORDER BY id_entretien ASC");
         }else{
@@ -3188,6 +3211,7 @@ function searchEntretienArchive()
                     OR prix_entretien LIKE ('%" . $search . "%')       
                     OR pimm_voiture LIKE ('%" . $search . "%')
                     OR marque LIKE ('%" . $search . "%')
+                    OR commentaire LIKE ('%" . $search . "%')
                     OR model LIKE ('%" . $search . "%')
                     OR nom_agence LIKE ('%" . $search . "%'))
                     ORDER BY id_entretien ASC");
@@ -3202,7 +3226,8 @@ function searchEntretienArchive()
                     <td>' . $row['datefin_entretien'] . '</td>
                     <td>' . $row['prix_entretien'] . '</td>
                     <td>' . $row['pimm_voiture'] . '</td>
-                    <td>' . $row['marque'] . ' ' . $row['model'] . '</td>';
+                    <td>' . $row['marque'] . ' ' . $row['model'] . '</td>
+                    <td>' . $row['commentaire'] . '</td>';
                     if($id_agence == 0){
                         $value .= '<td>' . $row['nom_agence'] . '</td>';
                     }

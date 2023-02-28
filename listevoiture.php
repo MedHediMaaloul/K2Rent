@@ -69,7 +69,19 @@ function disponibilite_Vehicule($id_voiture, $debut, $fin)
     $result = mysqli_query($conn, $query);
     $nb_res = mysqli_num_rows($result);
 
-    if ($nb_res == 0) {
+    $queryEntretien = "SELECT * FROM entretien_voiture
+    where  
+    id_voiture ='$id_voiture' and 
+    ((datedebut_entretien <='$debut' and datefin_entretien >='$debut' )
+     or (datedebut_entretien <='$fin' and datefin_entretien >='$fin' ) 
+     or (datedebut_entretien >='$debut' and datefin_entretien <='$fin' ))
+     AND blockage_voiture = '1' AND action_entretien='1'";
+
+    $result_entretien = mysqli_query($conn, $queryEntretien);
+    $nb_res_entretien = mysqli_num_rows($result_entretien);
+
+
+    if ($nb_res == 0 && $nb_res_entretien == 0 ) {
         return "disponibile";
     } else {
         return " non disponibile";

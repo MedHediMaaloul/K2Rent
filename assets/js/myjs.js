@@ -1232,12 +1232,11 @@ function update_voiture_record() {
     var up_voiturecartegrise = $("#up_voiturecartegrise").prop("files")[0];
     var up_voitureassurance = $("#up_voitureassurance").prop("files")[0];
     // Checkbox
-    let checkboxes = document.querySelectorAll('input[name="up_voitureclim"]:checked');
+    let checkboxes = document.querySelectorAll('input[name="voitureclim"]:checked');
     let up_voitureclimatisation = [];
     checkboxes.forEach((checkbox) => {
       up_voitureclimatisation.push(checkbox.value);
     });
-
     if (up_voiturepimm1 == "" || up_voiturepimm2 == "" || up_voiturenbreplace == "" || up_voiturepuissance == "" || up_voitureclimatisation == "" ||
       up_voitureMarqueModel == null || up_voituretypecarburant == null || up_voitureboitevitesse == null || up_voiturenbrevalise == null) {
       $("#up_message")
@@ -1966,9 +1965,15 @@ function insert_entretien_Record() {
     var DateDebutEntretien = $("#DateDebutEntretien").val();
     var DateFinEntretien = $("#DateFinEntretien").val();
     var prixentretien = $("#prixentretien").val();
+    var commentaire = $("#Commentaire_ajout").val();
     var voiture_entretien = $("#voiture_entretien").val();
-
-    if (DateDebutEntretien == "" || DateFinEntretien == "" || prixentretien == "" || voiture_entretien == undefined) {
+        // Checkbox
+        let checkboxes = document.querySelectorAll('input[name="blockage"]:checked');
+        let blockageVoiture = [];
+        checkboxes.forEach((checkbox) => {
+          blockageVoiture.push(checkbox.value);
+        });
+    if (DateDebutEntretien == "" || DateFinEntretien == "" || prixentretien == "" || voiture_entretien == undefined || commentaire ==""  ) {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1982,6 +1987,9 @@ function insert_entretien_Record() {
       form_data.append("DateFinEntretien", DateFinEntretien);
       form_data.append("prixentretien", prixentretien);
       form_data.append("voiture_entretien", voiture_entretien);
+      form_data.append("blockageVoiture", blockageVoiture);
+      form_data.append("commentaire", commentaire);
+
       $.ajax({
         url: "AjoutEntretien.php",
         method: "post",
@@ -2034,8 +2042,19 @@ function get_entretien_record() {
         $("#up_entretienid").val(data[0]);
         $("#up_DateDebutEntretien").val(data[1]);
         $("#up_DateFinEntretien").val(data[2]);
-        $("#up_prixentretien").val(data[3]);
+      $("input[name='upblockage']:checked").value=data[3];        
+        $("#commentaire_modifie").val(data[4]);
+        console.log(data[4]);
+        $("#up_prixentretien").val(data[5]);
         $("#updateEntretien").modal("show");
+        if(data[3]==0){
+          $("#UpblockageNON").prop('checked', true);
+        
+        }
+        else{
+          $("#UpblockageOUI").prop('checked', true);
+
+        }
       },
     });
   });
@@ -2051,9 +2070,17 @@ function update_entretien_record() {
     var up_DateDebutEntretien = $("#up_DateDebutEntretien").val();
     var up_DateFinEntretien = $("#up_DateFinEntretien").val();
     var up_prixentretien = $("#up_prixentretien").val();
+    var up_commentaire = $("#commentaire_modifie").val();
+    console.log(up_commentaire);
+        // Checkbox
+        let checkboxes = document.querySelectorAll('input[name="upblockage"]:checked');
+        let upblockageVoiture = [];
+        checkboxes.forEach((checkbox) => {
+          upblockageVoiture.push(checkbox.value);
+        });
 
-    if (up_DateDebutEntretien == "" || up_DateFinEntretien == "" || up_prixentretien == "") {
-      $("#up_message")
+        if (up_DateDebutEntretien == "" || up_DateFinEntretien == "" || up_prixentretien == "" || up_commentaire ==""  ) {
+          $("#up_message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
     } else if (up_prixentretien < 0) {
@@ -2066,7 +2093,8 @@ function update_entretien_record() {
       form_data.append("up_DateDebutEntretien", up_DateDebutEntretien);
       form_data.append("up_DateFinEntretien", up_DateFinEntretien);
       form_data.append("up_prixentretien", up_prixentretien);
-      
+      form_data.append("up_commentaire", up_commentaire);
+      form_data.append("upblockageVoiture",upblockageVoiture);
       $.ajax({
         url: "update_entretien.php",
         method: "POST",
