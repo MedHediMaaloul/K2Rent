@@ -4,15 +4,26 @@ $id_agence = $_SESSION['Agence'];
 include('Gestion_location/inc/header_sidebar.php');
 include('Gestion_location/inc/connect_db.php');
 ?>
+<style>
+    .priceChangeMarque{
+        border: 0.5px solid #B6B6B6;
+        display: grid !important;
+        grid-template-columns: 25% 15% 60%;
+        align-content: space-evenly;
+        gap : 2px;
+        justify-items: center;
+        border-radius: 3px;    
+    }
+</style>
 <div class="page-wrapper">
 	<div class="page-content">
 		<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-				<nav aria-label="breadcrumb">
-					<ol class="breadcrumb mb-0 p-0">
-						<div class="breadcrumb-item" style="font-size: 19px; font-weight: bold;">Tableau De Board</div>
-						<div class="breadcrumb-item active" style="font-size: 19px; color:#D71218; font-weight: bold;" aria-current="page">Tableau De Board</div>
-					</ol>
-				</nav>
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0 p-0">
+					<div class="breadcrumb-item" style="font-size: 19px; font-weight: bold;">Tableau De Board</div>
+					<div class="breadcrumb-item active" style="font-size: 19px; color:#D71218; font-weight: bold;" aria-current="page">Tableau De Board</div>
+				</ol>
+			</nav>
 		</div>
 		<div class="row">
 			<div class="col-lg-4">
@@ -632,46 +643,108 @@ include('Gestion_location/inc/connect_db.php');
         </div>
         <!-- end Model alert ajout echec -->
 
-        <!-- Model ajout MarqueVoiture -->
-        <div class="modal fade" id="Registration-MarqueVoiture" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header" style="background: #D71218;">
-                        <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Marque</h5>
-						<button class="button-close" id="btn-close-x">X</button>
-					</div>
-                    <div class="modal-body">
-                        <p id="message_marque"></p>
-                        <form id="marquevoitureForm" autocomplete="off" class="form-horizontal form-material">
-                            <div class="form-group mb-4">
-                                <label class="col-md-12 p-0">Marque<span class="text-danger">*</span></label>
-                                <div class="col-md-12 border-bottom p-0">
-                                    <input type="text" id="voituremarque" placeholder="Renault" class="form-control p-0 border-0">
-                                </div>
-                            </div>
-                            <div class="form-group mb-4">
-                                <label class="col-md-12 p-0">Model<span class="text-danger">*</span></label>
-                                <div class="col-md-12 border-bottom p-0">
-                                    <input type="text" id="voituremodel" placeholder="Clio 4" class="form-control p-0 border-0">
-                                </div>
-                            </div>
-                            <div class="form-group mb-4">
-                                <label class="col-md-12 p-0">Prix Location<span class="text-danger">*</span></label>
-                                <div class="col-md-12 border-bottom p-0">
-                                    <input type="number" id="voitureprix" placeholder="70000" class="form-control p-0 border-0">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-						<div style="float: right;">
-							<button class="buttonvalidate" id="btn-register-marquevoiture">Ajouter</button>
-                        	<button class="buttonechec" id="btn-close">Annuler</button>
+         <!-- Model ajout MarqueVoiture -->
+         <div class="modal fade" id="Registration-MarqueVoiture" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background: #D71218;">
+                            <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Marque</h5>
+							<button class="button-close" id="btn-close-x">X</button>
 						</div>
+                        <div class="modal-body">
+                            <p id="message_marque"></p>
+                            <form id="marquevoitureForm" autocomplete="off" class="form-horizontal form-material">
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Marque<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 border-bottom p-0">
+                                        <input type="text" id="voituremarque" placeholder="Renault" class="form-control p-0 border-0">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Model<span class="text-danger">*</span></label>
+                                    <div class="col-md-12 border-bottom p-0">
+                                        <input type="text" id="voituremodel" placeholder="Clio 4" class="form-control p-0 border-0">
+                                    </div>
+                                </div>
+                                <label class="col-md-12 p-0">Saisisser le prix par mois :<span class="text-danger">*</span></label>
+                                <div style="display: grid !important; grid-template-columns: repeat(2,1fr) !important;grid-template-rows: 40px 40px 40px 40px 40px 40px !important;gap: 5px !important;">
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Janvier
+                                        <input type="number" id="prixjan" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Février
+                                        <input type="number" id="prixfev" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Mars
+                                        <input type="number" id="prixmars" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Avril
+                                        <input type="number" id="prixavril" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Mai
+                                        <input type="number" id="prixmai" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Juin
+                                        <input type="number" id="prixjuin" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Juillet
+                                        <input type="number" id="prixjuil" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Aout
+                                        <input type="number" id="prixaout" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Septembre
+                                        <input type="number" id="prixsept" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Octobre
+                                        <input type="number" id="prixoct" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Novembre
+                                        <input type="number" id="prixnov" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+                                    <div class="priceChangeMarque">
+                                        <img src="assets/images/img_prixvoiture/calendar.png" alt="">
+                                        Décembre
+                                        <input type="number" id="prixdec" style="border: transparent; width: 61px;" placeholder="90">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+							<div style="float: right;">
+								<button class="buttonvalidate" id="btn-register-marquevoiture">Ajouter</button>
+                            	<button class="buttonechec" id="btn-close">Annuler</button>
+							</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         <!-- end Model ajout MarqueVoiture -->
         <!-- Model alert ajout succès -->
 		<div class="modal fade" id="SuccessAddMarqueVoiture" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
