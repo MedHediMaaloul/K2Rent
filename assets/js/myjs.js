@@ -43,6 +43,8 @@ $(document).ready(function () {
   view_marquevoiture_record();
   searchMarqueVoiture();
   insert_marquevoiture_Record();
+  get_prix_marquevoiture_record();
+  update_prix_marquevoiture_record();
   get_marquevoiture_record();
   update_marquevoiture_record();
   delete_marquevoiture_record();
@@ -869,8 +871,12 @@ function insertClientRecord() {
               if ($("#EchecAddClient").length > 0) {
                 $("#EchecAddClient").modal("hide");
               }
-            }, 5000);
-            view_client_record();
+            }, 2000);
+            setTimeout(function () {
+              if ($("#EchecAddClient").length > 0) {
+                location.reload();
+              }
+            }, 2000);
           } else {
             $("#Registration-Client").modal("hide");
             $("#addclient_success").addClass("text-checked").html(data);
@@ -880,8 +886,12 @@ function insertClientRecord() {
               if ($("#SuccessAddClient").length > 0) {
                 $("#SuccessAddClient").modal("hide");
               }
-            }, 5000);
-            view_client_record();
+            }, 2000);
+            setTimeout(function () {
+              if ($("#SuccessAddClient").length > 0) {
+                location.reload();
+              }
+            }, 2000);
           }
         },
       });
@@ -959,7 +969,7 @@ function update_client_record() {
               if ($("#EchecUpClient").length > 0) {
                 $("#EchecUpClient").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_client_record();
           } else {
             $("#updateClient").modal("hide");
@@ -970,7 +980,7 @@ function update_client_record() {
               if ($("#SuccessUpClient").length > 0) {
                 $("#SuccessUpClient").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_client_record();
           }
         },
@@ -999,7 +1009,7 @@ function delete_client_record() {
               if ($("#EchecDeleteClient").length > 0) {
                 $("#EchecDeleteClient").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_client_record();
           } else {
             $("#deleteClient").modal("hide");
@@ -1010,7 +1020,7 @@ function delete_client_record() {
               if ($("#SuccessDeleteClient").length > 0) {
                 $("#SuccessDeleteClient").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_client_record();
           }
         },
@@ -1127,9 +1137,12 @@ function insert_voiture_Record() {
               if ($("#EchecAddVoiture").length > 0) {
                 $("#EchecAddVoiture").modal("hide");
               }
-            }, 5000);
-            view_voiture_record();
-            view_stockvoiture_record();
+            }, 2000);
+            setTimeout(function () {
+              if ($("#EchecAddVoiture").length > 0) {
+                location.reload();
+              }
+            }, 2000);
           } else {
             $("#Registration-Voiture").modal("hide");
             $("#addvoiture_success").addClass("text-checked").html(data);
@@ -1139,9 +1152,12 @@ function insert_voiture_Record() {
               if ($("#SuccessAddVoiture").length > 0) {
                 $("#SuccessAddVoiture").modal("hide");
               }
-            }, 5000);
-            view_voiture_record();
-            view_stockvoiture_record();
+            }, 2000);
+            setTimeout(function () {
+              if ($("#SuccessAddVoiture").length > 0) {
+                location.reload();
+              }
+            }, 2000);
           }
         },
       });
@@ -1255,7 +1271,7 @@ function update_voiture_record() {
               if ($("#EchecUpVoiture").length > 0) {
                 $("#EchecUpVoiture").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_voiture_record();
           } else {
             $("#updateVoiture").modal("hide");
@@ -1266,7 +1282,7 @@ function update_voiture_record() {
               if ($("#SuccessUpVoiture").length > 0) {
                 $("#SuccessUpVoiture").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_voiture_record();
           }
         },
@@ -1295,7 +1311,7 @@ function delete_voiture_record() {
               if ($("#EchecDeleteVoiture").length > 0) {
                 $("#EchecDeleteVoiture").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_voiture_record();
           } else {
             $("#deleteVoiture").modal("hide");
@@ -1306,7 +1322,7 @@ function delete_voiture_record() {
               if ($("#SuccessDeleteVoiture").length > 0) {
                 $("#SuccessDeleteVoiture").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_voiture_record();
           }
         },
@@ -1352,15 +1368,31 @@ function searchMarqueVoiture() {
 
 function insert_marquevoiture_Record() {
   $(document).on("click", "#show_form_marquevoiture", function () {
+    $("#message")
+    .removeClass("alert alert-danger")
+    .html("");
+
     $("#Registration-MarqueVoiture").modal("show");
   });
   $(document).on("click", "#btn-register-marquevoiture", function () {
     $("#Registration-MarqueVoiture").scrollTop(0);
     var voituremarque = $("#voituremarque").val();
     var voituremodel = $("#voituremodel").val();
-    var voitureprix = $("#voitureprix").val();
+    var prixjan = $("#prixjan").val();
+    var prixfev = $("#prixfev").val();
+    var prixmars = $("#prixmars").val();
+    var prixavril = $("#prixavril").val();
+    var prixmai = $("#prixmai").val();
+    var prixjuin = $("#prixjuin").val();
+    var prixjuil = $("#prixjuil").val();
+    var prixaout = $("#prixaout").val();
+    var prixsept = $("#prixsept").val();
+    var prixoct = $("#prixoct").val();
+    var prixnov = $("#prixnov").val();
+    var prixdec = $("#prixdec").val();
 
-    if (voituremarque == "" || voituremodel == "" || voitureprix == "") {
+    if (voituremarque == "" || voituremodel == "" || prixjan == "" || prixfev == "" || prixmars == "" || prixavril == "" || prixmai == "" || prixjuin == "" || prixjuil == "" || prixaout == ""
+    || prixsept == "" || prixoct == "" || prixnov == "" || prixdec == "") {
       $("#message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1368,7 +1400,18 @@ function insert_marquevoiture_Record() {
       var form_data = new FormData();
       form_data.append("voituremarque", voituremarque);
       form_data.append("voituremodel", voituremodel);
-      form_data.append("voitureprix", voitureprix);
+      form_data.append("prixjan", prixjan);
+      form_data.append("prixfev", prixfev);
+      form_data.append("prixmars", prixmars);
+      form_data.append("prixavril", prixavril);
+      form_data.append("prixmai", prixmai);
+      form_data.append("prixjuin", prixjuin);
+      form_data.append("prixjuil", prixjuil);
+      form_data.append("prixaout", prixaout);
+      form_data.append("prixsept", prixsept);
+      form_data.append("prixoct", prixoct);
+      form_data.append("prixnov", prixnov);
+      form_data.append("prixdec", prixdec);
       $.ajax({
         url: "AjoutMarqueVoiture.php",
         method: "post",
@@ -1384,8 +1427,12 @@ function insert_marquevoiture_Record() {
               if ($("#EchecAddMarqueVoiture").length > 0) {
                 $("#EchecAddMarqueVoiture").modal("hide");
               }
-            }, 5000);
-            view_marquevoiture_record();
+            }, 2000);
+            setTimeout(function () {
+              if ($("#EchecAddMarqueVoiture").length > 0) {
+                location.reload();
+              }
+            }, 2000);
           } else {
             $("#Registration-MarqueVoiture").modal("hide");
             $("#addmarquevoiture_success").addClass("text-checked").html(data);
@@ -1395,8 +1442,12 @@ function insert_marquevoiture_Record() {
               if ($("#SuccessAddMarqueVoiture").length > 0) {
                 $("#SuccessAddMarqueVoiture").modal("hide");
               }
-            }, 5000);
-            view_marquevoiture_record();
+            }, 2000);
+            setTimeout(function () {
+              if ($("#SuccessAddMarqueVoiture").length > 0) {
+                location.reload();
+              }
+            }, 2000);
           }
         },
       });
@@ -1404,6 +1455,106 @@ function insert_marquevoiture_Record() {
   });
   $('#Registration-MarqueVoiture').on('hidden.bs.modal', function () {
     $(this).find('form').trigger('reset');
+  });
+}
+
+function get_prix_marquevoiture_record() {
+  $(document).on("click", "#btn-vue-prixmarque", function () {
+    var ID = $(this).attr("data-id");
+    $.ajax({
+      url: "get_prix_marquevoiture_data.php",
+      method: "post",
+      data: {
+        id_marquevoiture: ID
+      },
+      dataType: "JSON",
+      success: function (data) {
+        $("#up_prix_marquevoitureid").val(data[0]);
+        $("#up_prixjan").val(data[1]);
+        $("#up_prixfev").val(data[2]);
+        $("#up_prixmars").val(data[3]);
+        $("#up_prixavr").val(data[4]);
+        $("#up_prixmai").val(data[5]);
+        $("#up_prixjuin").val(data[6]);
+        $("#up_prixjuil").val(data[7]);
+        $("#up_prixaout").val(data[8]);
+        $("#up_prixsep").val(data[9]);
+        $("#up_prixoct").val(data[10]);
+        $("#up_prixnov").val(data[11]);
+        $("#up_prixdec").val(data[12]);
+        $("#updatePrixMarque").modal("show");
+      },
+    });
+  });
+}
+
+function update_prix_marquevoiture_record() {
+  $(document).on("click", "#btn_update_prix_marque", function () {
+    $("#updatePrixMarque").scrollTop(0);
+    var up_prix_marquevoitureid = $("#up_prix_marquevoitureid").val();
+    var up_prixjan = $("#up_prixjan").val();
+    var up_prixfev = $("#up_prixfev").val();
+    var up_prixmars = $("#up_prixmars").val();
+    var up_prixavr = $("#up_prixavr").val();
+    var up_prixmai = $("#up_prixmai").val();
+    var up_prixjuin = $("#up_prixjuin").val();
+    var up_prixjuil = $("#up_prixjuil").val();
+    var up_prixaout = $("#up_prixaout").val();
+    var up_prixsep = $("#up_prixsep").val();
+    var up_prixoct = $("#up_prixoct").val();
+    var up_prixnov = $("#up_prixnov").val();
+    var up_prixdec = $("#up_prixdec").val();
+
+    if (up_prixjan == "" || up_prixfev == "" || up_prixmars == "" || up_prixavr == "" || up_prixmai == "" || up_prixjuin == ""
+      || up_prixjuil == "" || up_prixaout == "" || up_prixsep == "" || up_prixoct == "" || up_prixnov == "" || up_prixdec == "") {
+        alert("Veuillez remplir tous les champs obligatoires !");
+    } else {
+      var form_data = new FormData();
+      form_data.append("up_prix_marquevoitureid", up_prix_marquevoitureid);
+      form_data.append("up_prixjan", up_prixjan);
+      form_data.append("up_prixfev", up_prixfev);
+      form_data.append("up_prixmars", up_prixmars);
+      form_data.append("up_prixavr", up_prixavr);
+      form_data.append("up_prixmai", up_prixmai);
+      form_data.append("up_prixjuin", up_prixjuin);
+      form_data.append("up_prixjuil", up_prixjuil);
+      form_data.append("up_prixaout", up_prixaout);
+      form_data.append("up_prixsep", up_prixsep);
+      form_data.append("up_prixoct", up_prixoct);
+      form_data.append("up_prixnov", up_prixnov);
+      form_data.append("up_prixdec", up_prixdec);
+      $.ajax({
+        url: "update_prix_marquevoiture.php",
+        method: "POST",
+        processData: false,
+        contentType: false,
+        data: form_data,
+        success: function (data) {
+          if (data.includes('text-echec')) {
+            $("#updatePrixMarque").modal("hide");
+            $("#EchecUpPrixMarqueVoiture").modal("show");
+            $("#up_prix_marquevoiture_success").removeClass("text-checked").addClass("text-echec").html(data);
+            setTimeout(function () {
+              if ($("#EchecUpPrixMarqueVoiture").length > 0) {
+                $("#EchecUpPrixMarqueVoiture").modal("hide");
+              }
+            }, 2000);
+            view_marquevoiture_record();
+          } else {
+            $("#updatePrixMarque").modal("hide");
+            $("#SuccessUpPrixMarqueVoiture").modal("show");
+            $("#up_prix_marquevoiture_success").addClass("text-checked").html(data);
+            $("#up_prix_marquevoiture_success").removeClass("text-echec").addClass("text-checked");
+            setTimeout(function () {
+              if ($("#SuccessUpPrixMarqueVoiture").length > 0) {
+                $("#SuccessUpPrixMarqueVoiture").modal("hide");
+              }
+            }, 2000);
+            view_marquevoiture_record();
+          }
+        },
+      });
+    }
   });
 }
 
@@ -1430,13 +1581,16 @@ function get_marquevoiture_record() {
 
 function update_marquevoiture_record() {
   $(document).on("click", "#btn_update_marquevoiture", function () {
+    $("#up_message")
+    .removeClass("alert alert-danger")
+    .html("");
+
     $("#updateMarqueVoiture").scrollTop(0);
     var up_marquevoitureid = $("#up_marquevoitureid").val();
     var up_voituremarque = $("#up_voituremarque").val();
     var up_voituremodel = $("#up_voituremodel").val();
-    var up_voitureprix = $("#up_voitureprix").val();
 
-    if (up_voituremarque == "" || up_voituremodel == "" || up_voitureprix == "") {
+    if (up_voituremarque == "" || up_voituremodel == "") {
       $("#up_message")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
@@ -1445,7 +1599,6 @@ function update_marquevoiture_record() {
       form_data.append("up_marquevoitureid", up_marquevoitureid);
       form_data.append("up_voituremarque", up_voituremarque);
       form_data.append("up_voituremodel", up_voituremodel);
-      form_data.append("up_voitureprix", up_voitureprix);
 
       $.ajax({
         url: "update_marquevoiture.php",
@@ -1462,7 +1615,7 @@ function update_marquevoiture_record() {
               if ($("#EchecUpMarqueVoiture").length > 0) {
                 $("#EchecUpMarqueVoiture").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_marquevoiture_record();
           } else {
             $("#updateMarqueVoiture").modal("hide");
@@ -1473,7 +1626,7 @@ function update_marquevoiture_record() {
               if ($("#SuccessUpMarqueVoiture").length > 0) {
                 $("#SuccessUpMarqueVoiture").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_marquevoiture_record();
           }
         },
@@ -1502,7 +1655,7 @@ function delete_marquevoiture_record() {
               if ($("#EchecDeleteMarqueVoiture").length > 0) {
                 $("#EchecDeleteMarqueVoiture").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_marquevoiture_record();
           } else {
             $("#deleteMarqueVoiture").modal("hide");
@@ -1513,7 +1666,7 @@ function delete_marquevoiture_record() {
               if ($("#SuccessDeleteMarqueVoiture").length > 0) {
                 $("#SuccessDeleteMarqueVoiture").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_marquevoiture_record();
           }
         },
@@ -1601,7 +1754,7 @@ function transfert_voiture_agence_record() {
               if ($("#EchecUpAgenceVoiture").length > 0) {
                 $("#EchecUpAgenceVoiture").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_stockvoiture_record();
           } else {
             $("#updateagencevoiture").modal("hide");
@@ -1612,7 +1765,7 @@ function transfert_voiture_agence_record() {
               if ($("#SuccessUpAgenceVoiture").length > 0) {
                 $("#SuccessUpAgenceVoiture").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_stockvoiture_record();
           }
         },
@@ -1704,7 +1857,7 @@ function insert_contrat_Record() {
               if ($("#EchecAddContrat").length > 0) {
                 $("#EchecAddContrat").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_contrat_record();
           } else {
             $("#Registration-Contrat").modal("hide");
@@ -1715,7 +1868,7 @@ function insert_contrat_Record() {
               if ($("#SuccessAddContrat").length > 0) {
                 $("#SuccessAddContrat").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_contrat_record();
           }
         },
@@ -1747,7 +1900,7 @@ function delete_contrat_record() {
               if ($("#EchecDeleteContrat").length > 0) {
                 $("#EchecDeleteContrat").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_contrat_record();
           } else {
             $("#deleteContrat").modal("hide");
@@ -1758,7 +1911,7 @@ function delete_contrat_record() {
               if ($("#SuccessDeleteContrat").length > 0) {
                 $("#SuccessDeleteContrat").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_contrat_record();
           }
         },
@@ -1952,7 +2105,7 @@ function insert_entretien_Record() {
               if ($("#EchecAddEntretien").length > 0) {
                 $("#EchecAddEntretien").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_entretien_record();
           } else {
             $("#Registration-Entretien").modal("hide");
@@ -1963,7 +2116,7 @@ function insert_entretien_Record() {
               if ($("#SuccessAddEntretien").length > 0) {
                 $("#SuccessAddEntretien").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_entretien_record();
           }
         },
@@ -2034,7 +2187,7 @@ function update_entretien_record() {
               if ($("#EchecUpEntretien").length > 0) {
                 $("#EchecUpEntretien").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_entretien_record();
           } else {
             $("#updateEntretien").modal("hide");
@@ -2045,7 +2198,7 @@ function update_entretien_record() {
               if ($("#SuccessUpEntretien").length > 0) {
                 $("#SuccessUpEntretien").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_entretien_record();
           }
         },
@@ -2074,7 +2227,7 @@ function delete_entretien_record() {
               if ($("#EchecDeleteEntretien").length > 0) {
                 $("#EchecDeleteEntretien").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_entretien_record();
           } else {
             $("#deleteEntretien").modal("hide");
@@ -2085,7 +2238,7 @@ function delete_entretien_record() {
               if ($("#SuccessDeleteEntretien").length > 0) {
                 $("#SuccessDeleteEntretien").modal("hide");
               }
-            }, 5000);
+            }, 2000);
             view_entretien_record();
           }
         },
