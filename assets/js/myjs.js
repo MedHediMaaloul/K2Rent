@@ -4,11 +4,16 @@ $(document).ready(function () {
   // login
   login();
   //  Notification
+  notification_controle_assurance();
+  remove_notification_controle_assurance();
+  notification_controle_visite();
+  remove_notification_controle_visite();
   notification_fin_contrat();
   remove_notification_fin_contrat();
   notification_create_contrat();
   remove_notification_create_contrat();
   view_notification_record();
+  view_notification_controle_papier_record();
   //  Agence
   insertAgenceRecord();
   insertAgenceRecordHeur();
@@ -199,6 +204,62 @@ function login(){
 
 // Notification
 
+function notification_controle_assurance(view = "") {
+  const str2 = 'Non Lus';
+  $.ajax({
+    url: "controleassurancenotification.php",
+    method: "POST",
+    data: {
+      view: view
+    },
+    dataType: "json",
+    success: function (data) {
+      $("#controle_assurance").html(data.notification_controle_assurance);
+      if (data.count_fin_assurance > 0) {
+        $("#count_assurance_fin").html(data.count_fin_assurance);
+        $("#count_assurance_fin_not_vue").html(data.count_fin_assurance.concat(' ', str2));
+      } else {
+        $("#count_assurance_fin").css("display", "none");
+      }
+    },
+  });
+}
+
+function remove_notification_controle_assurance() {
+  $(document).on("click", "#toggle-controle-assurance", function () {
+    $("#count_assurance_fin").html("0").css("display", "none");
+    notification_controle_assurance("yes");
+  });
+}
+
+function notification_controle_visite(view = "") {
+  const str2 = 'Non Lus';
+  $.ajax({
+    url: "controlevisitenotification.php",
+    method: "POST",
+    data: {
+      view: view
+    },
+    dataType: "json",
+    success: function (data) {
+      $("#controle_visite").html(data.notification_controle_visite);
+      if (data.count_fin_visite > 0) {
+        $("#count_visite_fin").html(data.count_fin_visite);
+        $("#count_visite_fin_not_vue").html(data.count_fin_visite.concat(' ', str2));
+      } else {
+        $("#count_visite_fin").css("display", "none");
+      }
+    },
+  });
+}
+
+function remove_notification_controle_visite() {
+  $(document).on("click", "#toggle-controle-visite-technique", function () {
+    $("#count_visite_fin").html("0").css("display", "none");
+    notification_controle_visite("yes");
+  });
+}
+
 function notification_fin_contrat(view = "") {
   const str2 = 'Non Lus';
   $.ajax({
@@ -221,7 +282,7 @@ function notification_fin_contrat(view = "") {
 }
 
 function remove_notification_fin_contrat() {
-  $(document).on("click", "#toggle-contrat", function () {
+  $(document).on("click", "#toggle-contrat-fin", function () {
     $("#count_contrat_fin").html("0").css("display", "none");
     notification_fin_contrat("yes");
   });
@@ -253,7 +314,7 @@ function notification_create_contrat(view = "") {
 }
 
 function remove_notification_create_contrat() {
-  $(document).on("click", "#toggle-contrat", function () {
+  $(document).on("click", "#toggle-contrat-create", function () {
     $("#count_contrat_crée").html("0").css("display", "none");
     notification_create_contrat("yes");
   });
@@ -269,6 +330,20 @@ function view_notification_record() {
     },
     success: function (response) {
       $("#notification-list").html(response);
+    },
+  });
+}
+
+function view_notification_controle_papier_record() {
+  var search_controle_papier = $("#search_entretien_controle_papier").val();
+  $.ajax({
+    url: "viewnotificationcontrolepapier.php",
+    method: "post",
+    data: {
+      search_controle_papier: search_controle_papier,
+    },
+    success: function (response) {
+      $("#notification-controle-papier-list").html(response);
     },
   });
 }

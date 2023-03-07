@@ -27,9 +27,21 @@ function disponibilite_Vehicule($id_voiture)
                 AND ((datedebut_contrat <= DATE(NOW()) and datefin_contrat >=DATE(NOW())))";
     $result = mysqli_query($conn, $query);
     $nb_res = mysqli_num_rows($result);
-    
+
+    $queryEntretien = "SELECT * 
+                        FROM entretien_voiture
+                        WHERE id_voiture ='$id_voiture' 
+                        AND (datedebut_entretien <= DATE(NOW()) and datefin_entretien >= DATE(NOW()))
+                        AND action_entretien = '1'";
+    $result_entretien = mysqli_query($conn, $queryEntretien);
+    $nb_res_entretien = mysqli_num_rows($result_entretien);
+
     if ($nb_res == 0) {
-        return "Disponible";
+        if ($nb_res_entretien != 0) {
+            return "En entretien";
+        } else {
+            return "Disponible";
+        }
     } else {
         return "Loué";
     }
@@ -88,6 +100,208 @@ function login(){
 }
 
 // Notification 
+
+function AssuranceNotification()
+{
+    global $conn;
+    $id_agence = $_SESSION['Agence'];
+    
+    if (isset($_POST["view"])) {
+        if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+            $query = "SELECT V.id_voiture,V.pimm_voiture,AV.id_assurancevoiture,AV.prix_assurance,AV.view_notif
+            FROM assurance_voiture AS AV
+            left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+            WHERE V.action_voiture = '1'
+            AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_assurance, INTERVAL 0 DAY))
+            ORDER BY AV.view_notif DESC
+            LIMIT 4";
+
+            $query_total = "SELECT COUNT(*)
+            FROM assurance_voiture AS AV
+            left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+            WHERE V.action_voiture = '1'
+            AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_assurance, INTERVAL 0 DAY))";
+        }else{
+            $query = "SELECT V.id_voiture,V.pimm_voiture,AV.id_assurancevoiture,AV.prix_assurance,AV.view_notif
+            FROM assurance_voiture AS AV
+            left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+            WHERE V.action_voiture = '1'
+            AND V.id_agence = $id_agence
+            AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_assurance, INTERVAL 0 DAY))
+            ORDER BY AV.view_notif DESC
+            LIMIT 4";
+
+            $query_total = "SELECT COUNT(*)
+            FROM assurance_voiture AS AV
+            left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+            WHERE V.action_voiture = '1'
+            AND V.id_agence = $id_agence
+            AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_assurance, INTERVAL 0 DAY))";
+        }
+        $result = mysqli_query($conn, $query);
+        $result_total = mysqli_query($conn, $query_total);
+        $row_total = mysqli_fetch_row($result_total);
+        $number_notif = $row_total[0] - 4;
+        $output = '';
+
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_array($result)) {
+                $str1 = "La validité de l'assurance du véhicule avec matricule ";
+                $str2 = " se terminera bientôt";
+
+                if ($row['view_notif'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
+                } else {
+                    $style = 'background-color: #E8E8E8;';
+                }
+
+                $output .= '
+                    <li>
+                        <div class="border-bottom border-dark p-3" style="'. $style .'">
+                            <div class="text-secondary">
+                                <a onClick="reply_click(this.id)" id="'.$row["id_voiture"].'" target="_blank" att="'.$row["id_voiture"].'" 
+                                    href="update_notification.php?id_assurance_fin='.$row["id_assurancevoiture"].'">'.$str1.$row["pimm_voiture"].''.$str2.'</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="divider"></li>';
+            }
+            if($number_notif > 0){
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notification_controle_papier.php">Voir Tous ('.$number_notif.' autres)</a></div>';
+            }else{
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notification_controle_papier.php">Voir Tous</a></div>';
+            }
+        } else {
+            $output .= '<li class="text-bold text-italic">Aucune notification trouvée</li>';
+        }
+
+        if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+            $query_count = "SELECT COUNT(*) AS count
+                FROM assurance_voiture AS AV
+                left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+                WHERE V.action_voiture = '1'
+                AND AV.view_notif = '1'
+                AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_assurance, INTERVAL 0 DAY))";
+        }else{
+            $query_count = "SELECT COUNT(*) AS count
+                FROM assurance_voiture AS AV
+                left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+                WHERE V.action_voiture = '1'
+                AND AV.view_notif = '1'
+                AND V.id_agence = $id_agence
+                AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_assurance, INTERVAL 0 DAY))";
+        }
+        $result_count = mysqli_query($conn, $query_count);
+        $row = mysqli_fetch_row($result_count);
+        $count = $row[0];
+        $data = array(
+            'notification_controle_assurance' => $output,
+            'count_fin_assurance' => $count
+        );
+        echo json_encode($data);
+    }
+}
+
+function VisiteTechniqueNotification()
+{
+    global $conn;
+    $id_agence = $_SESSION['Agence'];
+    
+    if (isset($_POST["view"])) {
+        if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+            $query = "SELECT V.id_voiture,V.pimm_voiture,AV.id_visitevoiture,AV.prix_visite,AV.view_notif
+            FROM visite_voiture AS AV
+            left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+            WHERE V.action_voiture = '1'
+            AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_visite, INTERVAL 0 DAY))
+            ORDER BY AV.view_notif DESC
+            LIMIT 4";
+
+            $query_total = "SELECT COUNT(*)
+            FROM visite_voiture AS AV
+            left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+            WHERE V.action_voiture = '1'
+            AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_visite, INTERVAL 0 DAY))";
+        }else{
+            $query = "SELECT V.id_voiture,V.pimm_voiture,AV.id_visitevoiture,AV.prix_visite,AV.view_notif
+            FROM visite_voiture AS AV
+            left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+            WHERE V.action_voiture = '1'
+            AND V.id_agence = $id_agence
+            AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_visite, INTERVAL 0 DAY))
+            ORDER BY AV.view_notif DESC
+            LIMIT 4";
+
+            $query_total = "SELECT COUNT(*)
+            FROM visite_voiture AS AV
+            left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+            WHERE V.action_voiture = '1'
+            AND V.id_agence = $id_agence
+            AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_visite, INTERVAL 0 DAY))";
+        }
+        $result = mysqli_query($conn, $query);
+        $result_total = mysqli_query($conn, $query_total);
+        $row_total = mysqli_fetch_row($result_total);
+        $number_notif = $row_total[0] - 4;
+        $output = '';
+
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_array($result)) {
+                $str1 = "La validité de visite technique du véhicule avec matricule ";
+                $str2 = " se terminera bientôt";
+
+                if ($row['view_notif'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
+                } else {
+                    $style = 'background-color: #E8E8E8;';
+                }
+
+                $output .= '
+                    <li>
+                        <div class="border-bottom border-dark p-3" style="'. $style .'">
+                            <div class="text-secondary">
+                                <a onClick="reply_click(this.id)" id="'.$row["id_voiture"].'" target="_blank" att="'.$row["id_voiture"].'" 
+                                    href="update_notification.php?id_visite_fin='.$row["id_visitevoiture"].'">'.$str1.$row["pimm_voiture"].''.$str2.'</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="divider"></li>';
+            }
+            if($number_notif > 0){
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notification_controle_papier.php">Voir Tous ('.$number_notif.' autres)</a></div>';
+            }else{
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notification_controle_papier.php">Voir Tous</a></div>';
+            }
+        } else {
+            $output .= '<li class="text-bold text-italic">Aucune notification trouvée</li>';
+        }
+
+        if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+            $query_count = "SELECT COUNT(*) AS count
+                FROM visite_voiture AS AV
+                left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+                WHERE V.action_voiture = '1'
+                AND AV.view_notif = '1'
+                AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_visite, INTERVAL 0 DAY))";
+        }else{
+            $query_count = "SELECT COUNT(*) AS count
+                FROM visite_voiture AS AV
+                left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+                WHERE V.action_voiture = '1'
+                AND AV.view_notif = '1'
+                AND V.id_agence = $id_agence
+                AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_visite, INTERVAL 0 DAY))";
+        }
+        $result_count = mysqli_query($conn, $query_count);
+        $row = mysqli_fetch_row($result_count);
+        $count = $row[0];
+        $data = array(
+            'notification_controle_visite' => $output,
+            'count_fin_visite' => $count
+        );
+        echo json_encode($data);
+    }
+}
 
 function ContratNotification()
 {
@@ -156,9 +370,9 @@ function ContratNotification()
                     <li class="divider"></li>';
             }
             if($number_notif > 0){
-                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notifications.php">Voir Tous ('.$number_notif.' autres)</a></div>';
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notification_contrat.php">Voir Tous ('.$number_notif.' autres)</a></div>';
             }else{
-                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notifications.php">Voir Tous</a></div>';
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notification_contrat.php">Voir Tous</a></div>';
             }
         } else {
             $output .= '<li class="text-bold text-italic">Aucune notification trouvée</li>';
@@ -257,9 +471,9 @@ function notification_create_contrat()
                     <li class="divider"></li>';
             }
             if($number_notif > 0){
-                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notifications.php">Voir Tous ('.$number_notif.' autres)</a></div>';
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notification_contrat.php">Voir Tous ('.$number_notif.' autres)</a></div>';
             }else{
-                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notifications.php">Voir Tous</a></div>';
+                $output .= '<div style="margin-top:12px; position: absolute; right: 5%;"><a style="color: #1E90FF;" href="notification_contrat.php">Voir Tous</a></div>';
             }
         } else {
             $output .= '<li class="text-bold text-italic">Aucune notification trouvée</li>';
@@ -453,6 +667,174 @@ function view_notification_record()
                     <td>' . $row_fin['nom_client'] . '</td>
                     <td>' . $row_fin['datefin_contrat'] . '</td>
                     <td style="height: 70px;"><center><div class="'.$class.'">' . $etat . '</div></center></td>
+                </tr>';
+                $i += 1;
+            }
+        }
+        $value .= '</tbody>';
+    echo $value;
+}
+
+function view_notification_controle_papier_record()
+{
+    global $conn;
+    $id_agence = $_SESSION['Agence'];
+    $search = $_POST['search_controle_papier'];
+    $value = '<table class="table align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Voiture</th>
+                <th>Le papier</th>
+                <th>Prix (DT)</th>
+                <th>Date fin</th>
+            </tr>
+        </thead>
+		<tbody>';
+        $i = 1;
+        if($search == "0"){
+            if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+                $query_create = "SELECT V.pimm_voiture,AV.date_fin_assurance,AV.view_notif,AV.prix_assurance,MV.marque,MV.model
+                FROM assurance_voiture AS AV
+                left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+                left JOIN marque_voiture AS MV ON V.id_marquemodel = MV.id_marquevoiture
+                WHERE V.action_voiture = '1'
+                AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_assurance, INTERVAL 0 DAY))
+                ORDER BY AV.view_notif DESC";
+            }else{
+                $query_create = "SELECT V.pimm_voiture,AV.date_fin_assurance,AV.view_notif,AV.prix_assurance,MV.marque,MV.model
+                FROM assurance_voiture AS AV
+                left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+                left JOIN marque_voiture AS MV ON V.id_marquemodel = MV.id_marquevoiture
+                WHERE V.action_voiture = '1'
+                AND V.id_agence = $id_agence
+                AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_assurance, INTERVAL 0 DAY))
+                ORDER BY AV.view_notif DESC";
+            }
+            
+            $result_create = mysqli_query($conn, $query_create);
+            while ($row = mysqli_fetch_assoc($result_create)) {
+                if ($row['view_notif'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
+                } else {
+                    $style = 'background-color: #E8E8E8;';
+                }
+                $value .= '<tr style="'.$style.'">
+                    <td>' . $i . '</td>
+                    <td>' .$row["pimm_voiture"]. " " .$row["marque"]. " " .$row["model"]. '</td>
+                    <td>' . "Assurance" . '</td>
+                    <td>' . $row['prix_assurance'] . '</td>
+                    <td>' . $row['date_fin_assurance'] . '</td>
+                </tr>';
+                $i += 1;
+            }
+
+            if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+                $query_fin = "SELECT V.pimm_voiture,VV.date_fin_visite,VV.view_notif,VV.prix_visite,MV.marque,MV.model
+                FROM visite_voiture AS VV
+                left JOIN voiture AS V ON VV.id_voiture = V.id_voiture
+                left JOIN marque_voiture AS MV ON V.id_marquemodel = MV.id_marquevoiture
+                WHERE V.action_voiture = '1'
+                AND (DATE(NOW()) BETWEEN DATE_SUB(VV.date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(VV.date_fin_visite, INTERVAL 0 DAY))
+                ORDER BY VV.view_notif DESC";
+            }else{
+                $query_fin = "SELECT V.pimm_voiture,VV.date_fin_visite,VV.view_notif,VV.prix_visite,MV.marque,MV.model
+                FROM visite_voiture AS VV
+                left JOIN voiture AS V ON VV.id_voiture = V.id_voiture
+                left JOIN marque_voiture AS MV ON V.id_marquemodel = MV.id_marquevoiture
+                WHERE V.action_voiture = '1'
+                AND V.id_agence = $id_agence
+                AND (DATE(NOW()) BETWEEN DATE_SUB(VV.date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(VV.date_fin_visite, INTERVAL 0 DAY))
+                ORDER BY VV.view_notif DESC";
+            }
+            
+            $result_fin = mysqli_query($conn, $query_fin);
+            while ($row_fin = mysqli_fetch_assoc($result_fin)) {
+                if ($row_fin['view_notif'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
+                } else {
+                    $style = 'background-color: #E8E8E8;';
+                }
+                $value .= '<tr style="'.$style.'">
+                    <td>' . $i . '</td>
+                    <td>' .$row_fin["pimm_voiture"]. " " .$row_fin["marque"]. " " .$row_fin["model"]. '</td>
+                    <td>' . "Visite technique" . '</td>
+                    <td>' . $row_fin['prix_visite'] . '</td>
+                    <td>' . $row_fin['date_fin_visite'] . '</td>
+                </tr>';
+                $i += 1;
+            }
+        } else if ($search == "1"){
+
+            if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+                $query_create = "SELECT V.pimm_voiture,AV.date_fin_assurance,AV.view_notif,AV.prix_assurance,MV.marque,MV.model
+                FROM assurance_voiture AS AV
+                left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+                left JOIN marque_voiture AS MV ON V.id_marquemodel = MV.id_marquevoiture
+                WHERE V.action_voiture = '1'
+                AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_assurance, INTERVAL 0 DAY))
+                ORDER BY AV.view_notif DESC";
+            }else{
+                $query_create = "SELECT V.pimm_voiture,AV.date_fin_assurance,AV.view_notif,AV.prix_assurance,MV.marque,MV.model
+                FROM assurance_voiture AS AV
+                left JOIN voiture AS V ON AV.id_voiture = V.id_voiture
+                left JOIN marque_voiture AS MV ON V.id_marquemodel = MV.id_marquevoiture
+                WHERE V.action_voiture = '1'
+                AND V.id_agence = $id_agence
+                AND (DATE(NOW()) BETWEEN DATE_SUB(AV.date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(AV.date_fin_assurance, INTERVAL 0 DAY))
+                ORDER BY AV.view_notif DESC";
+            }
+            
+            $result_create = mysqli_query($conn, $query_create);
+            while ($row = mysqli_fetch_assoc($result_create)) {
+                if ($row['view_notif'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
+                } else {
+                    $style = 'background-color: #E8E8E8;';
+                }
+                $value .= '<tr style="'.$style.'">
+                    <td>' . $i . '</td>
+                    <td>' .$row["pimm_voiture"]. " " .$row["marque"]. " " .$row["model"]. '</td>
+                    <td>' . "Assurance" . '</td>
+                    <td>' . $row['prix_assurance'] . '</td>
+                    <td>' . $row['date_fin_assurance'] . '</td>
+                </tr>';
+                $i += 1;
+            }
+        } else if ($search == "2"){
+
+            if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
+                $query_fin = "SELECT V.pimm_voiture,VV.date_fin_visite,VV.view_notif,VV.prix_visite,MV.marque,MV.model
+                FROM visite_voiture AS VV
+                left JOIN voiture AS V ON VV.id_voiture = V.id_voiture
+                left JOIN marque_voiture AS MV ON V.id_marquemodel = MV.id_marquevoiture
+                WHERE V.action_voiture = '1'
+                AND (DATE(NOW()) BETWEEN DATE_SUB(VV.date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(VV.date_fin_visite, INTERVAL 0 DAY))
+                ORDER BY VV.view_notif DESC";
+            }else{
+                $query_fin = "SELECT V.pimm_voiture,VV.date_fin_visite,VV.view_notif,VV.prix_visite,MV.marque,MV.model
+                FROM visite_voiture AS VV
+                left JOIN voiture AS V ON VV.id_voiture = V.id_voiture
+                left JOIN marque_voiture AS MV ON V.id_marquemodel = MV.id_marquevoiture
+                WHERE V.action_voiture = '1'
+                AND V.id_agence = $id_agence
+                AND (DATE(NOW()) BETWEEN DATE_SUB(VV.date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(VV.date_fin_visite, INTERVAL 0 DAY))
+                ORDER BY VV.view_notif DESC";
+            }
+            
+            $result_fin = mysqli_query($conn, $query_fin);
+            while ($row_fin = mysqli_fetch_assoc($result_fin)) {
+                if ($row_fin['view_notif'] == 1) {
+                    $style = 'background-color: #FEE2E9;';
+                } else {
+                    $style = 'background-color: #E8E8E8;';
+                }
+                $value .= '<tr style="'.$style.'">
+                    <td>' . $i . '</td>
+                    <td>' .$row_fin["pimm_voiture"]. " " .$row_fin["marque"]. " " .$row_fin["model"]. '</td>
+                    <td>' . "Visite technique" . '</td>
+                    <td>' . $row_fin['prix_visite'] . '</td>
+                    <td>' . $row_fin['date_fin_visite'] . '</td>
                 </tr>';
                 $i += 1;
             }
@@ -2297,6 +2679,9 @@ function display_stockvoiture_record()
     while ($row = mysqli_fetch_assoc($result)) {
         $disponibilte = disponibilite_Vehicule($row['id_voiture']);
         $class = "etat etatactif";
+        if ($disponibilte == 'En entretien') {
+            $class = "etat etatentretien";
+        } 
         if ($disponibilte == 'Loué') {
             $row['nom_agence'] = localisation_Vehicule($row['id_voiture']);
             $class = "etat etatinactif";

@@ -358,12 +358,12 @@ input[type=radio] {
                                 $id_agence = $_SESSION['Agence'];
                                 $year = date('Y');
                                 if ($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1") {
-                                    $query_chiffreaffaire = "SELECT SUM(prix_contrat)/1000 AS number FROM contrat 
+                                    $query_chiffreaffaire = "SELECT SUM(prix_contrat) AS number FROM contrat 
                                     WHERE action_contrat = '1'
                                     AND datefin_contrat BETWEEN '$year-$month-01' AND LAST_DAY('$year-$month-01')
                                     ORDER BY id_contrat";
                                 }else{
-                                    $query_chiffreaffaire = "SELECT SUM(prix_contrat)/1000 AS number FROM contrat 
+                                    $query_chiffreaffaire = "SELECT SUM(prix_contrat) AS number FROM contrat 
                                     WHERE action_contrat = '1'
                                     AND id_agence = $id_agence
                                     AND datefin_contrat BETWEEN '$year-$month-01' AND LAST_DAY('$year-$month-01')

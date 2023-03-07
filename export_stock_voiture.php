@@ -59,6 +59,15 @@ foreach($data as $d){
             $d->nom_agence = $d1->nom_client." ( Téléphone : ".$d1->tel_client." )";
         }
     }
+    $req_entretien = $bdd->prepare("SELECT * 
+    FROM entretien_voiture
+    WHERE id_voiture ='$d->id_voiture' 
+    AND (datedebut_entretien <= DATE(NOW()) and datefin_entretien >= DATE(NOW()))
+    AND action_entretien = '1'");
+    $req_entretien->execute();
+    if ($req_entretien->rowCount() > 0){
+        $d->etat_voiture = "En entretien";
+    }
     echo '"'.utf8_decode($d->pimm_voiture).'";"'.utf8_decode($d->marque).'";"'.utf8_decode($d->model).'";"'.utf8_decode($d->boitevitesse_voiture).'";"'.utf8_decode($d->label_carburant).'";"'.utf8_decode($d->nom_agence).'";"'.utf8_decode($d->etat_voiture).'";'."\n";
 }
 ?>

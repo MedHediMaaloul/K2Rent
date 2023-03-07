@@ -112,9 +112,13 @@
 				</li>
 
 				<li>
-					<a href="notifications.php">
+					<a href="javascript:;" class="has-arrow">
 						<div class="menu-title"><img src="assets/images/img_menu/notification.png" style="margin-right: 15px;" width="20px" height="20px">Notifications</div>
 					</a>
+					<ul>
+						<li> <a href="notification_contrat.php"></i>Notifications des contrats</a></li>
+						<li> <a href="notification_controle_papier.php"></i>Notifications des contrôles papiers</a></li>
+					</ul>
 				</li>
                 	
 			</ul>
@@ -137,7 +141,51 @@
 					<div class="top-menu ms-auto" >
 						<ul class="navbar-nav align-items-center" style="margin-right: -30px; margin-top:10px;">
 							<li class="nav-item dropdown dropdown-large">
-								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="toggle-contrat" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
+								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="toggle-controle-visite-technique" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
+									<span id="count_visite_fin" class="alert-count"></span>
+									<img src="assets/images/img_menu/Visitetechnique.png" width="50px" height="50px">
+								</a>
+								<div class="dropdown-menu dropdown-menu-end">
+									<a href="javascript:;">
+										<div class="msg-header">
+											<div id="div1">
+												<p class="msg-header-title">Contrôle visite technique</p>
+											</div>
+											<div id="divnotif">
+												<p id="count_visite_fin_not_vue"></p>
+											</div>
+										</div>
+									</a>
+									<div class="header-message-list">
+										<p class="msg-info" id="controle_visite"></p>	
+									</div>
+								</div>
+							</li>
+
+							<li class="nav-item dropdown dropdown-large" style="margin-left: -29px;">
+								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="toggle-controle-assurance" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
+									<span id="count_assurance_fin" class="alert-count"></span>
+									<img src="assets/images/img_menu/Assurance.png" width="50px" height="50px">
+								</a>
+								<div class="dropdown-menu dropdown-menu-end">
+									<a href="javascript:;">
+										<div class="msg-header">
+											<div id="div1">
+												<p class="msg-header-title">Contrôle assurance</p>
+											</div>
+											<div id="divnotif">
+												<p id="count_assurance_fin_not_vue"></p>
+											</div>
+										</div>
+									</a>
+									<div class="header-message-list">
+										<p class="msg-info" id="controle_assurance"></p>	
+									</div>
+								</div>
+							</li>
+
+							<li class="nav-item dropdown dropdown-large" style="margin-left: -29px;">
+								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="toggle-contrat-fin" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
 									<span id="count_contrat_fin" class="alert-count"></span>
 									<img src="assets/images/img_menu/FinContrat.png" width="50px" height="50px">
 								</a>
@@ -159,7 +207,7 @@
 							</li>
 
 							<li class="nav-item dropdown dropdown-large" style="margin-left: -29px;">
-								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#" id="toggle-contrat-create" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 									<span id="count_contrat_crée" class="alert-count"></span>
 									<img src="assets/images/img_menu/CreateContrat.png" width="50px" height="50px">
 								</a>

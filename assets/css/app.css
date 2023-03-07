@@ -5487,6 +5487,11 @@ input::placeholder {
 	color: #E92E33;
 }
 
+.etatentretien {
+	background: #FDC5A6;
+	color: #FC4B13;
+}
+
 
 .login-icon {
 	width: 15%;
