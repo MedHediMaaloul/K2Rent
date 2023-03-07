@@ -15,5 +15,21 @@ if (isset($_GET["id_contrat_create"])){
     if (mysqli_query($conn, $query)) {
 		header('Location: fpdf/contratlocation.php?N='.$_GET['id_contrat_create']); 
     }
-}  
+}
+if (isset($_GET["id_assurance_fin"])){
+	$query = "UPDATE assurance_voiture SET view_notif = '0' WHERE id_assurancevoiture = ".$_GET['id_assurance_fin'];
+    if (mysqli_query($conn, $query)) {
+    ?>
+      <script>window.close();</script>
+    <?php
+    }
+}
+if (isset($_GET["id_visite_fin"])){
+	$query = "UPDATE visite_voiture SET view_notif = '0' WHERE id_visitevoiture = ".$_GET['id_visite_fin'];
+    if (mysqli_query($conn, $query)) {
+    ?>
+      <script>window.close();</script>
+    <?php
+    }
+}    
 ?>
