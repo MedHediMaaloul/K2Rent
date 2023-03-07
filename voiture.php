@@ -7,83 +7,91 @@ if (!isset($_SESSION['Login'])) {
 }
 ?>
 <style>
-  /* css modal ajout voiture */
-  .form-control {
+/* css modal ajout voiture */
+.form-control {
     border: 0.5px solid #B6B6B6;
 }
-
-#formAjoutVoiture{
-	display: grid !important;
-	grid-template-rows: repeat(3,auto);
-	gap: 1%;
-}
-#fiche_technique{
-	display: grid !important;
-	grid-template-rows: repeat(2,auto);
-	grid-template-columns: repeat(3,auto);
-	grid-column-gap: 1%;
-	grid-row-gap: 12%;
-}
-#options{
-	display: grid !important;
-	grid-template-columns: repeat(2,auto);
-	grid-column-gap: 3%;
+#formAjoutVoiture {
+    display: grid !important;
+    grid-template-rows: repeat(3, auto);
+    gap: 1%;
 }
 
-.rowsName{
-	font-weight: 700;
-	font-size: 16px;
-	line-height: 20px;
-	color: rgba(191, 22, 22, 1);
-	;	
+#fiche_technique {
+    display: grid !important;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: repeat(3, auto);
+    grid-column-gap: 1%;
+    grid-row-gap: 12%;
 }
-#btn-edit-papier{
-	width: 80px;
-	height: 23px;
-	margin-top: 1.2px;
-	background: #FDA6A6;
-	border-radius: 3px;
-	border: transparent;
-	border-top-left-radius: 17px ;
-	font-weight: 700;
+
+#options {
+    display: grid !important;
+    grid-template-columns: repeat(2, auto);
+    grid-column-gap: 3%;
+}
+
+.rowsName {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 20px;
+    color: rgba(191, 22, 22, 1);
+    ;
+}
+
+#btn-edit-papier {
+    width: 80px;
+    height: 23px;
+    margin-top: 1.2px;
+    background: #FDA6A6;
+    border-radius: 3px;
+    border: transparent;
+    border-top-left-radius: 17px;
+    font-weight: 700;
     font-size: 12px;
     line-height: 15px;
     color: #BF1616;
-	margin-right: 24px;
+    margin-right: 24px;
 }
 
-#papier{
-	display: grid !important;
-	grid-template-rows: repeat(2,auto);
+#papier {
+    display: grid !important;
+    grid-template-rows: repeat(2, auto);
 }
 
-#btn-edit-papier:hover{
-	background: #BF1616;
-	color:#FFFFFF ;
+#btn-edit-papier:hover {
+    background: #BF1616;
+    color: #FFFFFF;
 }
-#papier1{
-	display: grid !important;
-	grid-template-columns: repeat(2,auto);
-	grid-column-gap: 3%;
+
+#papier1 {
+    display: grid !important;
+    grid-template-columns: repeat(2, auto);
+    grid-column-gap: 3%;
 }
-#papier2{
-	display: grid !important;
-	grid-template-columns: repeat(3,auto);
-	grid-template-rows: repeat(2,auto);
-	grid-column-gap: 3%;
+
+#papier2 {
+    display: grid !important;
+    grid-template-columns: repeat(3, auto);
+    grid-template-rows: repeat(2, auto);
+    grid-column-gap: 3%;
 }
-.griseVignette{
-	display: grid !important;
-	grid-template-columns: repeat(2,auto);
-	align-items: center;
+
+.griseVignette {
+    display: grid !important;
+    grid-template-columns: repeat(2, auto);
+    align-items: center;
     gap: 2%;
 }
-.modal-content{
-    border-radius: 23px 23px 0px 0px !important;	
+
+.modal-content {
+    border-radius: 23px 23px 0px 0px !important;
 }
-.modal-header{
-    border-radius: 22px 22px 0px 0px !important;	
+
+.modal-header {
+    border-radius: 22px 22px 0px 0px !important;
 }
+
 #PIMM {
     display: flex;
     gap: 5%;
@@ -116,7 +124,6 @@ input[type=radio] {
     margin-top: 10%;
     margin-bottom: 10%;
 }
-
 </style>
 <div class="page-wrapper">
     <div class="page-content">
@@ -131,7 +138,7 @@ input[type=radio] {
             <div class="ms-auto">
                 <div id="div1">
                     <div class="input-group">
-                        <input type="input" class="form-control search-control" placeholder="Que recherchez-vous?"
+                        <input type="input" class="form-control search-control" style="border: 1px solid #ffffff;" placeholder="Que recherchez-vous?"
                             id="searchVoiture">
                         <span class="position-absolute top-50 search-show translate-middle-y"><i
                                 class='bx bx-search'></i></span>
@@ -251,7 +258,7 @@ input[type=radio] {
                                 $query = "SELECT * FROM marque_voiture WHERE action_marquevoiture = '1' ORDER BY marque ASC";
                                 $result = mysqli_query($conn, $query);
                                 ?>
-                                <div class="form-group mb-4">
+                                <div class="form-group border-bottom mb-4">
                                     <label class="col-md-12 p-0">Marque<span class="text-danger">*</span></label>
                                     <div class="col-md-12">
                                         <select name="type" id="up_voitureMarqueModel" class="form-control p-0 border-0"
@@ -273,7 +280,7 @@ input[type=radio] {
                                 $query = "SELECT * FROM carburant_voiture ORDER BY label_carburant ASC";
                                 $result = mysqli_query($conn, $query);
                                 ?>
-                                <div class="form-group mb-4">
+                                <div class="form-group border-bottom mb-4">
                                     <label class="col-md-12 p-0">Type carburant<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-12">
@@ -292,7 +299,7 @@ input[type=radio] {
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-4">
+                                <div class="form-group border-bottom mb-4">
                                     <label class="col-md-12 p-0">Boite de vitesse<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-12">
@@ -305,7 +312,7 @@ input[type=radio] {
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-4">
+                                <div class="form-group border-bottom mb-4">
                                     <label class="col-md-12 p-0">Nombre de place<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-12 p-0">
@@ -316,7 +323,7 @@ input[type=radio] {
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-4">
+                                <div class="form-group border-bottom mb-4">
                                     <label class="col-md-12 p-0">Nombre de valise<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-12">
@@ -334,7 +341,7 @@ input[type=radio] {
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-4">
+                                <div class="form-group border-bottom mb-4">
                                     <label class="col-md-12 p-0">Puissance (CV)<span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-12 p-0">
@@ -348,20 +355,15 @@ input[type=radio] {
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Air conditionné<span
                                             class="text-danger">*</span></label>
-                                    <div class="col-md-12 p-0">
-                                        <div>
-                                            <input type="radio" id="up_voitureavecclim" name="up_voitureclim" value="1">
-                                            <label for="up_voitureavecclim">OUI</label>
-                                        </div>
-                                        <div>
-                                            <input type="radio" id="up_voituresansclim" name="up_voitureclim" value="0">
-                                            <label for="up_voituresansclim">NON</label>
-                                        </div>
-
+                                    <div class="col-md-6 p-0" style="display: flex; gap: 5px; margin-top: 5px;">
+                                        <input type="radio" id="up_voitureavecclim" name="up_voitureclim" value="1">
+                                        <label for="up_voitureavecclim">OUI</label>
+                                        <input type="radio" id="up_voituresansclim" name="up_voitureclim" value="0">
+                                        <label for="up_voituresansclim">NON</label>
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-4">
+                                <div class="form-group border-bottom mb-4">
                                     <label class="col-md-12 p-0">Carte grise</label>
                                     <div class="col-md-12">
                                         <input type="file" id="up_voiturecartegrise" class="form-control p-0 border-0">
@@ -424,9 +426,10 @@ input[type=radio] {
             </div>
             <!-- end Model alert modification echec -->
             <!-- Model ajout Voiture -->
-            <div class="modal fade bd-example-modal-lg" id="Registration-Voiture" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-                    <div  class="modal-content">
+            <div class="modal fade bd-example-modal-lg" id="Registration-Voiture" tabindex="-1" role="dialog"
+                aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
                         <div class="modal-header" style="background: #D71218;">
                             <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Voiture</h5>
                             <button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png"
@@ -435,15 +438,13 @@ input[type=radio] {
                         <div id="bodyAjoutVoiture" class="modal-body">
                             <p id="message"></p>
                             <form id="formAjoutVoiture" autocomplete="off" class="form-horizontal form-material">
-
                                 <div class="rowsName">Fiche technique:</div>
-
                                 <div id="fiche_technique">
                                     <?php
-                                include_once('Gestion_location/inc/connect_db.php');
-                                $query = "SELECT * FROM marque_voiture WHERE action_marquevoiture = '1' ORDER BY marque ASC";
-                                $result = mysqli_query($conn, $query);
-                                ?>
+                                        include_once('Gestion_location/inc/connect_db.php');
+                                        $query = "SELECT * FROM marque_voiture WHERE action_marquevoiture = '1' ORDER BY marque ASC";
+                                        $result = mysqli_query($conn, $query);
+                                    ?>
                                     <div>
                                         <label>Marque<span class="text-danger">*</span></label>
                                         <div>
@@ -481,7 +482,7 @@ input[type=radio] {
                                     <div>
                                         <label>Nombre de place<span class="text-danger">*</span></label>
                                         <div>
-                                            <div id="divimm1" class="inputstyle">
+                                            <div id="divimmm1" class="inputstyle">
                                                 <input type="number" id="voiturenbreplace" placeholder="5"
                                                     class="numberDate">
                                             </div>
@@ -529,7 +530,7 @@ input[type=radio] {
                                         <label class="col-md-12 p-0">Puissance (CV)<span
                                                 class="text-danger">*</span></label>
                                         <div class="col-md-12 p-0">
-                                            <div id="divimm1">
+                                            <div id="divimmm1">
                                                 <input type="number" id="voiturepuissance" placeholder="4"
                                                     class="numberDate">
                                             </div>
