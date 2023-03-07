@@ -5539,20 +5539,8 @@ input::placeholder {
 	display: inline-block;
 }
 
-#divimm1 {
-	width: 10%;
-	text-align: center;
-	display: inline-block;
-}
-
 #divtu {
 	width: 5%;
-	text-align: center;
-	display: inline-block;
-}
-
-#divimm2 {
-	width: 15%;
 	text-align: center;
 	display: inline-block;
 }
@@ -6100,3 +6088,128 @@ thead {
 
 
 }
+
+/* css modal ajout voiture */
+
+#formAjoutVoiture{
+	display: grid !important;
+	grid-template-rows: repeat(3,auto);
+	gap: 1%;
+}
+#fiche_technique{
+	display: grid !important;
+	grid-template-rows: repeat(2,auto);
+	grid-template-columns: repeat(3,auto);
+	grid-column-gap: 1%;
+	grid-row-gap: 12%;
+}
+#options{
+	display: grid !important;
+	grid-template-columns: repeat(2,auto);
+	grid-column-gap: 3%;
+}
+
+.rowsName{
+	font-weight: 700;
+	font-size: 16px;
+	line-height: 20px;
+	color: rgba(191, 22, 22, 1);
+	;	
+}
+#btn-edit-papier{
+	width: 80px;
+	height: 23px;
+	margin-top: 1.2px;
+	background: #FDA6A6;
+	border-radius: 3px;
+	border: transparent;
+	border-top-left-radius: 17px ;
+	font-weight: 700;
+    font-size: 12px;
+    line-height: 15px;
+    color: #BF1616;
+	margin-right: 24px;
+}
+
+#papier{
+	display: grid !important;
+	grid-template-rows: repeat(2,auto);
+}
+
+#btn-edit-papier:hover{
+	background: #BF1616;
+	color:#FFFFFF ;
+}
+#papier1{
+	display: grid !important;
+	grid-template-columns: repeat(2,auto);
+	grid-column-gap: 3%;
+}
+#papier2{
+	display: grid !important;
+	grid-template-columns: repeat(3,auto);
+	grid-template-rows: repeat(2,auto);
+	grid-column-gap: 3%;
+}
+.griseVignette{
+	display: grid !important;
+	grid-template-columns: repeat(2,auto);
+	align-items: center;
+    gap: 2%;
+}
+.modal-content{
+    border-radius: 23px 23px 0px 0px !important;	
+}
+.modal-header{
+    border-radius: 22px 22px 0px 0px !important;	
+}
+#PIMM {
+    display: flex;
+    gap: 5%;
+    justify-content: center;
+    align-items: center;
+}
+
+.pimm {
+    border: 0.5px solid #B6B6B6;
+    border-radius: 0.25rem;
+    padding: 0.47rem 0.75rem;
+}
+
+.numberDate {
+    width: 100%;
+    padding: 0.47rem 0.75rem;
+    border: 0.5px solid #B6B6B6;
+    border-radius: 0.25rem;
+}
+
+input[type=radio] {
+    width: 20px;
+    height: 20px;
+    accent-color: #BF1616;
+}
+
+#buttonMenu {
+    display: flex !important;
+    justify-content: space-around;
+    margin-top: 10%;
+    margin-bottom: 10%;
+}
+#divimm1 {
+	width: 10%;
+	text-align: center;
+	display: inline-block;
+}
+
+#divtu {
+	width: 5%;
+	text-align: center;
+	display: inline-block;
+}
+
+#divimm2 {
+	width: 15%;
+	text-align: center;
+	display: inline-block;
+}
+

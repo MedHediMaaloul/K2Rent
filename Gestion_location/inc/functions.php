@@ -1353,6 +1353,39 @@ function delete_client_record()
 
 // Voiture
 
+function testPapier($idVoiture, &$modalNumb){
+    global $conn;
+
+    // test papier assurance
+    $queryAssur="SELECT *
+            FROM assurance_voiture
+    WHERE (DATE(NOW()) BETWEEN DATE_SUB(date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(date_fin_assurance, INTERVAL 0 DAY))
+    AND id_voiture='$idVoiture'";
+    $resultAssur = mysqli_query($conn, $queryAssur);
+
+    // test papier visite technique
+    $queryVisit="SELECT *
+    FROM visite_voiture
+WHERE (DATE(NOW()) BETWEEN DATE_SUB(date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(date_fin_visite, INTERVAL 0 DAY))
+AND id_voiture='$idVoiture'";
+$resultVisit = mysqli_query($conn, $queryVisit);
+
+    if (mysqli_num_rows($resultAssur) > 0 && mysqli_num_rows($resultVisit) > 0 ) 
+    {
+    return true;
+    }else if(mysqli_num_rows($resultAssur) > 0){
+        $modalNumb=1;
+        return true;
+     
+    }
+    else if(mysqli_num_rows($resultVisit) > 0){
+    $modalNumb=2;
+    return true;
+ 
+}
+    else return false;
+}
+
 function display_voiture_record()
 {
     global $conn;
@@ -1373,7 +1406,6 @@ function display_voiture_record()
             <th class="border-top-0">Air conditionné</th>
             <th class="border-top-0">Agence</th>
             <th class="border-top-0">Carte grise</th>
-            <th class="border-top-0">Assurance</th>
             <th class="border-top-0">Actions</th>      
         </tr>
     </thead>
@@ -1407,6 +1439,8 @@ function display_voiture_record()
             $class = "etat etatinactif";
             $climatisation = "NON";
         } 
+        $modalNumb=0;
+        $papierResult=testPapier($row['id_voiture'],$modalNumb )==false ?"hidden":"";
         $value .= '<tr>
             <td>' . $i . '</td>
             <td>' . $row['pimm_voiture'] . '</td>
@@ -1419,15 +1453,16 @@ function display_voiture_record()
             <td style="height: 70px;"><center><div class="'.$class.'">' . $climatisation . '</div></center></td>
             <td>' . $row['nom_agence'] . '</td>
             <td><a href="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '"></a></td>
-            <td><a href="uploadfile/voiture/assurance/' . $row["assurance_voiture"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/assurance/' . $row["assurance_voiture"] . '"></a></td>
             <td>
                 <div class="btn-group" role="group">
+                <button '.$papierResult.' title="Modifier papier voiture" id="btn-edit-papier"  papier-id=' . $row['id_voiture'] . ' modal-Numb='.$modalNumb.'>Modifier
+               </button>
                     <button type="button" title="Modifier la voiture" class="btn" style="font-size: 2px;" id="btn-edit-voiture" data-id=' . $row['id_voiture'] . '>
                     <i class="lni lni-pencil-alt iconaction"></i></button>
                     <button type="button" title="Supprimer la voiture" class="btn" style="font-size: 2px;" id="btn-delete-voiture" data-id1=' . $row['id_voiture'] . '>
                     <i class="lni lni-trash iconaction"></i></button>
                 </div>
-            </td>
+            </td> 
         </tr>';
         $i += 1;  
     }
@@ -1455,7 +1490,6 @@ function searchVoiture()
             <th class="border-top-0">Air conditionné</th>
             <th class="border-top-0">Agence</th>
             <th class="border-top-0">Carte grise</th>
-            <th class="border-top-0">Assurance</th>
             <th class="border-top-0">Actions</th>       
         </tr>
     </thead>
@@ -1520,7 +1554,6 @@ function searchVoiture()
                     <td style="height: 70px;"><center><div class="'.$class.'">' . $climatisation . '</div></center></td>
                     <td>' . $row['nom_agence'] . '</td>
                     <td><a href="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '"></a></td>
-                    <td><a href="uploadfile/voiture/assurance/' . $row["assurance_voiture"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/assurance/' . $row["assurance_voiture"] . '"></a></td>
                     <td>
                         <div class="btn-group" role="group">
                             <button type="button" title="Modifier la voiture" class="btn" style="font-size: 2px;" id="btn-edit-voiture" data-id=' . $row['id_voiture'] . '>
@@ -1555,6 +1588,7 @@ function searchVoiture()
 function InsertVoiture()
 {
     global $conn;
+    global $msg_insert_echec;
     global $msg_insert_succés;
     $id_agence = $_SESSION['Agence'];
 
@@ -1569,6 +1603,13 @@ function InsertVoiture()
     $voitureclimatisation = $_POST['voitureclimatisation'];
     $voiturecartegrise = isset($_FILES['voiturecartegrise']) ? $_FILES['voiturecartegrise'] : "";
     $voitureassurance = isset($_FILES['voitureassurance']) ? $_FILES['voitureassurance'] : "";
+    $visitetechniquevoiture = isset($_FILES['visitetechniquevoiture']) ? $_FILES['visitetechniquevoiture'] : "";
+    $voiturevignette = isset($_FILES['voiturevignette']) ? $_FILES['voiturevignette'] : "";
+    $prixassurance = $_POST['prixassurance'];
+    $datefinassurance = $_POST['datefinassurance'];
+    $datefinvisitetechnique = $_POST['datefinvisitetechnique'];
+    $prixvisitetechnique = $_POST['prixvisitetechnique'];
+
     if ($id_agence != "0") {
         $voitureagence = $id_agence;
     } else {
@@ -1595,7 +1636,30 @@ function InsertVoiture()
             echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
           }
         }
-        // upload file assurance
+
+         // verifier file vignette
+         $emplacement_vignette = "uploadfile/voiture/vignette/";
+         $file_vignette = $emplacement_vignette . basename($_FILES["voiturevignette"]["name"]);
+         $uploadOk_vignette = 1;
+         $type_vignette = strtolower(pathinfo($file_vignette,PATHINFO_EXTENSION));
+ 
+         if($type_vignette != "jpg" && $type_vignette != "png" && $type_vignette != "jpeg" && $type_vignette != "gif" ) {
+             echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+             $uploadOk_vignette = 0;
+         }  
+
+            // verifier file visite technique
+            $emplacement_visite = "uploadfile/voiture/visite_technique/";
+            $file_visite = $emplacement_visite . basename($_FILES["visitetechniquevoiture"]["name"]);
+            $uploadOk_visite = 1;
+            $type_visite = strtolower(pathinfo($file_visite,PATHINFO_EXTENSION));
+    
+            if($type_visite != "jpg" && $type_visite != "png" && $type_visite != "jpeg" && $type_visite != "gif" ) {
+                echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+                $uploadOk_visite = 0;
+            }  
+
+        // verifier file assurance
         $emplacement_assurance = "uploadfile/voiture/assurance/";
         $file_assurance = $emplacement_assurance . basename($_FILES["voitureassurance"]["name"]);
         $uploadOk_assurance = 1;
@@ -1604,33 +1668,75 @@ function InsertVoiture()
         if($type_assurance != "jpg" && $type_assurance != "png" && $type_assurance != "jpeg" && $type_assurance != "gif" ) {
             echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
             $uploadOk_assurance = 0;
-        }  
-        if ($uploadOk_assurance != 0) {
-          if (move_uploaded_file($_FILES["voitureassurance"]["tmp_name"], $emplacement_assurance .$Namefile.".".$type_assurance)) {
-            $voitureassurance = $Namefile.".".$type_assurance;
-          } else {
-            echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
-          }
-        }
-        if ($uploadOk_cartegrise == 1 && $uploadOk_assurance == 1) {
+        }   
+         
+        if ($uploadOk_cartegrise == 1 && $uploadOk_assurance == 1 && $uploadOk_visite == 1 && $uploadOk_vignette == 1)
+         {
             // vérification si le pimm existe
             $sql_e = "SELECT * FROM voiture WHERE pimm_voiture = '$voiturepimm' AND action_voiture = '1'";
             $res_e = mysqli_query($conn, $sql_e);
             if (mysqli_num_rows($res_e) > 0) {
                 echo '<div class="text-echec">Désolé ... Immatriculation est déjà pris!</div>';
-            } else {
-                $date = date('Y-m-d H:i:s');
-                $query = "INSERT INTO voiture(pimm_voiture,id_marquemodel,id_agence,id_typecarburant,boitevitesse_voiture,nbreplace_voiture,valise_voiture,puissance_voiture,climatisation_voiture,
-                            cartegrise_voiture,assurance_voiture,date_created_voiture,date_updated_voiture) 
-                        VALUES ('$voiturepimm','$voitureMarqueModel','$voitureagence','$voituretypecarburant','$voitureboitevitesse','$voiturenbreplace','$voiturenbrevalise','$voiturepuissance','$voitureclimatisation',
-                            '$voiturecartegrise','$voitureassurance','$date','$date') ";
+            } else 
+           {
 
-                $result = mysqli_query($conn, $query);
-                if ($result) {
-                    echo "<div class='text-checked'>La voiture $msg_insert_succés</div>";
+                // insert data in table voiture
+                $date = date('Y-m-d H:i:s');
+                $queryVoiture = "INSERT INTO voiture(pimm_voiture,id_marquemodel,id_agence,id_typecarburant,boitevitesse_voiture,nbreplace_voiture,valise_voiture,puissance_voiture,climatisation_voiture,
+                            cartegrise_voiture,date_created_voiture,date_updated_voiture) 
+                        VALUES ('$voiturepimm','$voitureMarqueModel','$voitureagence','$voituretypecarburant','$voitureboitevitesse','$voiturenbreplace','$voiturenbrevalise','$voiturepuissance','$voitureclimatisation',
+                            '$voiturecartegrise','$date','$date') ";
+                $resultVoiture = mysqli_query($conn, $queryVoiture);
+
+                // get the new id_voiture
+
+               $queryID = " SELECT id_voiture
+              FROM voiture 
+              WHERE pimm_voiture = '$voiturepimm'";
+              $IdVoiture = mysqli_query($conn, $queryID);
+              $rowID = mysqli_fetch_assoc($IdVoiture);
+               $ID= $rowID['id_voiture'];
+
+                // insert data in table assurance  and upload file
+                if (move_uploaded_file($_FILES["voitureassurance"]["tmp_name"], $emplacement_assurance .$Namefile."_".date("Y").".".$type_assurance)) {
+                    $ClientAssur = $Namefile."_".date("Y").".".$type_assurance;
+                  } else {
+                    echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
+                  }
+
+                $queryAssurance = "INSERT INTO assurance_voiture(id_voiture,prix_assurance,date_fin_assurance,file_assurance) 
+                VALUES ('$ID','$prixassurance','$datefinassurance','$ClientAssur') ";
+                $resultAssurance = mysqli_query($conn, $queryAssurance);
+
+               // insert data in table visite and upload file
+
+               if (move_uploaded_file($_FILES["visitetechniquevoiture"]["tmp_name"], $emplacement_visite .$Namefile."_".date("Y").".".$type_visite)) 
+               {
+                $voiturevisite = $Namefile."_".date("Y").".".$type_visite;
+               } else {
+                echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
+               }
+
+               $queryVisite = "INSERT INTO visite_voiture(id_voiture,prix_visite,date_fin_visite,file_visite) 
+               VALUES ('$ID','$prixvisitetechnique','$datefinvisitetechnique','$voiturevisite') ";
+                $resultVisite = mysqli_query($conn, $queryVisite);
+                // insert data in table vignette and upload file
+
+                if (move_uploaded_file($_FILES["voiturevignette"]["tmp_name"], $emplacement_vignette .$Namefile."_".date("Y").".".$type_vignette)) 
+                {
+                 $voiturevignette = $Namefile."_".date("Y").".".$type_vignette;
                 } else {
-                    echo "<div class='text-echec'>Vous avez rencontré un problème lors de l'ajout du voiture</div>";
+                 echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
                 }
+
+                  $queryVignette = "INSERT INTO vignette_voiture(id_voiture,file_vignette) 
+                VALUES ('$ID','$voiturevignette') ";
+                   $resultVignette = mysqli_query($conn, $queryVignette);
+                   if($resultVoiture && $resultAssurance && $resultVisite && $resultVisite){
+                    echo "<div class='text-checked'>La voiture $msg_insert_succés</div>";
+                }else {
+                    echo "<div class='text-echec'>$msg_insert_echec la voiture</div>";
+                }                  
             }
         }
     }     
@@ -1683,7 +1789,6 @@ function update_voiture_value()
     $up_voiturepuissance = $_POST['up_voiturepuissance'];
     $up_voitureclimatisation = $_POST['up_voitureclimatisation'];
     $up_voiturecartegrise = isset($_FILES['up_voiturecartegrise']) ? $_FILES['up_voiturecartegrise'] : "";
-    $up_voitureassurance = isset($_FILES['up_voitureassurance']) ? $_FILES['up_voitureassurance'] : "";
 
     $voiture_query = "SELECT * FROM voiture where id_voiture = $up_voitureid";
     $voiture_result = mysqli_query($conn, $voiture_query);
@@ -1711,28 +1816,6 @@ function update_voiture_value()
         $up_voiturecartegrise = $voiture["cartegrise_voiture"];
     }
     
-    if($up_voitureassurance != ""){
-        $emplacement_assurance = "uploadfile/voiture/assurance/";
-        $file_assurance = $emplacement_assurance . basename($_FILES["up_voitureassurance"]["name"]);
-        $uploadOk_assurance = 1;
-        $type_assurance = strtolower(pathinfo($file_assurance,PATHINFO_EXTENSION));
-
-        if($type_assurance != "jpg" && $type_assurance != "png" && $type_assurance != "jpeg" && $type_assurance != "gif" ) {
-            $up_voitureassurance = $voiture["assurance_voiture"];
-            echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
-            $uploadOk_assurance = 0;
-        }  
-        if ($uploadOk_assurance != 0) {
-          if (move_uploaded_file($_FILES["up_voitureassurance"]["tmp_name"], $emplacement_assurance .$Namefile.".".$type_assurance)) {
-            $up_voitureassurance = $Namefile.".".$type_assurance;
-          } else {
-            $up_voitureassurance = $voiture["assurance_voiture"];
-            echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
-          }
-        }
-    }else{
-        $up_voitureassurance = $voiture["assurance_voiture"];
-    }
 
     $sql_e = "SELECT * FROM voiture WHERE id_voiture != '$up_voitureid' AND pimm_voiture = '$up_voiturepimm' AND action_voiture = '1'";
     $res_e = mysqli_query($conn, $sql_e);
@@ -1752,7 +1835,6 @@ function update_voiture_value()
                             puissance_voiture = '$up_voiturepuissance',
                             climatisation_voiture = '$up_voitureclimatisation',
                             cartegrise_voiture = '$up_voiturecartegrise',
-                            assurance_voiture = '$up_voitureassurance',
                             date_updated_voiture = '$date'
                         WHERE id_voiture = $up_voitureid";
 
@@ -1786,6 +1868,95 @@ function delete_voiture_record()
     } else {
         echo "<div class='text-echec'>$msg_delete_echec voiture !</div>";
     }
+}
+
+function update_assurance_voiture(){
+    global $conn;
+    global $msg_insert_succés;
+    global $msg_insert_echec;
+    $assurance_voiture_id = $_POST['assurance_voiture_id'];
+    $up_DateFinAssurance = $_POST['up_DateFinAssurance'];
+    $up_prixAssurance = $_POST['up_prixAssurance'];
+    $AssurVoiturePhoto = isset($_FILES['up_assurancephoto']) ? $_FILES['up_assurancephoto'] : "";
+   
+    $emplacement_assurance = "uploadfile/voiture/assurance/";
+    $file_assurance = $emplacement_assurance . basename($_FILES["up_assurancephoto"]["name"]);
+    $uploadOk_assur = 1;
+    $type_assurance = strtolower(pathinfo($file_assurance,PATHINFO_EXTENSION));
+    if($type_assurance != "jpg" && $type_assurance != "png" && $type_assurance != "jpeg" && $type_assurance != "gif" ) {
+        echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+        $uploadOk_assur = 0;
+    }  
+    if ($uploadOk_assur != 0) {
+        $queryPIMM = "SELECT pimm_voiture  
+        FROM voiture 
+        WHERE id_voiture = '$assurance_voiture_id'";
+
+            $RowPIMM = mysqli_query($conn, $queryPIMM);
+            if (mysqli_num_rows($RowPIMM) > 0) {
+            $row = mysqli_fetch_assoc($RowPIMM);
+            $PIMM= $row['pimm_voiture'];
+            $Namefile = md5($PIMM);
+            }
+      if (move_uploaded_file($_FILES["up_assurancephoto"]["tmp_name"], $emplacement_assurance .$Namefile."_".date("Y").".".$type_assurance)) {
+        $ClientAssur = $Namefile."_".date("Y").".".$type_assurance;
+      } else {
+        echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
+      }
+    }
+    if ($uploadOk_assur == 1 ) {
+    $query = "INSERT INTO assurance_voiture(id_voiture,prix_assurance,date_fin_assurance,file_assurance) 
+VALUES ('$assurance_voiture_id','$up_prixAssurance','$up_DateFinAssurance','$ClientAssur') ";
+$result = mysqli_query($conn, $query);
+if($result){
+    echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
+
+    echo "<div class='text-checked'>L'assurance $msg_insert_succés</div>";
+}else {
+    echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
+}}
+}
+function update_visite_technique_voiture(){
+    global $conn;
+    global $msg_insert_succés;
+    global $msg_insert_echec;
+    $visite_voiutre_id = $_POST['visite_voiture_id'];
+    $up_DateFinVisite = $_POST['up_DateFinVisite'];
+    $up_prixVisite = $_POST['up_prixVisite'];
+    $VisiteVoiturePhoto = isset($_FILES['up_visitephoto']) ? $_FILES['up_visitephoto'] : "";
+    $emplacement_visite = "uploadfile/voiture/visite_technique/";
+    $file_visite = $emplacement_visite . basename($_FILES["up_visitephoto"]["name"]);
+    $uploadOk_visite = 1;
+    $type_visite = strtolower(pathinfo($file_visite,PATHINFO_EXTENSION));
+    if($type_visite != "jpg" && $type_visite != "png" && $type_visite != "jpeg" && $type_visite != "gif" ) {
+        echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+        $uploadOk_visite = 0;
+    }  
+    if ($uploadOk_visite != 0) {
+        $queryPIMM = "SELECT pimm_voiture  
+        FROM voiture 
+        WHERE id_voiture = '$visite_voiutre_id'";
+            $RowPIMM = mysqli_query($conn, $queryPIMM);
+            if (mysqli_num_rows($RowPIMM) > 0) {
+            $row = mysqli_fetch_assoc($RowPIMM);
+            $PIMM= $row['pimm_voiture'];
+            $Namefile = md5($PIMM);
+            }
+      if (move_uploaded_file($_FILES["up_visitephoto"]["tmp_name"], $emplacement_visite .$Namefile."_".date("Y").".".$type_visite)) {
+        $ClientVisite = $Namefile."_".date("Y").".".$type_visite;
+      } else {
+        echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
+      }
+    }
+    if ($uploadOk_visite == 1 ) {
+    $query = "INSERT INTO visite_voiture(id_voiture,prix_visite,date_fin_visite,file_visite) 
+VALUES ('$visite_voiutre_id','$up_prixVisite','$up_DateFinVisite','$ClientVisite') ";
+$result = mysqli_query($conn, $query);
+if($result){
+    echo "<div class='text-checked'>La visite technique $msg_insert_succés</div>";
+}else {
+    echo "<div class='text-echec'>$msg_insert_echec la visite technique</div>";
+}}
 }
 
 // Marque Voiture
@@ -2099,7 +2270,6 @@ function display_stockvoiture_record()
             <th class="border-top-1">Localisation</th>
             <th class="border-top-1">Disponibilité</th>
             <th class="border-top-0">Carte grise</th>
-            <th class="border-top-0">Assurance</th>
             <th class="border-top-0">Transfert</th>      
         </tr>
     </thead>
@@ -2140,7 +2310,6 @@ function display_stockvoiture_record()
             <td>' . $row['nom_agence'] . '</td>
             <td style="height: 70px;"><center><div class="'.$class.'">' . $disponibilte . '</div></center></td>
             <td><a href="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '"></a></td>
-            <td><a href="uploadfile/voiture/assurance/' . $row["assurance_voiture"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/assurance/' . $row["assurance_voiture"] . '"></a></td>
             <td>';
             if ($disponibilte != "Loué") {
                 $value .= '<div class="btn-group" role="group">

@@ -37,7 +37,7 @@ if (!isset($_SESSION['Login'])) {
                     <div class="modal-content">
                         <div class="modal-header"  style="background-color: #D71218;" >
                             <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Supprimer Entretien</h5>
-    						<button class="button-close" id="btn-close-x">X</button>
+    						<button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
                         </div>
                         <div class="modal-body">
                             <p>Voulez-vous supprimer l'entretien ?</p>
@@ -57,7 +57,7 @@ if (!isset($_SESSION['Login'])) {
                     <div class="modal-content">
                         <div class="modal-header"  style="background-color: #D71218;" >
                             <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Supprimer Entretien</h5>
-    						<button class="button-close" id="btn-close-x">X</button>
+    						<button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
                         </div>
                         <div>
                             <div class="circlechecked">
@@ -77,7 +77,7 @@ if (!isset($_SESSION['Login'])) {
                     <div class="modal-content">
                         <div class="modal-header"  style="background-color: #D71218;" >
                             <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Supprimer Entretien</h5>
-    						<button class="button-close" id="btn-close-x">X</button>
+    						<button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
                         </div>
                         <div>
                             <div class="circleerror">
@@ -97,7 +97,7 @@ if (!isset($_SESSION['Login'])) {
                     <div class="modal-content">
                         <div class="modal-header" style="background: #D71218;">
                             <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Modifier Entretien</h5>
-                            <button class="button-close" id="btn-close-x">X</button>
+                            <button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
                         </div>
                         <div class="modal-body">
                             <p id="up_message"></p>
@@ -170,7 +170,7 @@ if (!isset($_SESSION['Login'])) {
                     <div class="modal-content">
                         <div class="modal-header"  style="background-color: #D71218;" >
                             <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Modifier Entretien</h5>
-    						<button class="button-close" id="btn-close-x">X</button>
+    						<button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
                         </div>
                         <div>
                             <div class="circlechecked">
@@ -190,7 +190,7 @@ if (!isset($_SESSION['Login'])) {
                     <div class="modal-content">
                         <div class="modal-header"  style="background-color: #D71218;" >
                             <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Modifier Entretien</h5>
-    						<button class="button-close" id="btn-close-x">X</button>
+    						<button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
                         </div>
                         <div>
                             <div class="circleerror">
@@ -210,7 +210,7 @@ if (!isset($_SESSION['Login'])) {
                     <div class="modal-content">
                         <div class="modal-header" style="background: #D71218;">
                             <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Entretien</h5>
-							<button class="button-close" id="btn-close-x">X</button>
+							<button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
 						</div>
                         <div class="modal-body">
                             <p id="message"></p>
@@ -305,7 +305,7 @@ if (!isset($_SESSION['Login'])) {
                     <div class="modal-content">
                         <div class="modal-header"  style="background-color: #D71218;" >
                             <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Entretien</h5>
-    						<button class="button-close" id="btn-close-x">X</button>
+    						<button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
                         </div>
                         <div>
                             <div class="circlechecked">
@@ -325,7 +325,7 @@ if (!isset($_SESSION['Login'])) {
                     <div class="modal-content">
                         <div class="modal-header"  style="background-color: #D71218;" >
                             <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Entretien</h5>
-    						<button class="button-close" id="btn-close-x">X</button>
+    						<button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
                         </div>
                         <div>
                             <div class="circleerror">

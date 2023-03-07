@@ -27,7 +27,7 @@ if (!isset($_SESSION['Login'])) {
                     <div class="modal-content" style="min-height: 440px;">
                         <div class="modal-header"  style="background-color: #D71218;" >
                             <h5 class="modal-title" style="color: white;" id="ModalTitleContratByDay"></h5>
-    						<button class="button-close" id="btn-close-x">X</button>
+    						<button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
                         </div>
                         <div class="modal-body" id="PlanningContratDayListe">			
 
