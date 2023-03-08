@@ -6,6 +6,13 @@ if (!isset($_SESSION['Login'])) {
     include('Gestion_location/inc/header_sidebar.php');
 }
 ?>
+<style>
+    input[type=radio] {
+        width: 20px;
+        height: 20px;
+        accent-color: #BF1616;
+    }
+</style>
 <div class="page-wrapper">
 	<div class="page-content">
 		<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
@@ -120,19 +127,13 @@ if (!isset($_SESSION['Login'])) {
                                     </div>
                                 </div>
 
-                           
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Bloquer location<span class="text-danger">*</span></label>
-                                    <div class="col-md-12 p-0">
-                                        <div>
-                                            <input type="radio" id="UpblockageOUI" name="upblockage" value="1">
-                                            <label for="blockageOUI">OUI</label>
-                                        </div>
-                                        <div>
-                                            <input type="radio" id="UpblockageNON" name="upblockage" value="0">
-                                            <label for="blockageNON">NON</label>
-                                        </div>
-
+                                    <div class="col-md-6 p-0" style="display: flex; gap: 5px; margin-top: 5px;">
+                                        <input type="radio" id="UpblockageOUI" name="upblockage" value="1">
+                                        <label for="UpblockageOUI">OUI</label>
+                                        <input type="radio" id="UpblockageNON" name="upblockage" value="0">
+                                        <label for="UpblockageNON">NON</label>
                                     </div>
                                 </div>
 
@@ -142,8 +143,6 @@ if (!isset($_SESSION['Login'])) {
                                     <textarea id="commentaire_modifie"  class="form-control p-0 border-0"   rows="4" cols="50"></textarea>
                                     </div>
                                 </div>
-
-
 
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Prix (DT)<span class="text-danger">*</span></label>
@@ -232,16 +231,11 @@ if (!isset($_SESSION['Login'])) {
 
                                 <div class="form-group mb-4">
                                     <label class="col-md-12 p-0">Bloquer location<span class="text-danger">*</span></label>
-                                    <div class="col-md-12 p-0">
-                                        <div>
-                                            <input type="radio" id="blockageOUI" name="blockage" value="1" checked>
-                                            <label for="blockageOUI">OUI</label>
-                                        </div>
-                                        <div>
-                                            <input type="radio" id="blockageNON" name="blockage" value="0">
-                                            <label for="blockageNON">NON</label>
-                                        </div>
-
+                                    <div class="col-md-6 p-0" style="display: flex; gap: 5px; margin-top: 5px;">
+                                        <input type="radio" id="blockageOUI" name="blockage" value="1" checked>
+                                        <label for="blockageOUI">OUI</label>
+                                        <input type="radio" id="blockageNON" name="blockage" value="0">
+                                        <label for="blockageNON">NON</label>
                                     </div>
                                 </div>
 

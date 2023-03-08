@@ -11,6 +11,45 @@ if (!isset($_SESSION['Login'])) {
 .form-control {
     border: 0.5px solid #B6B6B6;
 }
+.form-select-simple {
+    border: 0.5px solid #B6B6B6;
+    display:block;
+    width:100%;
+    padding:.375rem .75rem;
+    font-size:1rem;
+    font-weight:400;
+    line-height:1.5;
+    color:#212529;
+    background-color:#ffffff;
+    background-clip:padding-box;
+}
+.select2-container{
+    display:block;
+    width:100%;
+    font-size:1rem;
+    font-weight:500;
+    line-height:1.5;
+    color:#212529;
+    background-color:#ffffff;
+    background-clip:padding-box;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+    line-height: 36px;
+}
+.select2-container .select2-selection--single .select2-selection__rendered{
+    padding-left: 20px !important;
+}
+.select2-container .select2-selection--single {
+    height: 37px !important;
+}
+.select2-container--default .select2-selection--single {
+    border-radius: 2px;
+}
+.select2-selection__arrow {
+    height: 40px !important;
+}
+
 #formAjoutVoiture {
     display: grid !important;
     grid-template-rows: repeat(3, auto);
@@ -261,7 +300,7 @@ input[type=radio] {
                                 <div class="form-group border-bottom mb-4">
                                     <label class="col-md-12 p-0">Marque<span class="text-danger">*</span></label>
                                     <div class="col-md-12">
-                                        <select name="type" id="up_voitureMarqueModel" class="form-control p-0 border-0"
+                                        <select name="type" id="up_voitureMarqueModel" class="form-select-simple"
                                             required>
                                             <option value="0" disabled selected>Selectionner la marque</option>
                                             <?php
@@ -285,7 +324,7 @@ input[type=radio] {
                                             class="text-danger">*</span></label>
                                     <div class="col-md-12">
                                         <select name="type" id="up_voituretypecarburant"
-                                            class="form-control p-0 border-0" required>
+                                            class="form-select-simple" required>
                                             <option value="0" disabled selected>Selectionner le type de carburant
                                             </option>
                                             <?php
@@ -304,7 +343,7 @@ input[type=radio] {
                                             class="text-danger">*</span></label>
                                     <div class="col-md-12">
                                         <select type="text" name="type" id="up_voitureboitevitesse"
-                                            class="form-control p-0 border-0" required>
+                                            class="form-select-simple" required>
                                             <option value="" disabled selected>Selectionner la boite de vitesse</option>
                                             <option value="Manuelle">Manuelle</option>
                                             <option value="Automatique">Automatique</option>
@@ -328,7 +367,7 @@ input[type=radio] {
                                             class="text-danger">*</span></label>
                                     <div class="col-md-12">
                                         <select type="text" name="type" id="up_voiturenbrevalise"
-                                            class="form-control p-0 border-0" required>
+                                            class="form-select-simple" required>
                                             <option value="" disabled selected>Selectionner le nombre de valise</option>
                                             <option value="1">1G + 1P</option>
                                             <option value="2">1G + 2P</option>
@@ -366,7 +405,7 @@ input[type=radio] {
                                 <div class="form-group border-bottom mb-4">
                                     <label class="col-md-12 p-0">Carte grise</label>
                                     <div class="col-md-12">
-                                        <input type="file" id="up_voiturecartegrise" class="form-control p-0 border-0">
+                                        <input type="file" id="up_voiturecartegrise" class="form-control">
                                     </div>
                                 </div>
                             </form>
@@ -432,8 +471,7 @@ input[type=radio] {
                     <div class="modal-content">
                         <div class="modal-header" style="background: #D71218;">
                             <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Voiture</h5>
-                            <button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png"
-                                    alt=""></button>
+                            <button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
                         </div>
                         <div id="bodyAjoutVoiture" class="modal-body">
                             <p id="message"></p>
@@ -448,15 +486,14 @@ input[type=radio] {
                                     <div>
                                         <label>Marque<span class="text-danger">*</span></label>
                                         <div>
-                                            <select style="border: 0.5px solid #B6B6B6;" class="form-select"
-                                                id="voitureMarqueModele" name="voitureMarqueModele" required>
+                                            <select class="form-select" id="voitureMarqueModele" name="voitureMarqueModele" required>
                                                 <option value="0" disabled selected>Selectionner la marque</option>
                                                 <?php
-                                            if ($result->num_rows > 0) {
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo '<option value="' . $row['id_marquevoiture'] . '">' . $row['marque'] .  '  ' . $row['model'] . '</option>';
+                                                if ($result->num_rows > 0) {
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo '<option value="' . $row['id_marquevoiture'] . '">' . $row['marque'] .  '  ' . $row['model'] . '</option>';
+                                                    }
                                                 }
-                                            }
                                             ?>
                                             </select>
                                         </div>
@@ -478,7 +515,6 @@ input[type=radio] {
                                         </div>
                                     </div>
 
-
                                     <div>
                                         <label>Nombre de place<span class="text-danger">*</span></label>
                                         <div>
@@ -494,7 +530,7 @@ input[type=radio] {
                                                 class="text-danger">*</span></label>
                                         <div class="col-md-12">
                                             <select type="text" name="type" id="voitureboitevitesse"
-                                                class="form-control" required>
+                                                class="form-select-simple" required>
                                                 <option value="" disabled selected>Selectionner la boite de vitesse
                                                 </option>
                                                 <option value="Manuelle">Manuelle</option>
@@ -502,18 +538,16 @@ input[type=radio] {
                                             </select>
                                         </div>
                                     </div>
-
-
                                     <?php
-                                include_once('Gestion_location/inc/connect_db.php');
-                                $query = "SELECT * FROM carburant_voiture ORDER BY label_carburant ASC";
-                                $result = mysqli_query($conn, $query);
-                                ?>
+                                        include_once('Gestion_location/inc/connect_db.php');
+                                        $query = "SELECT * FROM carburant_voiture ORDER BY label_carburant ASC";
+                                        $result = mysqli_query($conn, $query);
+                                    ?>
                                     <div class="form-group mb-4">
                                         <label class="col-md-12 p-0">Type carburant<span
                                                 class="text-danger">*</span></label>
                                         <div class="col-md-12">
-                                            <select name="type" id="voituretypecarburant" class="form-control" required>
+                                            <select name="type" id="voituretypecarburant" class="form-select-simple" required>
                                                 <option value="" disabled selected>Selectionner le type de carburant
                                                 </option>
                                                 <?php
@@ -536,18 +570,15 @@ input[type=radio] {
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <div class="rowsName">Options:</div>
-
-
                                 <div id="options">
                                     <div class="form-group mb-4">
                                         <label class="col-md-12 p-0">Nombre de valise<span
                                                 class="text-danger">*</span></label>
                                         <div class="col-md-12">
-                                            <select type="text" name="type" id="voiturenbrevalise" class="form-control"
+                                            <select type="text" name="type" id="voiturenbrevalise" class="form-select-simple"
                                                 required>
                                                 <option value="" disabled selected>Selectionner le nombre de valise
                                                 </option>
@@ -576,9 +607,7 @@ input[type=radio] {
                                     </div>
                                 </div>
 
-
                                 <div class="rowsName">Papier:</div>
-
                                 <div id="papier">
                                     <div id="papier1">
                                         <div class="form-group mb-4 griseVignette">
@@ -597,7 +626,6 @@ input[type=radio] {
                                         </div>
                                     </div>
                                     <div id="papier2">
-
                                         <div class="form-group mb-4">
                                             <label class="col-md-12 p-0 ">Assurance<span
                                                     class="text-danger">*</span></label>
@@ -640,19 +668,17 @@ input[type=radio] {
                                                 <input type="date" id="datefinvisitetechnique" class="numberDate">
                                             </div>
                                         </div>
-
                                     </div>
-
                                 </div>
-                                <div class="rowsName">Agence <span class="text-danger">*</span></div>
-
-                                <div id="agence">
-                                    <?php
+                                
+                                <?php
                                 if($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1"){
                                 include_once('Gestion_location/inc/connect_db.php');
                                 $query = "SELECT * FROM agence WHERE id_agence != '0' AND action_agence = '1' ORDER BY nom_agence ASC";
                                 $result = mysqli_query($conn, $query);
                                 ?>
+                                <div class="rowsName">Agence <span class="text-danger">*</span></div>
+                                <div id="agence">
                                     <div class="form-group mb-4">
                                         <div class="col-md-12">
                                             <select name="voitureagence" id="voitureagence" class="form-control"
@@ -685,7 +711,7 @@ input[type=radio] {
             </div>
             <!-- end Model ajout Voiture -->
 
-            <!-- Model  update visite assurance -->
+            <!-- Model update visite assurance -->
             <div class="modal fade" id="AssuranceVisite" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog" role="document">

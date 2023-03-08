@@ -2198,7 +2198,6 @@ function update_voiture_value()
         $up_voiturecartegrise = $voiture["cartegrise_voiture"];
     }
     
-
     $sql_e = "SELECT * FROM voiture WHERE id_voiture != '$up_voitureid' AND pimm_voiture = '$up_voiturepimm' AND action_voiture = '1'";
     $res_e = mysqli_query($conn, $sql_e);
     if (mysqli_num_rows($res_e) > 0) {
@@ -2271,32 +2270,31 @@ function update_assurance_voiture(){
     }  
     if ($uploadOk_assur != 0) {
         $queryPIMM = "SELECT pimm_voiture  
-        FROM voiture 
-        WHERE id_voiture = '$assurance_voiture_id'";
-
-            $RowPIMM = mysqli_query($conn, $queryPIMM);
-            if (mysqli_num_rows($RowPIMM) > 0) {
+                        FROM voiture 
+                        WHERE id_voiture = '$assurance_voiture_id'";
+        $RowPIMM = mysqli_query($conn, $queryPIMM);
+        if (mysqli_num_rows($RowPIMM) > 0) {
             $row = mysqli_fetch_assoc($RowPIMM);
             $PIMM= $row['pimm_voiture'];
             $Namefile = md5($PIMM);
-            }
-      if (move_uploaded_file($_FILES["up_assurancephoto"]["tmp_name"], $emplacement_assurance .$Namefile."_".date("Y").".".$type_assurance)) {
-        $ClientAssur = $Namefile."_".date("Y").".".$type_assurance;
-      } else {
-        echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
-      }
+        }
+
+        if (move_uploaded_file($_FILES["up_assurancephoto"]["tmp_name"], $emplacement_assurance .$Namefile."_".date("Y").".".$type_assurance)) {
+            $ClientAssur = $Namefile."_".date("Y").".".$type_assurance;
+        } else {
+            echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
+        }
     }
     if ($uploadOk_assur == 1 ) {
-    $query = "INSERT INTO assurance_voiture(id_voiture,prix_assurance,date_fin_assurance,file_assurance) 
-VALUES ('$assurance_voiture_id','$up_prixAssurance','$up_DateFinAssurance','$ClientAssur') ";
-$result = mysqli_query($conn, $query);
-if($result){
-    echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
-
-    echo "<div class='text-checked'>L'assurance $msg_insert_succés</div>";
-}else {
-    echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
-}}
+        $query = "INSERT INTO assurance_voiture(id_voiture,prix_assurance,date_fin_assurance,file_assurance) 
+        VALUES ('$assurance_voiture_id','$up_prixAssurance','$up_DateFinAssurance','$ClientAssur') ";
+        $result = mysqli_query($conn, $query);
+        if($result){
+            echo "<div class='text-checked'>L'assurance $msg_insert_succés</div>";
+        }else {
+            echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
+        }
+    }
 }
 function update_visite_technique_voiture(){
     global $conn;
