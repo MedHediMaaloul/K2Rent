@@ -2284,17 +2284,10 @@ function update_assurance_voiture(){
     }  
     if ($uploadOk_assur != 0) {
         $queryPIMM = "SELECT pimm_voiture  
-<<<<<<< HEAD
-                        FROM voiture 
-                        WHERE id_voiture = '$assurance_voiture_id'";
-        $RowPIMM = mysqli_query($conn, $queryPIMM);
-        if (mysqli_num_rows($RowPIMM) > 0) {
-=======
         FROM voiture 
         WHERE id_voiture = '$assurance_voiture_id'";
             $RowPIMM = mysqli_query($conn, $queryPIMM);
             if (mysqli_num_rows($RowPIMM) > 0) {
->>>>>>> malekmoslah-Sprint4
             $row = mysqli_fetch_assoc($RowPIMM);
             $PIMM= $row['pimm_voiture'];
             $Namefile = md5($PIMM);
@@ -2307,14 +2300,6 @@ function update_assurance_voiture(){
         }
     }
     if ($uploadOk_assur == 1 ) {
-<<<<<<< HEAD
-        $query = "INSERT INTO assurance_voiture(id_voiture,prix_assurance,date_fin_assurance,file_assurance) 
-        VALUES ('$assurance_voiture_id','$up_prixAssurance','$up_DateFinAssurance','$ClientAssur') ";
-        $result = mysqli_query($conn, $query);
-        if($result){
-            echo "<div class='text-checked'>L'assurance $msg_insert_succés</div>";
-        }else {
-=======
 
         $query_update_etat = "UPDATE assurance_voiture
                     SET etat_assurance = '0'
@@ -2331,7 +2316,6 @@ function update_assurance_voiture(){
                 echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
             }
         } else {
->>>>>>> malekmoslah-Sprint4
             echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
         }
     }
