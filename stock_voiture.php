@@ -39,30 +39,11 @@ if (!isset($_SESSION['Login'])) {
     ;
 }
 
-#btn-edit-papier {
-    width: 80px;
-    height: 23px;
-    margin-top: 1.2px;
-    background: #FDA6A6;
-    border-radius: 3px;
-    border: transparent;
-    border-top-left-radius: 17px;
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 15px;
-    color: #BF1616;
-    margin-right: 24px;
-}
-
 #papier {
     display: grid !important;
     grid-template-rows: repeat(2, auto);
 }
 
-#btn-edit-papier:hover {
-    background: #BF1616;
-    color: #FFFFFF;
-}
 
 #papier1 {
     display: grid !important;
@@ -375,15 +356,14 @@ input[type=radio] {
                                     </div>
 
                                 </div>
-                                <div class="rowsName">Agence <span class="text-danger">*</span></div>
-
-                                <div id="agence">
-                                    <?php
+                                <?php
                                 if($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1"){
                                 include_once('Gestion_location/inc/connect_db.php');
                                 $query = "SELECT * FROM agence WHERE id_agence != '0' AND action_agence = '1' ORDER BY nom_agence ASC";
                                 $result = mysqli_query($conn, $query);
                                 ?>
+                                <div class="rowsName">Agence <span class="text-danger">*</span></div>
+                                <div id="agence">
                                     <div class="form-group mb-4">
                                         <div class="col-md-12">
                                             <select name="voitureagence" id="voitureagence" class="form-control"

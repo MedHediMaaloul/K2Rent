@@ -74,6 +74,7 @@
 					<ul>
 						<li> <a href="voiture.php">Liste des voitures</a></li>
 						<li> <a href="marque_voiture.php">Liste des marques</a></li>
+						<li> <a href="papier_voiture.php">Liste des papiers</a></li>
 					</ul>		
 				</li>
                 

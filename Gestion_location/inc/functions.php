@@ -1242,7 +1242,6 @@ function searchUser()
 
     if (isset($_POST['query'])) {
         $search = $_POST['query'];
-
         $query = "SELECT * FROM user
             LEFT JOIN agence ON user.id_agence = agence.id_agence
             LEFT JOIN role_user ON user.role_user = role_user.id_roleuser
@@ -1739,18 +1738,34 @@ function testPapier($idVoiture, &$modalNumb){
     global $conn;
 
     // test papier assurance
+    $queryAssur_lastid="SELECT id_assurancevoiture
+            FROM assurance_voiture
+            WHERE id_voiture='$idVoiture'
+            ORDER BY id_assurancevoiture DESC LIMIT 1";
+    $resultAssur_lastid = mysqli_query($conn, $queryAssur_lastid);
+    $rowAssur_lastid = mysqli_fetch_row($resultAssur_lastid);
+    $Assur_lastid = $rowAssur_lastid[0];
     $queryAssur="SELECT *
             FROM assurance_voiture
-    WHERE (DATE(NOW()) BETWEEN DATE_SUB(date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(date_fin_assurance, INTERVAL 0 DAY))
-    AND id_voiture='$idVoiture'";
+            WHERE (DATE(NOW()) BETWEEN DATE_SUB(date_fin_assurance, INTERVAL 7 DAY) AND DATE_SUB(date_fin_assurance, INTERVAL 0 DAY))
+            AND id_voiture = '$idVoiture'
+            AND id_assurancevoiture = '$Assur_lastid'";
     $resultAssur = mysqli_query($conn, $queryAssur);
 
     // test papier visite technique
+    $queryVisit_lastid="SELECT id_visitevoiture
+            FROM visite_voiture
+            WHERE id_voiture='$idVoiture'
+            ORDER BY id_visitevoiture DESC LIMIT 1";
+    $resultVisit_lastid = mysqli_query($conn, $queryVisit_lastid);
+    $rowVisit_lastid = mysqli_fetch_row($resultVisit_lastid);
+    $Visit_lastid = $rowVisit_lastid[0];
     $queryVisit="SELECT *
-    FROM visite_voiture
-WHERE (DATE(NOW()) BETWEEN DATE_SUB(date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(date_fin_visite, INTERVAL 0 DAY))
-AND id_voiture='$idVoiture'";
-$resultVisit = mysqli_query($conn, $queryVisit);
+        FROM visite_voiture
+        WHERE (DATE(NOW()) BETWEEN DATE_SUB(date_fin_visite, INTERVAL 7 DAY) AND DATE_SUB(date_fin_visite, INTERVAL 0 DAY)) 
+        AND id_voiture='$idVoiture'
+        AND id_visitevoiture = '$Visit_lastid'";
+    $resultVisit = mysqli_query($conn, $queryVisit);
 
     if (mysqli_num_rows($resultAssur) > 0 && mysqli_num_rows($resultVisit) > 0 ) 
     {
@@ -1837,8 +1852,8 @@ function display_voiture_record()
             <td><a href="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/cartegrise/' . $row["cartegrise_voiture"] . '"></a></td>
             <td>
                 <div class="btn-group" role="group">
-                <button '.$papierResult.' title="Modifier papier voiture" id="btn-edit-papier"  papier-id=' . $row['id_voiture'] . ' modal-Numb='.$modalNumb.'>Modifier
-               </button>
+                    <button '.$papierResult.' type="button" title="Modifier papier voiture" class="btn" style="font-size:2px; background:#FDA6A6;" id="btn-edit-papier" papier-id=' . $row['id_voiture'] . ' modal-Numb='.$modalNumb.'> 
+                    <i id="iconpapiers" style="color: #BF1616;" class="lni lni-pencil-alt"></i></button>
                     <button type="button" title="Modifier la voiture" class="btn" style="font-size: 2px;" id="btn-edit-voiture" data-id=' . $row['id_voiture'] . '>
                     <i class="lni lni-pencil-alt iconaction"></i></button>
                     <button type="button" title="Supprimer la voiture" class="btn" style="font-size: 2px;" id="btn-delete-voiture" data-id1=' . $row['id_voiture'] . '>
@@ -2159,7 +2174,6 @@ function update_voiture_value()
     global $conn;
     global $msg_update_succés;
     global $msg_update_echec;
-
     $up_voitureid = $_POST["up_voitureid"];
     $up_voiturepimm = $_POST['up_voiturepimm1']." TU ".$_POST['up_voiturepimm2'];
     $Namefile = md5($up_voiturepimm);
@@ -2273,7 +2287,6 @@ function update_assurance_voiture(){
         $queryPIMM = "SELECT pimm_voiture  
         FROM voiture 
         WHERE id_voiture = '$assurance_voiture_id'";
-
             $RowPIMM = mysqli_query($conn, $queryPIMM);
             if (mysqli_num_rows($RowPIMM) > 0) {
             $row = mysqli_fetch_assoc($RowPIMM);
@@ -2287,17 +2300,27 @@ function update_assurance_voiture(){
       }
     }
     if ($uploadOk_assur == 1 ) {
-    $query = "INSERT INTO assurance_voiture(id_voiture,prix_assurance,date_fin_assurance,file_assurance) 
-VALUES ('$assurance_voiture_id','$up_prixAssurance','$up_DateFinAssurance','$ClientAssur') ";
-$result = mysqli_query($conn, $query);
-if($result){
-    echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
 
-    echo "<div class='text-checked'>L'assurance $msg_insert_succés</div>";
-}else {
-    echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
-}}
+        $query_update_etat = "UPDATE assurance_voiture
+                    SET etat_assurance = '0'
+                    WHERE id_voiture='$assurance_voiture_id'";
+        $result_update_etat = mysqli_query($conn, $query_update_etat);
+
+        if($result_update_etat){
+            $query = "INSERT INTO assurance_voiture(id_voiture,prix_assurance,date_fin_assurance,file_assurance) 
+                        VALUES ('$assurance_voiture_id','$up_prixAssurance','$up_DateFinAssurance','$ClientAssur') ";
+            $result = mysqli_query($conn, $query);
+            if($result) {
+                echo "<div class='text-checked'>L'assurance $msg_insert_succés</div>";
+            } else {
+                echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
+            }
+        } else {
+            echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
+        }
+    }
 }
+
 function update_visite_technique_voiture(){
     global $conn;
     global $msg_insert_succés;
@@ -2331,16 +2354,320 @@ function update_visite_technique_voiture(){
       }
     }
     if ($uploadOk_visite == 1 ) {
-    $query = "INSERT INTO visite_voiture(id_voiture,prix_visite,date_fin_visite,file_visite) 
-VALUES ('$visite_voiutre_id','$up_prixVisite','$up_DateFinVisite','$ClientVisite') ";
-$result = mysqli_query($conn, $query);
-if($result){
-    echo "<div class='text-checked'>La visite technique $msg_insert_succés</div>";
-}else {
-    echo "<div class='text-echec'>$msg_insert_echec la visite technique</div>";
-}}
+        $query_update_etat = "UPDATE visite_voiture
+                    SET 
+                        etat_visite = '0'
+                    WHERE id_voiture='$visite_voiutre_id'";
+        $result_update_etat = mysqli_query($conn, $query_update_etat);
+
+        if($result_update_etat){
+            $query = "INSERT INTO visite_voiture(id_voiture,prix_visite,date_fin_visite,file_visite) 
+                        VALUES ('$visite_voiutre_id','$up_prixVisite','$up_DateFinVisite','$ClientVisite') ";
+            $result = mysqli_query($conn, $query);
+
+            if($result){
+                echo "<div class='text-checked'>La visite technique $msg_insert_succés</div>";
+            }else {
+                echo "<div class='text-echec'>$msg_insert_echec la visite technique</div>";
+            }
+        } else {
+            echo "<div class='text-echec'>$msg_insert_echec l'assurance</div>";
+        }
+    }
 }
 
+
+function viewpapiervoiture(){
+    global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">PIMM</th>
+            <th class="border-top-0">Marque/Modèle</th>';
+            if($id_role !=2){
+                $value .= '<th class="border-top-0">Agence</th>';
+            }
+            $value .= '<th class="border-top-0">Assurance</th>
+            <th class="border-top-0">Vignette</th>
+            <th class="border-top-0">Visite Technique</th>
+            <th class="border-top-0">Actions</th>
+        </tr>
+    </thead>
+    <tbody>';
+    if($id_role == 2){
+        $query = "SELECT V.pimm_voiture,V.id_voiture,M.marque,M.model,A.file_assurance,VN.file_vignette,VT.file_visite
+        FROM voiture AS V
+        LEFT JOIN marque_voiture AS M on M.id_marquevoiture  = V.id_marquemodel
+        LEFT JOIN assurance_voiture AS A on A.id_voiture = V.id_voiture
+        LEFT JOIN vignette_voiture AS VN on VN.id_voiture = V.id_voiture
+        LEFT JOIN visite_voiture AS VT on VT.id_voiture = V.id_voiture 
+        WHERE V.action_voiture='1'
+        AND A.etat_assurance = '1' 
+        AND VN.etat_vignette = '1'
+        AND VT.etat_visite = '1'
+        AND V.id_agence = '$id_agence'
+        ORDER BY V.id_voiture ASC";
+    }else{
+        $query = "SELECT V.pimm_voiture,V.id_voiture,M.marque,M.model,A.file_assurance,VN.file_vignette,VT.file_visite,AG.nom_agence
+        FROM voiture AS V
+        LEFT JOIN marque_voiture AS M on M.id_marquevoiture  = V.id_marquemodel
+        LEFT JOIN assurance_voiture AS A on A.id_voiture = V.id_voiture
+        LEFT JOIN vignette_voiture AS VN on VN.id_voiture = V.id_voiture
+        LEFT JOIN visite_voiture AS VT on VT.id_voiture = V.id_voiture 
+        LEFT JOIN agence AS AG on AG.id_agence = V.id_agence 
+        WHERE V.action_voiture='1'
+        AND A.etat_assurance = '1' 
+        AND VN.etat_vignette = '1'
+        AND VT.etat_visite = '1'   
+        ORDER BY V.id_voiture ASC";
+    }
+    $result = mysqli_query($conn, $query);
+    $i = 1;
+    while ($row = mysqli_fetch_assoc($result)) {  
+        $value .= '<tr>
+                <td>' . $i . '</td>
+                <td>' . $row['pimm_voiture'] . '</td>
+                <td>' . $row['marque'] . ' ' . $row['model'] . '</td>';
+                if($id_role !=2){
+                    $value .= '<td>' . $row['nom_agence'] . '</td>';
+                }
+                $value .= '
+                <td><a href="uploadfile/voiture/assurance/' . $row["file_assurance"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/assurance/' . $row["file_assurance"] . '"></a></td>
+                <td><a href="uploadfile/voiture/vignette/' . $row["file_vignette"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/vignette/' . $row["file_vignette"] . '"></a></td>
+                <td><a href="uploadfile/voiture/visite_technique/' . $row["file_visite"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/visite_technique/' . $row["file_visite"] . '"></a></td>
+                <td>
+                    <button type="button" title="Modifier papier voiture" class="btn" style="font-size: 2px;" id="btn-edit-papiervoiture" data-id=' . $row['id_voiture'] . '>
+                    <i class="lni lni-pencil-alt iconaction"></i></button>
+                </td>
+
+        </tr>';
+        $i += 1;  
+    }
+    $value .= '</table>';
+    echo json_encode(['status' => 'success', 'html' => $value]);
+}
+
+function searchPapierVoiture(){
+
+    global $conn;
+    $id_role = $_SESSION['Role'];
+    $id_agence = $_SESSION['Agence'];
+
+    $value = '<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th class="border-top-0">#</th>
+            <th class="border-top-0">PIMM</th>
+            <th class="border-top-0">Marque/Modèle</th>';
+            if($id_role !=2){
+                $value .= '<th class="border-top-0">Agence</th>';
+            }           
+            $value .= '<th class="border-top-0">Assurance</th>
+            <th class="border-top-0">Vignette</th>   
+            <th class="border-top-0">Visite Technique</th>  
+            <th class="border-top-0">Actions</th>       
+        </tr>
+    </thead>
+    <tbody>';
+    if (isset($_POST['query'])) {
+        $search = $_POST['query'];
+
+        if($id_role == 2){
+            $query = "SELECT V.pimm_voiture,V.id_voiture,M.marque,M.model,A.file_assurance,VN.file_vignette,VT.file_visite
+            FROM voiture AS V
+            LEFT JOIN marque_voiture AS M on M.id_marquevoiture  = V.id_marquemodel
+            LEFT JOIN assurance_voiture AS A on A.id_voiture = V.id_voiture
+            LEFT JOIN vignette_voiture AS VN on VN.id_voiture = V.id_voiture
+            LEFT JOIN visite_voiture AS VT on VT.id_voiture = V.id_voiture 
+            WHERE V.action_voiture='1'
+            AND A.etat_assurance = '1' 
+            AND VN.etat_vignette = '1'
+            AND VT.etat_visite = '1' 
+            AND V.id_agence = '$id_agence'
+            AND (V.pimm_voiture LIKE ('%" . $search . "%')
+                OR M.marque LIKE ('%" . $search . "%') 
+                OR M.model LIKE ('%" . $search . "%'))       
+                ORDER BY V.id_voiture ASC";
+        }else{
+            $query = "SELECT V.pimm_voiture,V.id_voiture,M.marque,M.model,A.file_assurance,VN.file_vignette,VT.file_visite,AG.nom_agence
+            FROM voiture AS V
+            LEFT JOIN marque_voiture AS M on M.id_marquevoiture  = V.id_marquemodel
+            LEFT JOIN assurance_voiture AS A on A.id_voiture = V.id_voiture
+            LEFT JOIN vignette_voiture AS VN on VN.id_voiture = V.id_voiture
+            LEFT JOIN visite_voiture AS VT on VT.id_voiture = V.id_voiture 
+            LEFT JOIN agence AS AG on AG.id_agence = V.id_agence 
+            WHERE V.action_voiture='1'
+            AND A.etat_assurance = '1' 
+            AND VN.etat_vignette = '1'
+            AND VT.etat_visite = '1'  
+            AND (V.pimm_voiture LIKE ('%" . $search . "%')
+                OR M.marque LIKE ('%" . $search . "%') 
+                OR AG.nom_agence LIKE ('%" . $search . "%')
+                OR M.model LIKE ('%" . $search . "%'))       
+                ORDER BY V.id_voiture ASC";
+        }
+
+        $result = mysqli_query($conn, $query);
+        $i = 1;
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $value .= '<tr>
+                <td>' . $i . '</td>
+                <td>' . $row['pimm_voiture'] . '</td>
+                <td>' . $row['marque'] . ' ' . $row['model'] . '</td>';
+                if($id_role !=2){
+                    $value .= '<td>' . $row['nom_agence'] . '</td>';
+                }
+                $value .= '
+                <td><a href="uploadfile/voiture/assurance/' . $row["file_assurance"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/assurance/' . $row["file_assurance"] . '"></a></td>
+                <td><a href="uploadfile/voiture/vignette/' . $row["file_vignette"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/vignette/' . $row["file_vignette"] . '"></a></td>
+                <td><a href="uploadfile/voiture/visite_technique/' . $row["file_visite"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/voiture/visite_technique/' . $row["file_visite"] . '"></a></td>
+                <td>
+                    <button type="button" title="Modifier papier voiture" class="btn" style="font-size: 2px;" id="btn-edit-papiervoiture" data-id=' . $row['id_voiture'] . '>
+                    <i class="lni lni-pencil-alt iconaction"></i></button>
+                </td>
+            </tr>';
+        $i += 1;  
+            }
+            $value .= '</tbody>';
+        } else {
+            $value = '<table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Aucune donnée correspond à votre recherche!</td>
+            </tr>
+            </tbody>';
+        }
+        echo $value;
+    } else {
+        viewpapiervoiture();
+    }
+}
+
+
+function update_papier_voiture(){
+    global $conn;
+    global $msg_update_succés;
+    global $msg_update_echec;
+    $up_voitureid = $_POST['up_voitureid'];
+    $up_voitureassurance = isset($_FILES['up_voitureassurance']) ? $_FILES['up_voitureassurance'] : "";
+    $up_voiturevignette = isset($_FILES['up_voiturevignette']) ? $_FILES['up_voiturevignette'] : "";
+    $up_voiturevisite = isset($_FILES['up_voiturevisite']) ? $_FILES['up_voiturevisite'] : ""; 
+    $year = date('Y');
+
+    $papier_query = "SELECT V.pimm_voiture,A.file_assurance,VN.file_vignette,VT.file_visite
+        FROM voiture AS V
+        LEFT JOIN marque_voiture AS M on M.id_marquevoiture  = V.id_marquemodel
+        LEFT JOIN assurance_voiture AS A on A.id_voiture = V.id_voiture
+        LEFT JOIN vignette_voiture AS VN on VN.id_voiture = V.id_voiture
+        LEFT JOIN visite_voiture AS VT on VT.id_voiture = V.id_voiture 
+        WHERE V.id_voiture='$up_voitureid'
+        AND A.etat_assurance = '1' 
+        AND VN.etat_vignette = '1'
+        AND VT.etat_visite = '1'";
+    $papier_result = mysqli_query($conn, $papier_query);
+    $papier = mysqli_fetch_assoc($papier_result);
+    $pimm = $papier["pimm_voiture"];
+    $Namefile = md5($pimm)."_".$year;
+    if($up_voitureassurance != ""){
+        $emplacement_assurance = "uploadfile/voiture/assurance/";
+        $file_assurance = $emplacement_assurance . basename($_FILES["up_voitureassurance"]["name"]);
+        $uploadOk_assurance = 1;
+        $type_assurance = strtolower(pathinfo($file_assurance,PATHINFO_EXTENSION));
+        if($type_assurance != "jpg" && $type_assurance != "png" && $type_assurance != "jpeg" && $type_assurance != "gif" ) {
+            $up_voitureassurance = $papier["file_assurance"];
+            echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+            $uploadOk_assurance = 0;
+        }  
+        if ($uploadOk_assurance != 0) {
+          if (move_uploaded_file($_FILES["up_voitureassurance"]["tmp_name"], $emplacement_assurance .$Namefile.".".$type_assurance)) {
+            $up_voitureassurance = $Namefile.".".$type_assurance;
+          } else {
+            $up_voitureassurance = $papier["file_assurance"];
+            echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
+          }
+        }
+    }else{
+        $up_voitureassurance = $papier["file_assurance"];
+    }
+
+    if($up_voiturevignette != ""){
+        $emplacement_vignette = "uploadfile/voiture/vignette/";
+        $file_vignette = $emplacement_vignette . basename($_FILES["up_voiturevignette"]["name"]);
+        $uploadOk_vignette = 1;
+        $type_vignette = strtolower(pathinfo($file_vignette,PATHINFO_EXTENSION));
+        if($type_vignette != "jpg" && $type_vignette != "png" && $type_vignette != "jpeg" && $type_vignette != "gif" ) {
+            $up_voiturevignette = $papier["file_vignette"];
+            echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+            $uploadOk_vignette = 0;
+        }  
+        if ($uploadOk_vignette != 0) {
+          if (move_uploaded_file($_FILES["up_voiturevignette"]["tmp_name"], $emplacement_vignette .$Namefile.".".$type_vignette)) {
+            $up_voiturevignette = $Namefile.".".$type_vignette;
+          } else {
+            $up_voiturevignette = $papier["file_vignette"];
+            echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
+          }
+        }
+    }else{
+        $up_voiturevignette = $papier["file_vignette"];
+    }
+
+    if($up_voiturevisite != ""){
+        $emplacement_visite = "uploadfile/voiture/visite_technique/";
+        $file_visite = $emplacement_visite . basename($_FILES["up_voiturevisite"]["name"]);
+        $uploadOk_visite = 1;
+        $type_visite = strtolower(pathinfo($file_visite,PATHINFO_EXTENSION));
+        if($type_visite != "jpg" && $type_visite != "png" && $type_visite != "jpeg" && $type_visite != "gif" ) {
+            $up_voiturevisite = $papier["file_visite"];
+            echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+            $uploadOk_visite = 0;
+        }  
+        if ($uploadOk_visite != 0) {
+          if (move_uploaded_file($_FILES["up_voiturevisite"]["tmp_name"], $emplacement_visite .$Namefile.".".$type_visite)) {
+            $up_voiturevisite = $Namefile.".".$type_visite;
+          } else {
+            $up_voiturevisite = $papier["file_visite"];
+            echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
+          }
+        }
+    }else{
+        $up_voiturevisite = $papier["file_visite"];
+    }  
+    $query_visite = "UPDATE visite_voiture 
+    SET file_visite = '$up_voiturevisite'
+    WHERE id_voiture = '$up_voitureid'
+    AND etat_visite = '1'";
+
+    $query_vignette = "UPDATE vignette_voiture 
+    SET file_vignette = '$up_voiturevignette'
+    WHERE id_voiture = '$up_voitureid'
+    AND etat_vignette = '1'";
+
+     $query_assurance = "UPDATE assurance_voiture 
+     SET file_assurance = '$up_voitureassurance'
+     WHERE id_voiture = '$up_voitureid'
+     AND etat_assurance = '1' ";
+     
+     $update_assurance = mysqli_query($conn, $query_assurance);
+     $update_visite = mysqli_query($conn, $query_visite);
+    $update_vignette = mysqli_query($conn, $query_vignette);
+    if (!$update_assurance || !$update_vignette || !$update_visite) {
+        echo "<div class='text-echec'>$msg_update_echec voiture !</div>";
+        return;
+    } else {
+        echo "<div class='text-checked'>La voiture $msg_update_succés</div>";
+        return;
+    }
+}
 // Marque Voiture
 
 function display_marquevoiture_record()
