@@ -77,32 +77,10 @@ if (!isset($_SESSION['Login'])) {
     color: rgba(191, 22, 22, 1);
     ;
 }
-
-#btn-edit-papier {
-    width: 80px;
-    height: 23px;
-    margin-top: 1.2px;
-    background: #FDA6A6;
-    border-radius: 3px;
-    border: transparent;
-    border-top-left-radius: 17px;
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 15px;
-    color: #BF1616;
-    margin-right: 24px;
-}
-
 #papier {
     display: grid !important;
     grid-template-rows: repeat(2, auto);
 }
-
-#btn-edit-papier:hover {
-    background: #BF1616;
-    color: #FFFFFF;
-}
-
 #papier1 {
     display: grid !important;
     grid-template-columns: repeat(2, auto);
@@ -122,6 +100,22 @@ if (!isset($_SESSION['Login'])) {
     align-items: center;
     gap: 2%;
 }
+#btn-edit-papier{
+    margin-right:18px !important;
+    border-radius: 0.25rem;
+    style="font-size: 2px;
+    background: #FDA6A6;
+    padding: 0% 0% 0% 0% !important;
+    height: 28px;
+    padding-left: 7px !important;"
+}
+#btn-edit-papier:hover{
+    background:#BF1616 !important ;
+}
+
+#btn-edit-papier:hover #iconpapiers{
+    color:white !important;
+}
 
 .modal-content {
     border-radius: 23px 23px 0px 0px !important;
@@ -130,20 +124,17 @@ if (!isset($_SESSION['Login'])) {
 .modal-header {
     border-radius: 22px 22px 0px 0px !important;
 }
-
 #PIMM {
     display: flex;
     gap: 5%;
     justify-content: center;
     align-items: center;
 }
-
 .pimm {
     border: 0.5px solid #B6B6B6;
     border-radius: 0.25rem;
     padding: 0.47rem 0.75rem;
 }
-
 .numberDate {
     width: 100%;
     padding: 0.47rem 0.75rem;
@@ -159,9 +150,30 @@ input[type=radio] {
 
 #buttonMenu {
     display: flex !important;
-    justify-content: space-around;
+    justify-content: center;
     margin-top: 10%;
     margin-bottom: 10%;
+}
+.btn-secondary{
+    background: #F1F1F1;
+border-radius: 3px;
+font-weight: 600;
+font-size: 14px;
+line-height: 18px;
+color: #6C6C6C;
+border-color: transparent;
+}
+.btn-secondary:hover{
+    background: #BF1616; 
+    border-color: transparent;
+}
+
+.btn-secondary:focus{
+    border-radius: 4%;
+    background: #BF1616;
+border-radius: 3px;
+border-color: #BF1616;
+box-shadow: none;
 }
 </style>
 <div class="page-wrapper">
@@ -177,8 +189,8 @@ input[type=radio] {
             <div class="ms-auto">
                 <div id="div1">
                     <div class="input-group">
-                        <input type="input" class="form-control search-control" style="border: 1px solid #ffffff;" placeholder="Que recherchez-vous?"
-                            id="searchVoiture">
+                        <input type="input" class="form-control search-control" style="border: 1px solid #ffffff;"
+                            placeholder="Que recherchez-vous?" id="searchVoiture">
                         <span class="position-absolute top-50 search-show translate-middle-y"><i
                                 class='bx bx-search'></i></span>
                     </div>

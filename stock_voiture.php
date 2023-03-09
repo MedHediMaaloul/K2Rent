@@ -83,6 +83,10 @@ if (!isset($_SESSION['Login'])) {
     grid-template-rows: repeat(2, auto);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> malekmoslah-Sprint4
 #papier1 {
     display: grid !important;
     grid-template-columns: repeat(2, auto);
