@@ -19,6 +19,45 @@ include('Gestion_location/inc/connect_db.php');
 .form-control {
     border: 0.5px solid #B6B6B6;
 }
+.form-select-simple {
+    border: 0.5px solid #B6B6B6;
+    display:block;
+    width:100%;
+    padding:.375rem .75rem;
+    font-size:1rem;
+    font-weight:400;
+    line-height:1.5;
+    color:#212529;
+    background-color:#ffffff;
+    background-clip:padding-box;
+}
+.select2-container{
+    display:block;
+    width:100%;
+    font-size:1rem;
+    font-weight:500;
+    line-height:1.5;
+    color:#212529;
+    background-color:#ffffff;
+    background-clip:padding-box;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+    line-height: 36px;
+}
+.select2-container .select2-selection--single .select2-selection__rendered{
+    padding-left: 20px !important;
+}
+.select2-container .select2-selection--single {
+    height: 37px !important;
+}
+.select2-container--default .select2-selection--single {
+    border-radius: 2px;
+}
+.select2-selection__arrow {
+    height: 40px !important;
+}
+
 #formAjoutVoiture {
     display: grid !important;
     grid-template-rows: repeat(3, auto);
@@ -458,262 +497,253 @@ input[type=radio] {
                 </div>
             </div>
         </div>
-        <!-- Model ajout Voiture -->
-        <div class="modal fade bd-example-modal-lg" id="Registration-Voiture" tabindex="-1" role="dialog"
-            aria-labelledby="myLargeModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header" style="background: #D71218;">
-                        <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Voiture</h5>
-                        <button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png"
-                                alt=""></button>
-                    </div>
-                    <div id="bodyAjoutVoiture" class="modal-body">
-                        <p id="message"></p>
-                        <form id="formAjoutVoiture" autocomplete="off" class="form-horizontal form-material">
-
-                            <div class="rowsName">Fiche technique:</div>
-
-                            <div id="fiche_technique">
-                                <?php
-                                include_once('Gestion_location/inc/connect_db.php');
-                                $query = "SELECT * FROM marque_voiture WHERE action_marquevoiture = '1' ORDER BY marque ASC";
-                                $result = mysqli_query($conn, $query);
-                                ?>
-                                <div>
-                                    <label>Marque<span class="text-danger">*</span></label>
+         <!-- Model ajout Voiture -->
+         <div class="modal fade bd-example-modal-lg" id="Registration-Voiture" tabindex="-1" role="dialog"
+                aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background: #D71218;">
+                            <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Voiture</h5>
+                            <button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
+                        </div>
+                        <div id="bodyAjoutVoiture" class="modal-body">
+                            <p id="message"></p>
+                            <form id="formAjoutVoiture" autocomplete="off" class="form-horizontal form-material">
+                                <div class="rowsName">Fiche technique:</div>
+                                <div id="fiche_technique">
+                                    <?php
+                                        include_once('Gestion_location/inc/connect_db.php');
+                                        $query = "SELECT * FROM marque_voiture WHERE action_marquevoiture = '1' ORDER BY marque ASC";
+                                        $result = mysqli_query($conn, $query);
+                                    ?>
                                     <div>
-                                        <select style="border: 0.5px solid #B6B6B6;" class="form-select"
-                                            id="voitureMarqueModele" name="voitureMarqueModele" required>
-                                            <option value="0" disabled selected>Selectionner la marque</option>
-                                            <?php
-                                            if ($result->num_rows > 0) {
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo '<option value="' . $row['id_marquevoiture'] . '">' . $row['marque'] .  '  ' . $row['model'] . '</option>';
+                                        <label>Marque<span class="text-danger">*</span></label>
+                                        <div>
+                                            <select class="form-select" id="voitureMarqueModele" name="voitureMarqueModele" required>
+                                                <option value="0" disabled selected>Selectionner la marque</option>
+                                                <?php
+                                                if ($result->num_rows > 0) {
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo '<option value="' . $row['id_marquevoiture'] . '">' . $row['marque'] .  '  ' . $row['model'] . '</option>';
+                                                    }
                                                 }
-                                            }
                                             ?>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label style="margin-left: 13%;">Immatriculation<span
-                                            class="text-danger">*</span></label>
-                                    <div id="PIMM">
-                                        <div id="divimmm1">
-                                            <input class="pimm" type="number" style="width:80px" id="voiturepimm1"
-                                                placeholder="9999">
-                                        </div>
-                                        <div id="divtuu">TU</div>
-                                        <div id="divimmm2">
-                                            <input class="pimm" type="number" style="width:80px" id="voiturepimm2"
-                                                placeholder="9999">
+                                            </select>
                                         </div>
                                     </div>
-                                </div>
 
-
-                                <div>
-                                    <label>Nombre de place<span class="text-danger">*</span></label>
                                     <div>
-                                        <div id="divimmm1" class="inputstyle">
-                                            <input type="number" id="voiturenbreplace" placeholder="5"
-                                                class="numberDate">
+                                        <label style="margin-left: 13%;">Immatriculation<span
+                                                class="text-danger">*</span></label>
+                                        <div id="PIMM">
+                                            <div id="divimmm1">
+                                                <input class="pimm" type="number" style="width:80px" id="voiturepimm1"
+                                                    placeholder="9999">
+                                            </div>
+                                            <div id="divtuu">TU</div>
+                                            <div id="divimmm2">
+                                                <input class="pimm" type="number" style="width:80px" id="voiturepimm2"
+                                                    placeholder="9999">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Boite de vitesse<span
-                                            class="text-danger">*</span></label>
-                                    <div class="col-md-12">
-                                        <select type="text" name="type" id="voitureboitevitesse" class="form-control"
-                                            required>
-                                            <option value="" disabled selected>Selectionner la boite de vitesse
-                                            </option>
-                                            <option value="Manuelle">Manuelle</option>
-                                            <option value="Automatique">Automatique</option>
-                                        </select>
+                                    <div>
+                                        <label>Nombre de place<span class="text-danger">*</span></label>
+                                        <div>
+                                            <div id="divimmm1" class="inputstyle">
+                                                <input type="number" id="voiturenbreplace" placeholder="5"
+                                                    class="numberDate">
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
 
-
-                                <?php
-                                include_once('Gestion_location/inc/connect_db.php');
-                                $query = "SELECT * FROM carburant_voiture ORDER BY label_carburant ASC";
-                                $result = mysqli_query($conn, $query);
-                                ?>
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Type carburant<span
-                                            class="text-danger">*</span></label>
-                                    <div class="col-md-12">
-                                        <select name="type" id="voituretypecarburant" class="form-control" required>
-                                            <option value="" disabled selected>Selectionner le type de carburant
-                                            </option>
-                                            <?php
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">Boite de vitesse<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-12">
+                                            <select type="text" name="type" id="voitureboitevitesse"
+                                                class="form-select-simple" required>
+                                                <option value="" disabled selected>Selectionner la boite de vitesse
+                                                </option>
+                                                <option value="Manuelle">Manuelle</option>
+                                                <option value="Automatique">Automatique</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <?php
+                                        include_once('Gestion_location/inc/connect_db.php');
+                                        $query = "SELECT * FROM carburant_voiture ORDER BY label_carburant ASC";
+                                        $result = mysqli_query($conn, $query);
+                                    ?>
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">Type carburant<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-12">
+                                            <select name="type" id="voituretypecarburant" class="form-select-simple" required>
+                                                <option value="" disabled selected>Selectionner le type de carburant
+                                                </option>
+                                                <?php
                                             if ($result->num_rows > 0) {
                                                 while ($row = $result->fetch_assoc()) {
                                                     echo '<option value="' . $row['id_carburantvoiture'] . '">' . $row['label_carburant'] . '</option>';
                                                 }
                                             }
                                             ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Puissance (CV)<span
-                                            class="text-danger">*</span></label>
-                                    <div class="col-md-12 p-0">
-                                        <div id="divimmm1">
-                                            <input type="number" id="voiturepuissance" placeholder="4"
-                                                class="numberDate">
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="rowsName">Options:</div>
-
-
-                            <div id="options">
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12 p-0">Nombre de valise<span
-                                            class="text-danger">*</span></label>
-                                    <div class="col-md-12">
-                                        <select type="text" name="type" id="voiturenbrevalise" class="form-control"
-                                            required>
-                                            <option value="" disabled selected>Selectionner le nombre de valise
-                                            </option>
-                                            <option value="1">1G + 1P</option>
-                                            <option value="2">1G + 2P</option>
-                                            <option value="3">2G + 1P</option>
-                                            <option value="4">2G + 2P</option>
-                                            <option value="5">3G + 1P</option>
-                                            <option value="6">3G + 2P</option>
-                                            <option value="7">3G + 3P</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group mb-4">
-                                    <label class="col-md-12">Air conditionné<span class="text-danger">*</span></label>
-                                    <div class="col-md-12" style="display: flex; gap: 10px; margin-top: 7px;">
-                                        <input type="radio" id="voitureavecclim" name="voitureclim" value="1" checked>
-                                        <label for="voitureavecclim">OUI</label>
-                                        <input type="radio" id="voituresansclim" name="voitureclim" value="0">
-                                        <label for="voituresansclim">NON</label>
-
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="rowsName">Papier:</div>
-
-                            <div id="papier">
-                                <div id="papier1">
-                                    <div class="form-group mb-4 griseVignette">
-                                        <label class="col-md-12  ">Carte grise<span class="text-danger">*</span></label>
-                                        <div class="col-md-12">
-                                            <input type="file" id="voiturecartegrise" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4 griseVignette">
-                                        <label class="col-md-12 p-0 ">Vignette<span class="text-danger">*</span></label>
-                                        <div class="col-md-12">
-                                            <input type="file" id="voiturevignette" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="papier2">
-
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0 ">Assurance<span
-                                                class="text-danger">*</span></label>
-                                        <div class="col-md-12">
-                                            <input type="file" id="voitureassurance" class="form-control">
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Prix assurance<span
+                                        <label class="col-md-12 p-0">Puissance (CV)<span
                                                 class="text-danger">*</span></label>
-                                        <div class="col-md-12">
-                                            <input type="number" id="prixassurance" class="numberDate">
+                                        <div class="col-md-12 p-0">
+                                            <div id="divimmm1">
+                                                <input type="number" id="voiturepuissance" placeholder="4"
+                                                    class="numberDate">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Date fin assurance<span
-                                                class="text-danger">*</span></label>
-                                        <div class="col-md-12">
-                                            <input type="date" id="datefinassurance" class="numberDate">
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0 ">Visite technique<span
-                                                class="text-danger">*</span></label>
-                                        <div class="col-md-12">
-                                            <input type="file" id="visitetechniquevoiture" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Prix visite technique<span
-                                                class="text-danger">*</span></label>
-                                        <div class="col-md-12">
-                                            <input type="number" id="prixvisitetechnique" class="numberDate">
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4">
-                                        <label class="col-md-12 p-0">Date fin visite technique<span
-                                                class="text-danger">*</span></label>
-                                        <div class="col-md-12">
-                                            <input type="date" id="datefinvisitetechnique" class="numberDate">
-                                        </div>
-                                    </div>
-
                                 </div>
 
-                            </div>
-                            <div class="rowsName">Agence <span class="text-danger">*</span></div>
+                                <div class="rowsName">Options:</div>
+                                <div id="options">
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">Nombre de valise<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-12">
+                                            <select type="text" name="type" id="voiturenbrevalise" class="form-select-simple"
+                                                required>
+                                                <option value="" disabled selected>Selectionner le nombre de valise
+                                                </option>
+                                                <option value="1">1G + 1P</option>
+                                                <option value="2">1G + 2P</option>
+                                                <option value="3">2G + 1P</option>
+                                                <option value="4">2G + 2P</option>
+                                                <option value="5">3G + 1P</option>
+                                                <option value="6">3G + 2P</option>
+                                                <option value="7">3G + 3P</option>
+                                            </select>
+                                        </div>
+                                    </div>
 
-                            <div id="agence">
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12">Air conditionné<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-12" style="display: flex; gap: 10px; margin-top: 7px;">
+                                            <input type="radio" id="voitureavecclim" name="voitureclim" value="1"
+                                                checked>
+                                            <label for="voitureavecclim">OUI</label>
+                                            <input type="radio" id="voituresansclim" name="voitureclim" value="0">
+                                            <label for="voituresansclim">NON</label>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="rowsName">Papier:</div>
+                                <div id="papier">
+                                    <div id="papier1">
+                                        <div class="form-group mb-4 griseVignette">
+                                            <label class="col-md-12  ">Carte grise<span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-md-12">
+                                                <input type="file" id="voiturecartegrise" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-4 griseVignette">
+                                            <label class="col-md-12 p-0 ">Vignette<span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-md-12">
+                                                <input type="file" id="voiturevignette" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="papier2">
+                                        <div class="form-group mb-4">
+                                            <label class="col-md-12 p-0 ">Assurance<span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-md-12">
+                                                <input type="file" id="voitureassurance" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-4">
+                                            <label class="col-md-12 p-0">Prix assurance<span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-md-12">
+                                                <input type="number" id="prixassurance" class="numberDate">
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-4">
+                                            <label class="col-md-12 p-0">Date fin assurance<span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-md-12">
+                                                <input type="date" id="datefinassurance" class="numberDate">
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-4">
+                                            <label class="col-md-12 p-0 ">Visite technique<span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-md-12">
+                                                <input type="file" id="visitetechniquevoiture" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-4">
+                                            <label class="col-md-12 p-0">Prix visite technique<span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-md-12">
+                                                <input type="number" id="prixvisitetechnique" class="numberDate">
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-4">
+                                            <label class="col-md-12 p-0">Date fin visite technique<span
+                                                    class="text-danger">*</span></label>
+                                            <div class="col-md-12">
+                                                <input type="date" id="datefinvisitetechnique" class="numberDate">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <?php
                                 if($_SESSION['Role'] == "0" || $_SESSION['Role'] == "1"){
                                 include_once('Gestion_location/inc/connect_db.php');
                                 $query = "SELECT * FROM agence WHERE id_agence != '0' AND action_agence = '1' ORDER BY nom_agence ASC";
                                 $result = mysqli_query($conn, $query);
                                 ?>
-                                <div class="form-group mb-4">
-                                    <div class="col-md-12">
-                                        <select name="voitureagence" id="voitureagence" class="form-control" required>
-                                            <option value="" disabled selected>Selectionner l'agence</option>
-                                            <?php
+                                <div class="rowsName">Agence <span class="text-danger">*</span></div>
+                                <div id="agence">
+                                    <div class="form-group mb-4">
+                                        <div class="col-md-12">
+                                            <select name="voitureagence" id="voitureagence" class="form-control"
+                                                required>
+                                                <option value="" disabled selected>Selectionner l'agence</option>
+                                                <?php
                                                 if ($result->num_rows > 0) {
                                                     while ($row = $result->fetch_assoc()) {
                                                         echo '<option value="' . $row['id_agence'] . '">' . $row['nom_agence'] . '</option>';
                                                     }
                                                 }
                                                 ?>
-                                        </select>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <?php
+                                <?php
                                 }
                                 ?>
-                        </form>
-                    </div>
-                    <div class="modal-footer" style="margin-top:5%;">
-                        <div style="float: right;">
-                            <button class="buttonvalidate" id="btn-register-voiture">Ajouter</button>
-                            <button class="buttonechec" id="btn-close">Annuler</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer" style="margin-top:5%;">
+                            <div style="float: right;">
+                                <button class="buttonvalidate" id="btn-register-voiture">Ajouter</button>
+                                <button class="buttonechec" id="btn-close">Annuler</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- end Model ajout Voiture -->
+            <!-- end Model ajout Voiture -->
+
         <!-- Model alert ajout succès -->
         <div class="modal fade" id="SuccessAddVoiture" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
