@@ -34,6 +34,7 @@ $(document).ready(function () {
   view_client_record();
   searchClient();
   insertClientRecord();
+  get_papierclient_record();
   get_client_record();
   update_client_record();
   delete_client_record();
@@ -158,6 +159,25 @@ function refreshImage(imgElement){
   img.src = imgURL + queryString;    
 }      
  
+function selectpiecejointe(data) {
+  if (data == "1") {
+    $("#cin").show();
+    $("#passport").hide();
+  } else {
+    $("#passport").show();
+    $("#cin").hide();
+  }
+}
+
+function updatepiecejointe(data) {
+  if (data == "1") {
+    $("#up_cin").show();
+    $("#up_passport").hide();
+  } else {
+    $("#up_passport").show();
+    $("#up_cin").hide();
+  }
+}
 // Login
 
 function login(){
@@ -952,27 +972,82 @@ function insertClientRecord() {
   });
   $(document).on("click", "#btn-register-client", function () {
     $("#Registration-Client").scrollTop(0);
-    var ClientName = $("#clientName").val();
+    var clientNom = $("#clientNom").val();
+    var clientPrenom = $("#clientPrenom").val();
+    var ClientDateNaissance = $("#clientDateNaissance").val();
+    var ClientLieuNaissance = $("#clientLieuNaissance").val();
     var ClientEmail = $("#clientEmail").val();
     var ClientPhone = $("#clientPhone").val();
     var ClientAdresse = $("#clientAdresse").val();
-    var ClientCIN = $("#clientCIN").prop("files")[0];
+    // informations papiers
+    // CIN
+    var ClientNumCin = $("#clientNumCin").val();
+    var ClientDateCin = $("#clientDateCin").val();
+    var ClientRectoCin = $("#clientRectoCin").prop("files")[0];
+    var ClientVersoCin = $("#clientVersoCin").prop("files")[0];
+    // Passport
+    var ClientNumPassport = $("#clientNumPassport").val();
+    var ClientDatePassport = $("#clientDatePassport").val();
+    var ClientPassport = $("#clientPassport").prop("files")[0];
+    // Permis
+    var ClientNumPermis = $("#clientNumPermis").val();
+    var ClientDatePermis = $("#clientDatePermis").val();
+    var clientLieuPermis = $("#clientLieuPermis").val();
     var ClientPermis = $("#clientPermis").prop("files")[0];
-    if (ClientName == "" || ClientEmail == "" || ClientPhone == "" || ClientAdresse == "" || ClientCIN == null || ClientPermis == null) {
+    
+    // Choix du papier
+    const radioPieces = document.querySelectorAll('input[name="Piece"]');
+    let Piece;
+    for (const radioPiece of radioPieces) {
+        if (radioPiece.checked) {
+            Piece = radioPiece.value;
+            break;
+        }
+    }
+
+    if (clientNom == "" || clientPrenom == "" || ClientDateNaissance == "" || ClientLieuNaissance == "" || ClientEmail == "" || ClientPhone == "" || ClientAdresse == "") {
       $("#message_client")
         .addClass("alert alert-danger")
-        .html("Veuillez remplir tous les champs obligatoires !");
+        .html("Veuillez remplir les champs des informations personnelles !");
+    } else if (Piece == undefined) {
+      $("#message_client")
+        .addClass("alert alert-danger")
+        .html("Veuillez choisir la pièce d'identité !");
+    } else if (Piece == 1 && (ClientNumCin == "" || ClientDateCin == "" || ClientRectoCin == null || ClientVersoCin == null)) {
+      $("#message_client")
+        .addClass("alert alert-danger")
+        .html("Veuillez vérifier les champs du CIN !");
+    } else if (Piece == 0 && (ClientNumPassport == "" || ClientDatePassport == "" || ClientPassport == null)) {
+      $("#message_client")
+        .addClass("alert alert-danger")
+        .html("Veuillez vérifier les champs du passport !");
+    } else if (ClientNumPermis == "" || ClientDatePermis == "" || clientLieuPermis == "" || ClientPermis == null) {
+      $("#message_client")
+        .addClass("alert alert-danger")
+        .html("Veuillez vérifier les champs du permis !");
     } else if (!isValidEmailAddress(ClientEmail)) {
       $("#message_client")
         .addClass("alert alert-danger")
         .html("le champ « email » est invalide");
     } else {
       var form_data = new FormData();
-      form_data.append("ClientName", ClientName);
+      form_data.append("clientNom", clientNom);
+      form_data.append("clientPrenom", clientPrenom);
+      form_data.append("ClientDateNaissance", ClientDateNaissance);
+      form_data.append("ClientLieuNaissance", ClientLieuNaissance);
       form_data.append("ClientEmail", ClientEmail);
       form_data.append("ClientPhone", ClientPhone);
       form_data.append("ClientAdresse", ClientAdresse);
-      form_data.append("ClientCIN", ClientCIN);
+      form_data.append("ClientNumCin", ClientNumCin);
+      form_data.append("ClientDateCin", ClientDateCin);
+      form_data.append("ClientRectoCin", ClientRectoCin);
+      form_data.append("ClientVersoCin", ClientVersoCin);
+      form_data.append("ClientNumPassport", ClientNumPassport);
+      form_data.append("ClientDatePassport", ClientDatePassport);
+      form_data.append("ClientPassport", ClientPassport);
+      form_data.append("ClientNumPermis", ClientNumPermis);
+      form_data.append("ClientDatePermis", ClientDatePermis);
+      form_data.append("clientLieuPermis", clientLieuPermis);
       form_data.append("ClientPermis", ClientPermis);
       $.ajax({
         url: "AjoutClient.php",
@@ -1020,6 +1095,27 @@ function insertClientRecord() {
   });
 }
 
+function get_papierclient_record() {
+  $(document).on("click", "#btn-show-papierclient", function () {
+    var ID = $(this).attr("data-id");
+    $.ajax({
+      url: "get_papierclient_data.php",
+      method: "post",
+      data: {
+        ClientID: ID
+      },
+      dataType: "JSON",
+      success: function (data) {
+        $("#cin_recto").html('<a href="uploadfile/client/cin/'+data[0]+'" target="_blank"><img width="100%" height="150px" src="uploadfile/client/cin/'+data[0]+'">Recto</a>');
+        $("#cin_verso").html('<a href="uploadfile/client/cin/'+data[1]+'" target="_blank"><img width="100%" height="150px" src="uploadfile/client/cin/'+data[1]+'">Verso</a>');
+        $("#file_passport").html('<a href="uploadfile/client/passport/'+data[2]+'" target="_blank"><img width="100%" height="150px" src="uploadfile/client/passport/'+data[2]+'"></a>');
+        $("#permis").html('<a href="uploadfile/client/permis/'+data[3]+'" target="_blank"><img width="100%" height="150px" src="uploadfile/client/permis/'+data[3]+'"></a>');
+        $("#papierClient").modal("show");
+      },
+    });
+  });
+}
+
 function get_client_record() {
   $(document).on("click", "#btn-edit-client", function () {
     var ID = $(this).attr("data-id");
@@ -1032,11 +1128,23 @@ function get_client_record() {
       dataType: "JSON",
       success: function (data) {
         $("#up_idclient").val(data[0]);
-        $("#up_clientName").val(data[1]);
-        $("#up_clientEmail").val(data[2]);
-        $("#up_clientPhone").val(data[3]);
-        $("#up_clientAdresse").val(data[4]);
-        $("#up_clientCIN").val();
+        $("#up_clientNom").val(data[1]);
+        $("#up_clientPrenom").val(data[2]);
+        $("#up_clientDateNaissance").val(data[3]);
+        $("#up_clientLieuNaissance").val(data[4]);
+        $("#up_clientEmail").val(data[5]);
+        $("#up_clientPhone").val(data[6]);
+        $("#up_clientAdresse").val(data[7]);
+        $("#up_clientNumCin").val(data[8]);
+        $("#up_clientDateCin").val(data[9]);
+        $("#up_clientNumPassport").val(data[10]);
+        $("#up_clientDatePassport").val(data[11]);
+        $("#up_clientNumPermis").val(data[12]);
+        $("#up_clientDatePermis").val(data[13]);
+        $("#up_clientLieuPermis").val(data[14]);
+        $("#up_clientRectoCin").val();
+        $("#up_clientVersoCin").val();
+        $("#up_clientPassport").val();
         $("#up_clientPermis").val();
         $("#updateClient").modal("show");
       },
@@ -1046,34 +1154,53 @@ function get_client_record() {
 
 function update_client_record() {
   $(document).on("click", "#btn_update", function () {
-    $("#up_message")
-    .removeClass("alert alert-danger")
-    .html("");
+    $("#up_message").removeClass("alert alert-danger").html("");
     $("#updateClient").scrollTop(0);
     var up_idclient = $("#up_idclient").val();
-    var up_clientName = $("#up_clientName").val();
+    var up_clientNom = $("#up_clientNom").val();
+    var up_clientPrenom = $("#up_clientPrenom").val();
+    var up_clientDateNaissance = $("#up_clientDateNaissance").val();
+    var up_clientLieuNaissance = $("#up_clientLieuNaissance").val();
     var up_clientEmail = $("#up_clientEmail").val();
     var up_clientPhone = $("#up_clientPhone").val();
     var up_clientAdresse = $("#up_clientAdresse").val();
-    var up_clientCIN = $("#up_clientCIN").prop("files")[0];
+    var up_clientNumCin = $("#up_clientNumCin").val();
+    var up_clientDateCin = $("#up_clientDateCin").val();
+    var up_clientNumPassport = $("#up_clientNumPassport").val();
+    var up_clientDatePassport = $("#up_clientDatePassport").val();
+    var up_clientNumPermis = $("#up_clientNumPermis").val();
+    var up_clientDatePermis = $("#up_clientDatePermis").val();
+    var up_clientLieuPermis = $("#up_clientLieuPermis").val();
+    var up_clientRectoCin = $("#up_clientRectoCin").prop("files")[0];
+    var up_clientVersoCin = $("#up_clientVersoCin").prop("files")[0];
+    var up_clientPassport = $("#up_clientPassport").prop("files")[0];
     var up_clientPermis = $("#up_clientPermis").prop("files")[0];
 
-    if (up_clientName == "" || up_clientEmail == "" || up_clientPhone == "" || up_clientAdresse == "") {
-      $("#up_message")
-        .addClass("alert alert-danger")
-        .html("Veuillez remplir tous les champs obligatoires !");
+    if (up_clientNom == "" || up_clientPrenom == "" || up_clientDateNaissance == "" || up_clientLieuNaissance == "" || up_clientEmail == "" || up_clientPhone == "" || up_clientAdresse == ""
+        || up_clientNumPermis == "" || up_clientDatePermis == "" || up_clientLieuPermis == "") {
+      $("#up_message").addClass("alert alert-danger").html("Veuillez remplir tous les champs obligatoires !");
     } else if (!isValidEmailAddress(up_clientEmail)) {
-      $("#up_message")
-        .addClass("alert alert-danger")
-        .html("le champ « email » est invalide");
+      $("#up_message").addClass("alert alert-danger").html("le champ « email » est invalide");
     } else {
       var form_data = new FormData();
       form_data.append("up_idclient", up_idclient);
-      form_data.append("up_clientName", up_clientName);
+      form_data.append("up_clientNom", up_clientNom);
+      form_data.append("up_clientPrenom", up_clientPrenom);
+      form_data.append("up_clientDateNaissance", up_clientDateNaissance);
+      form_data.append("up_clientLieuNaissance", up_clientLieuNaissance);
       form_data.append("up_clientEmail", up_clientEmail);
       form_data.append("up_clientPhone", up_clientPhone);
       form_data.append("up_clientAdresse", up_clientAdresse);
-      form_data.append("up_clientCIN", up_clientCIN);
+      form_data.append("up_clientNumCin", up_clientNumCin);
+      form_data.append("up_clientDateCin", up_clientDateCin);
+      form_data.append("up_clientNumPassport", up_clientNumPassport);
+      form_data.append("up_clientDatePassport", up_clientDatePassport);
+      form_data.append("up_clientNumPermis", up_clientNumPermis);
+      form_data.append("up_clientDatePermis", up_clientDatePermis);
+      form_data.append("up_clientLieuPermis", up_clientLieuPermis);
+      form_data.append("up_clientRectoCin", up_clientRectoCin);
+      form_data.append("up_clientVersoCin", up_clientVersoCin);
+      form_data.append("up_clientPassport", up_clientPassport);
       form_data.append("up_clientPermis", up_clientPermis);
       $.ajax({
         url: "update_client.php",

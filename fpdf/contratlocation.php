@@ -11,7 +11,9 @@ if (isset($_GET['N'])){
   
   if ($result) {
     while ($row = $result->fetch_assoc()) {
-      $Contrat_number = $row['id_contrat'];
+        $Contrat_number = $row['id_contrat'];
+        $Contrat_number = str_pad($Contrat_number, 6, '0', STR_PAD_LEFT);
+
     }
   }
 
@@ -30,20 +32,6 @@ if (isset($_GET['N'])){
           $this->Cell($w,35,utf8_decode($titre),0,1,'C',false);
           $this->Ln(-13);
           $this->y0 = $this->GetY(); 
-  }
-  function Footer()
-  {
-      // Pied de page
-      $this->SetY(-15);
-      $texte = "k2 Group SAS au capital de 146.000 euro - RC DIJON:4669B
-      7 RUE JEAN BAPTISTE SAY 21800 CHEVIGNY ST SAUVEUR
-      Siret: 88236307000013 TVA: FR59882363090 APE: 4669B";
-      $this->SetFont('Arial','B',6);
-      $this->MultiCell(0,3,utf8_decode($texte),0,'C');
-      $this->SetFont('Arial','I',8);
-      $this->SetTextColor(128);
-      $this->Cell(0,0,"Page ".$this->PageNo(),0,0,'R');
-
   }
   function SetCol($col)
   {
@@ -244,11 +232,33 @@ if (isset($_GET['N'])){
 
   $pdf = new PDF('P','mm','A4');
   $pdf->AddPage();
-  define('EURO',chr(128));
+  $pdf->Image('1.jpg', 0, -8, 212, 200);
   $pdf->SetTitle(utf8_decode("ContratN°".$Contrat_number));
-  $pdf->Image('k2rent.png',10,15,20,15);
-  $pdf->SetFont('Arial','B',8);
-  $pdf->Cell(50,4,utf8_decode('CONTRAT DE LOCATION N°').$Contrat_number,0,2,'',false);
+  $pdf->SetFont('Courier','B',14);
+  $pdf->Cell(120,-35,utf8_decode('N° ').$Contrat_number,0,0,'C',false);
+  $pdf->SetXY(45, 34);
+  $pdf->SetFont('Courier','B',12);
+  $pdf->Cell(0,0,'Maaloul Mohamed Hedi',0,0,'',false);
+  $pdf->SetXY(45, 40);
+  $pdf->Cell(0,0,'03/06/1995',0,0,'',false);
+  $pdf->SetXY(45, 46);
+  $pdf->Cell(0,0,'09332541',0,0,'',false);
+  $pdf->SetXY(105, 46);
+  $pdf->Cell(0,0,'04/02/2022',0,0,'',false);
+  $pdf->SetXY(45, 52);
+  $pdf->Cell(0,0,'Tunisienne',0,0,'',false);
+  $pdf->SetXY(45, 58);
+  $pdf->Cell(0,0,utf8_decode('La première zone Ajim Djerba'),0,0,'',false);
+  $pdf->SetXY(45, 64);
+  $pdf->Cell(0,0,'53116288',0,0,'',false);
+  $pdf->SetXY(100, 64);
+  $pdf->Cell(0,0,'53116288',0,0,'',false);
+  $pdf->SetXY(55, 70);
+  $pdf->Cell(0,0,'09/169758',0,0,'',false);
+  $pdf->SetXY(60, 76);
+  $pdf->Cell(0,0,'02/09/2014',0,0,'',false);
+  $pdf->SetXY(100, 76);
+  $pdf->Cell(0,0,'Sousse',0,0,'',false);
   $pdf->Output('I',utf8_decode("ContratN°".$Contrat_number.".pdf"));
 
 }else {

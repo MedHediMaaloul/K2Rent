@@ -75,7 +75,6 @@ if (!isset($_SESSION['Login'])) {
     font-size: 16px;
     line-height: 20px;
     color: rgba(191, 22, 22, 1);
-    ;
 }
 #papier {
     display: grid !important;
