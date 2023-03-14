@@ -103,11 +103,9 @@ if (!isset($_SESSION['Login'])) {
 #btn-edit-papier{
     margin-right:18px !important;
     border-radius: 0.25rem;
-    style="font-size: 2px;
-    background: #FDA6A6;
     padding: 0% 0% 0% 0% !important;
     height: 28px;
-    padding-left: 7px !important;"
+    padding-left: 7px !important;
 }
 #btn-edit-papier:hover{
     background:#BF1616 !important ;
@@ -175,6 +173,7 @@ border-radius: 3px;
 border-color: #BF1616;
 box-shadow: none;
 }
+
 </style>
 <div class="page-wrapper">
     <div class="page-content">

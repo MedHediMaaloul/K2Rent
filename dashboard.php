@@ -85,30 +85,9 @@ include('Gestion_location/inc/connect_db.php');
     color: rgba(191, 22, 22, 1);
     ;
 }
-
-#btn-edit-papier {
-    width: 80px;
-    height: 23px;
-    margin-top: 1.2px;
-    background: #FDA6A6;
-    border-radius: 3px;
-    border: transparent;
-    border-top-left-radius: 17px;
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 15px;
-    color: #BF1616;
-    margin-right: 24px;
-}
-
 #papier {
     display: grid !important;
     grid-template-rows: repeat(2, auto);
-}
-
-#btn-edit-papier:hover {
-    background: #BF1616;
-    color: #FFFFFF;
 }
 
 #papier1 {

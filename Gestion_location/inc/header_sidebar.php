@@ -72,9 +72,10 @@
 						<div class="menu-title"><img src="assets/images/img_menu/voiture.png" style="margin-right: 15px;" width="22px" height="13px">Voitures</div>
 					</a>
 					<ul>
-						<li> <a href="voiture.php">Liste des voitures</a></li>
-						<li> <a href="marque_voiture.php">Liste des marques</a></li>
-						<li> <a href="papier_voiture.php">Liste des papiers</a></li>
+						<li> <a href="voiture.php">Liste des Voitures</a></li>
+						<li> <a href="marque_voiture.php">Liste des Marques</a></li>
+						<li> <a href="papier_voiture.php">Liste des Papiers</a></li>
+						<li> <a href="papier_archivage_voiture.php">Liste Archivage des Papiers</a></li>
 					</ul>		
 				</li>
                 
@@ -84,7 +85,7 @@
 					</a>
 					<ul>
 						<li> <a href="contrat_voiture.php">Liste des Contrats</a></li>
-						<li> <a href="contrat_archivage_voiture.php">Liste archivage des Contrats</a></li>
+						<li> <a href="contrat_archivage_voiture.php">Liste Archivage des Contrats</a></li>
                         <li> <a href="historique_contrat_voiture.php">Historiques Contrat</a></li>
 					</ul>
 				</li>
@@ -108,7 +109,7 @@
 					<ul>
 						<li> <a href="entretien_voiture.php"></i>Liste des Entretiens</a></li>
 						<li> <a href="entretien_archivage_voiture.php"></i>Liste archivage des Entretiens</a></li>
-                        <li> <a href="historique_entretien_voiture.php"></i>Historiques Entretien</a></li>
+                        <li> <a href="historique_entretien_voiture.php"></i>Historiques Entretiens</a></li>
 					</ul>
 				</li>
 
@@ -117,8 +118,8 @@
 						<div class="menu-title"><img src="assets/images/img_menu/notification.png" style="margin-right: 15px;" width="20px" height="20px">Notifications</div>
 					</a>
 					<ul>
-						<li> <a href="notification_contrat.php"></i>Notifications des contrats</a></li>
-						<li> <a href="notification_controle_papier.php"></i>Notifications des contrôles papiers</a></li>
+						<li> <a href="notification_contrat.php"></i>Notifications des Contrats</a></li>
+						<li> <a href="notification_controle_papier.php"></i>Notifications des Contrôles Papiers</a></li>
 					</ul>
 				</li>
                 	

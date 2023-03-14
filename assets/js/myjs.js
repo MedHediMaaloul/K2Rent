@@ -52,6 +52,7 @@ $(document).ready(function () {
   view_papier_voiture_record();
   searchPapierVoiture();
   update_voiture_papier();
+  view_papier_archivage_voiture_record();
   // Marque Voiture
   view_marquevoiture_record();
   searchMarqueVoiture();
@@ -147,6 +148,16 @@ function selectrole(data) {
     $("#cont_UserAgence").hide();
   }
 }
+
+function refreshImage(imgElement){    
+  // create a new timestamp 
+  var timestamp = new Date().getTime();
+  var img = document.getElementById(imgElement);    
+  var imgURL = img.src; 
+  var queryString = "?t=" + timestamp;    
+  img.src = imgURL + queryString;    
+}      
+ 
 // Login
 
 function login(){
@@ -1215,11 +1226,11 @@ function insert_voiture_Record() {
       $("#message").addClass("alert alert-danger").html("Veuillez vérifier la puissance du voiture !");
     } else if (voiturenbreplace > 10 || voiturenbreplace < 1 ) {
       $("#message").addClass("alert alert-danger").html("Veuillez vérifier le nombre de place du voiture !");
-    } else if (datefinassurance <= Date.now()  ) {
+      } else if (datefinassurance <= Date.now()  ) {
       $("#message").addClass("alert alert-danger").html("Veuillez vérifier Date fin assurance !");
-    } else if (datefinvisitetechnique <= Date.now()  ) {
+        } else if (datefinvisitetechnique <= Date.now()  ) {
       $("#message").addClass("alert alert-danger").html("Veuillez vérifier Date fin visite technique !");
-    } else {
+      } else {
       if (voitureagence == null) {
         voitureagence = 0;
       }
@@ -1250,9 +1261,9 @@ function insert_voiture_Record() {
         data: form_data,
         success: function (data) {
           if (data.includes('text-echec')) {
-            $("#Registration-Voiture").modal("hide");
-            $("#addvoiture_echec").removeClass("text-checked").addClass("text-echec").html(data);
-            $("#EchecAddVoiture").modal("show");
+              $("#Registration-Voiture").modal("hide");
+              $("#addvoiture_echec").removeClass("text-checked").addClass("text-echec").html(data);
+              $("#EchecAddVoiture").modal("show");
             setTimeout(function () {
                 $("#EchecAddVoiture").modal("hide");
             }, 2000);
@@ -1261,10 +1272,10 @@ function insert_voiture_Record() {
             $("#Registration-Voiture").modal("hide");
             $("#addvoiture_success").removeClass("text-echec").addClass("text-checked").html(data); 
             $("#SuccessAddVoiture").modal("show");
-            setTimeout(function () {
+          setTimeout(function () {
               $("#SuccessAddVoiture").modal("hide");
               view_voiture_record();
-            }, 2000);
+          }, 2000);
           }
         },
       });
@@ -1386,9 +1397,12 @@ function update_voiture_record() {
             $("#upvoiture_success").removeClass("text-echec").addClass("text-checked");
             setTimeout(function () {
               if ($("#SuccessUpVoiture").length > 0) {
-                $("#SuccessUpVoiture").modal("hide");
+                var imgGrise = "grise-"+up_voitureid; 
+                refreshImage(imgGrise);  
+                $("#SuccessUpVoiture").modal("hide"); 
+                location.reload(); 
               }
-            }, 2000);
+            }, 3000);
             view_voiture_record();
           }
         },
@@ -1463,7 +1477,7 @@ function update_visite_assurance() {
       $("#btn-edit-assurance").css("border","transparent");
       $("#btn-edit-visit").css("color","#FFFFFF");
       $("#btn-edit-visit").css("background","#BF1616");
-      $("#btn-edit-visit").attr('assur-id', voiture_id);
+      $("#btn-edit-visite").attr('visit-id', voiture_id);
       $('#assurance_form').attr('hidden',true);
       $('#visite_form').removeAttr("hidden");    
     $("#AssuranceVisite").modal("show");
@@ -1477,14 +1491,14 @@ function update_visite_assurance() {
       $("#btn-edit-assurance").css("color","#FFFFFF");
       $("#btn-edit-assurance").css("background","#BF1616");
       $("#btn-edit-assurance").css("border","transparent");
-      $("#btn-edit-assurance").attr('assur-id', voiture_id);
+      $("#btn-edit-assur").attr('assur-id', voiture_id);
       $('#visite_form').attr('hidden',true);
       $('#assurance_form').removeAttr("hidden");  
     $("#AssuranceVisite").modal("show");
     }
     else{
-      $("#btn-edit-assurance").attr('assur-id', voiture_id);
-      $("#btn-edit-visit").attr('visit-id', voiture_id);
+      $("#btn-edit-visite").attr('visit-id', voiture_id);
+      $("#btn-edit-assur").attr('assur-id', voiture_id);
       $('#visite_form').attr('hidden',true);
       $("#btn-edit-visit").css("color","#6C6C6C");
       $("#btn-edit-visit").css("background","#F1F1F1");  
@@ -1493,6 +1507,7 @@ function update_visite_assurance() {
       $("#btn-edit-assurance").css("background","#BF1616");
       $("#AssuranceVisite").modal("show");
     }
+
   });
 }
 
@@ -1510,23 +1525,29 @@ function update_voiture_assurance() {
     $("#btn-edit-assurance").css("background","#BF1616");
     $('#visite_form').attr('hidden',true);
     $('#assurance_form').removeAttr("hidden");
-
-    var assurance_voiture_id = $(this).attr("assur-id");
-    document.getElementById('id_assurance_voiture').setAttribute('value', assurance_voiture_id);
   });
   
   $(document).on("click", "#btn-edit-assur", function () {
     $(this).find('form').trigger('reset');
     $("#edit-assurance").scrollTop(0);
-    var assurance_voiture_id = $("#id_assurance_voiture").val();
+    var assurance_voiture_id = $(this).attr("assur-id");
     var up_DateFinAssurance = $("#date-fin-assurance").val();
     var up_prixAssurance = $("#prix-assurance").val();
     var up_assurancephoto = $("#edit-photo-assurance").prop("files")[0];
-    if (up_DateFinAssurance == "" || up_prixAssurance == "" || up_assurancephoto == null) {
+    datemonthplus1 = new Date();
+    datemonthplus1.setMonth(datemonthplus1.getMonth()+1); 
+    var mydate = new Date(up_DateFinAssurance);
+        if (up_DateFinAssurance == "" || up_prixAssurance == "" || up_assurancephoto == null) {
       $("#message_assurance")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
-    } else{
+    }
+    else if(mydate < datemonthplus1){
+      $("#message_assurance")
+      .addClass("alert alert-danger")
+      .html("Veuillez verifier la date fin assurance !");
+    }
+    else { 
       var form_data = new FormData();
       form_data.append("assurance_voiture_id", assurance_voiture_id);
       form_data.append("up_DateFinAssurance", up_DateFinAssurance);
@@ -1542,18 +1563,19 @@ function update_voiture_assurance() {
           if (data.includes('text-echec')) {
             $("#AssuranceVisite").modal("hide");
             $("#upassurance_echec").html(data);
-            $("#EchecUpAssurance").modal("show");
-            setTimeout(function () {
+          $("#EchecUpAssurance").modal("show");
+          setTimeout(function () {
               $("#EchecUpAssurance").modal("hide");
-            }, 2000);
+          }, 2000);
           } else {
             $("#AssuranceVisite").modal("hide");
-            $("#upassurance_success").html(data);
+              $("#upassurance_success").html(data);
             $("#SuccessUpAssurance").modal("show");
             setTimeout(function () {
                 $("#SuccessUpAssurance").modal("hide");
               }, 2000);
               view_voiture_record();
+              notification_controle_assurance();
           }
         },
       });
@@ -1573,19 +1595,25 @@ $(document).on("click", "#btn-edit-visit", function () {
   $("#btn-edit-visit").css("background","#BF1616");
 $('#assurance_form').attr('hidden',true);
   $('#visite_form').removeAttr("hidden");
-  var visite_voiture_id = $(this).attr("visit-id");
-  document.getElementById('id_visite_voiture').setAttribute('value', visite_voiture_id);
 });
   $(document).on("click", "#btn-edit-visite", function () {
     $("#edit-visite").scrollTop(0);
-    var visite_voiture_id = $("#id_visite_voiture").val();
+    var visite_voiture_id = $(this).attr("visit-id");
     var up_DateFinVisite = $("#date-fin-visite").val();
     var up_prixVisite = $("#prix-visite").val();
     var up_visitephoto = $("#edit-photo-visite").prop("files")[0];
+    datemonthplus1 = new Date();
+    datemonthplus1.setMonth(datemonthplus1.getMonth()+1); 
+    var mydate = new Date(up_DateFinVisite);
     if (up_DateFinVisite == "" || up_prixVisite == "" || up_visitephoto == null) {
       $("#message_visite")
         .addClass("alert alert-danger")
         .html("Veuillez remplir tous les champs obligatoires !");
+    }
+    else if(mydate < datemonthplus1){
+      $("#message_visite")
+      .addClass("alert alert-danger")
+      .html("Veuillez verifier la date fin visite technique !");
     }
     else{
       var form_data = new FormData();
@@ -1606,27 +1634,31 @@ $('#assurance_form').attr('hidden',true);
             $("#EchecUpVisit").modal("show");
           setTimeout(function () {
             $("#EchecUpVisit").modal("hide");
-          }, 3000);
+          }, 2000);
           } else {
              $("#AssuranceVisite").modal("hide");
               $("#upvisite_success").html(data);
             $("#SuccessUpVisite").modal("show");
             setTimeout(function () {
               $("#SuccessUpVisite").modal("hide");
-              }, 3000); }
+              }, 2000); }
               view_voiture_record();
+              notification_controle_visite();
         },
       });
     }
+
   });
 }
 
 // Papier voiture
 
 function view_papier_voiture_record(){
+  $("#papier-voiture").html("");
   $.ajax({
     url: "viewpapiervoiture.php",
     method: "post",
+    cache: false,
     success: function (data) {
       try {
         data = $.parseJSON(data);
@@ -1663,6 +1695,7 @@ function view_papier_voiture_record(){
       $("#up_message")
       .removeClass("alert alert-danger")
       .html("");
+      $("#updatePapiers").find('form').eq(0).trigger('reset');
       var papier_voiture_id = $(this).attr("data-id");
       document.getElementById('up_IdPapier').setAttribute('value', papier_voiture_id);
       $("#updatePapiers").modal("show");
@@ -1681,6 +1714,7 @@ function view_papier_voiture_record(){
       $.ajax({
         url: "update_papier_voiture.php",
         method: "POST",
+        cache: false,
         processData: false,
         contentType: false,
         data: form_data,
@@ -1701,15 +1735,42 @@ function view_papier_voiture_record(){
             $("#uppapiervoiture_success").removeClass("text-echec").addClass("text-checked");
             setTimeout(function () {
               if ($("#SuccessUpPapierVoiture").length > 0) {
-                $("#SuccessUpPapierVoiture").modal("hide");
-                view_papier_voiture_record();
+                var imgAssur = "assur-"+up_voitureid; 
+                var imgVig = "vig-"+up_voitureid; 
+                var imgVis = "vis-"+up_voitureid; 
+                refreshImage(imgAssur);
+                refreshImage(imgVig);
+                refreshImage(imgVis);                 
+                $("#SuccessUpPapierVoiture").modal("hide"); 
+                location.reload();
               }
-            },2000);  
+            },3000);  
           }
         },
       });
     });
   }
+
+  function view_papier_archivage_voiture_record() {
+    $("#PimmPapier").change(function (){
+      var idVoiture= $("#PimmPapier").val();
+      $.ajax({
+        url: "PapierYearArchivage.php",
+        method: "post",
+        data: {
+          idVoiture: idVoiture
+        },
+        success: function (response) {
+          if(response.status=="success"){
+
+          }
+          else{
+            alert(response.status);
+          }
+        },
+      });
+      });
+    }
 
 // Marque Voiture 
 
