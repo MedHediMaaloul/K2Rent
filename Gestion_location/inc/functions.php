@@ -1579,9 +1579,14 @@ function get_papierclient_record()
             $papierclient_data[1] = $row['cin_verso_client'];
             $papierclient_data[2] = "nonimage.png";
             $papierclient_data[3] = $row['permis_client'];
-        }else{
+        }else if($row['numcin_client'] == ""){
             $papierclient_data[0] = "nonimage.png";
             $papierclient_data[1] = "nonimage.png";
+            $papierclient_data[2] = $row['passport_client'];
+            $papierclient_data[3] = $row['permis_client'];
+        } else {
+            $papierclient_data[0] = $row['cin_client'];
+            $papierclient_data[1] = $row['cin_verso_client'];
             $papierclient_data[2] = $row['passport_client'];
             $papierclient_data[3] = $row['permis_client'];
         }
@@ -1835,7 +1840,7 @@ function update_client_value()
     }
 
     if($up_clientPassport != ""){
-        $emplacement_passport = "uploadfile/client/permis/";
+        $emplacement_passport = "uploadfile/client/passport/";
         $size_passport = $_FILES["up_clientPassport"]["size"];
         $file_passport = $emplacement_passport . basename($_FILES["up_clientPassport"]["name"]);
         $uploadOk_passport = 1;

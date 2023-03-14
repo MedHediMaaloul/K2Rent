@@ -150,6 +150,40 @@ input[type=radio] {
     margin-top: 10%;
     margin-bottom: 10%;
 }
+
+#fiche_3row{
+        display: grid !important;
+        grid-template-rows: repeat(1, auto);
+        grid-template-columns: repeat(3, auto);
+        grid-column-gap: 1%;
+}
+#fiche_4row{
+    display: grid !important;
+    grid-template-rows: repeat(1, auto);
+    grid-template-columns: repeat(4, auto);
+    grid-column-gap: 1%;
+}
+.title {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 20px;
+    color: rgba(191, 22, 22, 1);
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+.under_title{
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(191, 22, 22, 1);
+    margin-bottom: 3px;
+}
+.inputtext {
+    width: 100%;
+    padding: 0.47rem 0.75rem;
+    border: 0.5px solid #B6B6B6;
+    border-radius: 0.25rem;
+}   
 </style>
 <div class="page-wrapper">
     <div class="page-content">
@@ -768,61 +802,156 @@ input[type=radio] {
         </div>
         <!-- end Model alert ajout echec -->
         <!-- Model ajout Client -->
-        <div class="modal fade" id="Registration-Client" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
+        <div class="modal fade bd-example-modal-lg" id="Registration-Client" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header" style="background: #D71218;">
                         <h5 class="modal-title" style="color: white;" id="exampleModalLabel">Ajouter Client</h5>
-                        <button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png"
-                                alt=""></button>
-                    </div>
+						<button class="button-close" id="btn-close-x"><img src="assets/images/close_ring.png" alt=""></button>
+					</div>
                     <div class="modal-body">
                         <p id="message_client"></p>
                         <form id="clientForm" autocomplete="off" class="form-horizontal form-material">
-                            <div class="form-group mb-4">
-                                <label class="col-md-12 p-0">Nom<span class="text-danger">*</span></label>
-                                <div class="col-md-12 border-bottom p-0">
-                                    <input type="text" id="clientName" class="form-control p-0 border-0">
+                            <div class="title">Informations personnelles:</div>
+                            <div id="fiche_4row">
+                                <div>
+                                    <label class="col-md-12 p-0">Nom<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="text" id="clientNom" class="inputtext">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Prénom<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="text" id="clientPrenom" class="inputtext">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Date de naissance<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="date" id="clientDateNaissance" class="inputtext">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Lieu de naissance<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="text" id="clientLieuNaissance" class="inputtext">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group mb-4">
-                                <label class="col-md-12 p-0">Email<span class="text-danger">*</span></label>
-                                <div class="col-md-12 border-bottom p-0">
-                                    <input type="email" id="clientEmail" class="form-control p-0 border-0">
+                            <div id="fiche_3row">
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Email<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="email" id="clientEmail" class="inputtext">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Téléphone<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="text" id="clientPhone" class="inputtext">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Adresse<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="text" id="clientAdresse" class="inputtext">
+                                    </div>
                                 </div>
                             </div>
+                            <div class="title">Informations papiers:</div>
                             <div class="form-group mb-4">
-                                <label class="col-md-12 p-0">Téléphone<span class="text-danger">*</span></label>
-                                <div class="col-md-12 border-bottom p-0">
-                                    <input type="text" id="clientPhone" class="form-control p-0 border-0">
+                                <div id ="choice" class="col-md-6 p-0" style="display: flex; gap: 5px; margin-top: 5px;">
+                                    <input type="radio" id="CIN" name="Piece" value="1" onchange="selectpiecejointe(this.value)">
+                                    <label for="CIN">Carte d'identité natinale</label>
+                                    <input type="radio" id="PASSPORT" name="Piece" value="0" onchange="selectpiecejointe(this.value)">
+                                    <label for="PASSPORT">Passport</label>
                                 </div>
                             </div>
-                            <div class="form-group mb-4">
-                                <label class="col-md-12 p-0">Adresse<span class="text-danger">*</span></label>
-                                <div class="col-md-12 border-bottom p-0">
-                                    <input type="text" id="clientAdresse" class="form-control p-0 border-0">
+                            <div id="cin" style="display:none">
+                                <div id="fiche_4row">
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">N° CIN<span class="text-danger">*</span></label>
+                                        <div class="col-md-12">
+                                            <input type="text" id="clientNumCin" class="inputtext">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">Date de délivrance<span class="text-danger">*</span></label>
+                                        <div class="col-md-12">
+                                            <input type="date" id="clientDateCin" class="inputtext">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">CIN (Recto)<span class="text-danger">*</span></label>
+                                        <div class="col-md-12">
+                                            <input type="file" id="clientRectoCin" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">CIN (Verso)<span class="text-danger">*</span></label>
+                                        <div class="col-md-12">
+                                            <input type="file" id="clientVersoCin" class="form-control">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group mb-4">
-                                <label class="col-md-12 p-0">CIN<span class="text-danger">*</span></label>
-                                <div class="col-md-12 border-bottom p-0">
-                                    <input type="file" id="clientCIN" class="form-control p-0 border-0">
+                            <div id="passport" style="display:none">
+                                <div id="fiche_3row">
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">N° Passport<span class="text-danger">*</span></label>
+                                        <div class="col-md-12">
+                                            <input type="text" id="clientNumPassport" class="inputtext">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">Date de délivrance<span class="text-danger">*</span></label>
+                                        <div class="col-md-12">
+                                            <input type="date" id="clientDatePassport" class="inputtext">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="col-md-12 p-0">Pièce jointe<span class="text-danger">*</span></label>
+                                        <div class="col-md-12">
+                                            <input type="file" id="clientPassport" class="form-control">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group mb-4">
-                                <label class="col-md-12 p-0">Permis<span class="text-danger">*</span></label>
-                                <div class="col-md-12 border-bottom p-0">
-                                    <input type="file" id="clientPermis" class="form-control p-0 border-0">
+                            <div class="under_title">Permis:</div>
+                            <div id="fiche_4row">
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">N° de permis<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="text" id="clientNumPermis" class="inputtext">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Date de délivrance<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="date" id="clientDatePermis" class="inputtext">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Lieu de délivrance<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="text" id="clientLieuPermis" class="inputtext">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="col-md-12 p-0">Pièce jointe<span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="file" id="clientPermis" class="form-control">
+                                    </div>
                                 </div>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <div style="float: right;">
-                            <button class="buttonvalidate" id="btn-register-client">Ajouter</button>
-                            <button class="buttonechec" id="btn-close">Annuler</button>
-                        </div>
+						<div style="float: right;">
+							<button class="buttonvalidate" id="btn-register-client">Ajouter</button>
+                        	<button class="buttonechec" id="btn-close">Annuler</button>
+						</div>
                     </div>
                 </div>
             </div>

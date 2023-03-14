@@ -1105,11 +1105,15 @@ function get_papierclient_record() {
         ClientID: ID
       },
       dataType: "JSON",
-      success: function (data) {
-        $("#cin_recto").html('<a href="uploadfile/client/cin/'+data[0]+'" target="_blank"><img width="100%" height="150px" src="uploadfile/client/cin/'+data[0]+'">Recto</a>');
-        $("#cin_verso").html('<a href="uploadfile/client/cin/'+data[1]+'" target="_blank"><img width="100%" height="150px" src="uploadfile/client/cin/'+data[1]+'">Verso</a>');
-        $("#file_passport").html('<a href="uploadfile/client/passport/'+data[2]+'" target="_blank"><img width="100%" height="150px" src="uploadfile/client/passport/'+data[2]+'"></a>');
-        $("#permis").html('<a href="uploadfile/client/permis/'+data[3]+'" target="_blank"><img width="100%" height="150px" src="uploadfile/client/permis/'+data[3]+'"></a>');
+      success: function (data) {     
+        $("#cin_recto").html('<a href="uploadfile/client/cin/'+data[0]+'" target="_blank"><img width="100%" height="150px" id="id_cin_recto" src="uploadfile/client/cin/'+data[0]+'">Recto</a>');
+        $("#cin_verso").html('<a href="uploadfile/client/cin/'+data[1]+'" target="_blank"><img width="100%" height="150px" id="id_cin_verso" src="uploadfile/client/cin/'+data[1]+'">Verso</a>');
+        $("#file_passport").html('<a href="uploadfile/client/passport/'+data[2]+'" target="_blank"><img width="100%" height="150px" id="id_passport" src="uploadfile/client/passport/'+data[2]+'"></a>');
+        $("#permis").html('<a href="uploadfile/client/permis/'+data[3]+'" target="_blank"><img width="100%" height="150px" id="id_permis" src="uploadfile/client/permis/'+data[3]+'"></a>');
+        refreshImage("id_cin_recto");
+        refreshImage("id_cin_verso");
+        refreshImage("id_passport");
+        refreshImage("id_permis");
         $("#papierClient").modal("show");
       },
     });
@@ -1869,7 +1873,6 @@ function view_papier_voiture_record(){
                 refreshImage(imgVig);
                 refreshImage(imgVis);                 
                 $("#SuccessUpPapierVoiture").modal("hide"); 
-                location.reload();
               }
             },3000);  
           }
