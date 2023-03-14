@@ -62,14 +62,27 @@ function localisation_Vehicule($id_voiture)
     return $nom_client;
 }
 
+//compress image 
+function compressImage($source, $destination, $quality)
+{
+    $info = getimagesize($source);
+    if ($info['mime'] == 'image/jpeg') {
+        $image = imagecreatefromjpeg($source);
+    } elseif ($info['mime'] == 'image/gif') {
+        $image = imagecreatefromgif($source);
+    } elseif ($info['mime'] == 'image/png') {
+        $image = imagecreatefrompng($source);
+    }
+
+    imagejpeg($image, $destination, $quality);
+}
+
 // Login
 
 function login(){
     global $conn;
     $erreurlogin = '';
     $erreurpassword = '';
-    $erreur = '';
-    $ressaye = '';
     if (empty($_POST['login'])) {
         $erreurlogin = "Login est obligatoire!";
     } else if (empty($_POST['password'])){
@@ -1427,27 +1440,27 @@ function display_client_record()
         <tr>
             <th class="border-top-0">#</th>
             <th class="border-top-0">Nom Conducteur</th>
+            <th class="border-top-0">Date & Lieu de naissance</th>
             <th class="border-top-0">E-mail</th>
             <th class="border-top-0">Téléphone</th>
             <th class="border-top-0">Adresse</th>
-            <th class="border-top-0">CIN</th>
-            <th class="border-top-0">PERMIS</th>
+            <th class="border-top-0">Papiers</th>
             <th class="border-top-0">Actions</th>   
         </tr>
     </thead>
     <tbody>';
-    $query = "SELECT * FROM client where action_client = '1'";
+    $query = "SELECT * FROM client WHERE action_client = '1'";
     $result = mysqli_query($conn, $query);
     $i = 1;
     while ($row = mysqli_fetch_assoc($result)) {
         $value .= '<tr>
             <td>' . $i . '</td>
-            <td>' . $row['nom_client'] . '</td>
+            <td>' . $row['nom_client']." ".$row['prenom_client'] . '</td>
+            <td>' . $row['datenaissance_client'] ." à " . $row['lieunaissance_client']. '</td>
             <td>' . $row['email_client'] . '</td>
             <td>' . $row['tel_client'] . '</td>
             <td>' . $row['adresse_client'] . '</td>
-            <td><a href="uploadfile/client/cin/' . $row["cin_client"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/client/cin/' . $row["cin_client"] . '"></a></td>
-            <td><a href="uploadfile/client/permis/' . $row["permis_client"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/client/permis/' . $row["permis_client"] . '"></a></td>
+            <td><button class="btn btn-add-red" title="Afficher les papiers" id="btn-show-papierclient" data-id=' . $row['id_client'] . '>Afficher les papiers</td>
             <td>
                 <div class="btn-group" role="group">
                     <button type="button" title="Modifier le client" class="btn" style="font-size: 2px;" id="btn-edit-client" data-id=' . $row['id_client'] . '>
@@ -1485,6 +1498,9 @@ function searchClient()
         $query = ("SELECT * FROM client
          WHERE action_client = '1'
          AND (nom_client LIKE ('%" . $search . "%')
+                OR prenom_client LIKE ('%" . $search . "%')
+                OR datenaissance_client LIKE ('%" . $search . "%') 
+                OR lieunaissance_client LIKE ('%" . $search . "%')  
                 OR email_client LIKE ('%" . $search . "%') 
                 OR tel_client LIKE ('%" . $search . "%')       
                 OR adresse_client LIKE ('%" . $search . "%'))");
@@ -1493,13 +1509,13 @@ function searchClient()
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $value .= '<tr>
-                    <td>' . $i . '</td>
-                    <td>' . $row['nom_client'] . '</td>
-                    <td>' . $row['email_client'] . '</td>
-                    <td>' . $row['tel_client'] . '</td>
-                    <td>' . $row['adresse_client'] . '</td>
-                    <td><a href="uploadfile/client/cin/' . $row["cin_client"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/client/cin/' . $row["cin_client"] . '"></a></td>
-                    <td><a href="uploadfile/client/permis/' . $row["permis_client"] . '" target="_blank"><img width="40px"height="40px" src="uploadfile/client/permis/' . $row["permis_client"] . '"></a></td>
+                <td>' . $i . '</td>
+                <td>' . $row['nom_client']." ".$row['prenom_client'] . '</td>
+                <td>' . $row['datenaissance_client'] ." à " . $row['lieunaissance_client']. '</td>
+                <td>' . $row['email_client'] . '</td>
+                <td>' . $row['tel_client'] . '</td>
+                <td>' . $row['adresse_client'] . '</td>
+                <td><button class="btn btn-add-red" title="Afficher les papiers" id="btn-show-papierclient" data-id=' . $row['id_client'] . '>Afficher les papiers</td>
                     <td>
                         <div class="btn-group" role="group">
                             <button type="button" title="Modifier le client" class="btn" style="font-size: 2px;" id="btn-edit-client" data-id=' . $row['id_client'] . '>
@@ -1531,37 +1547,123 @@ function searchClient()
     }
 }
 
+function get_papierclient_record()
+{
+    global $conn;
+    $ClientId = $_POST['ClientID'];
+    $query = "SELECT * FROM client WHERE id_client= '$ClientId'";
+    $result = mysqli_query($conn, $query);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $papierclient_data = [];
+        if($row['numpassport_client'] == ""){
+            $papierclient_data[0] = $row['cin_client'];
+            $papierclient_data[1] = $row['cin_verso_client'];
+            $papierclient_data[2] = "nonimage.png";
+            $papierclient_data[3] = $row['permis_client'];
+        }else{
+            $papierclient_data[0] = "nonimage.png";
+            $papierclient_data[1] = "nonimage.png";
+            $papierclient_data[2] = $row['passport_client'];
+            $papierclient_data[3] = $row['permis_client'];
+        }
+    }
+    echo json_encode($papierclient_data);
+}
+
 function InsertClient()
 {
     global $conn;
     global $msg_insert_succés;
 
-    $ClientName = $_POST['ClientName'];
+    //informations personnelles
+    $clientNom = $_POST['clientNom'];
+    $clientPrenom = $_POST['clientPrenom'];
+    $ClientDateNaissance = $_POST['ClientDateNaissance'];
+    $ClientLieuNaissance = $_POST['ClientLieuNaissance'];
     $ClientEmail = $_POST['ClientEmail'];
-    $Namefile = md5($ClientEmail);
     $ClientPhone = $_POST['ClientPhone'];
     $ClientAdresse = $_POST['ClientAdresse'];
-    $ClientCIN = isset($_FILES['ClientCIN']) ? $_FILES['ClientCIN'] : "";
+    // informations papiers
+    $ClientNumCin = $_POST['ClientNumCin'];
+    $ClientDateCin = $_POST['ClientDateCin'];
+    $ClientRectoCin = isset($_FILES['ClientRectoCin']) ? $_FILES['ClientRectoCin'] : "";
+    $ClientVersoCin = isset($_FILES['ClientVersoCin']) ? $_FILES['ClientVersoCin'] : "";
+    $ClientNumPassport = $_POST['ClientNumPassport'];
+    $ClientDatePassport = $_POST['ClientDatePassport'];
+    $ClientPassport = isset($_FILES['ClientPassport']) ? $_FILES['ClientPassport'] : "";
+    $ClientNumPermis = $_POST['ClientNumPermis'];
+    $ClientDatePermis = $_POST['ClientDatePermis'];
+    $clientLieuPermis = $_POST['clientLieuPermis'];
     $ClientPermis = isset($_FILES['ClientPermis']) ? $_FILES['ClientPermis'] : "";
 
-    $emplacement_cin = "uploadfile/client/cin/";
-    $file_cin = $emplacement_cin . basename($_FILES["ClientCIN"]["name"]);
-    $uploadOk_cin = 1;
-    $type_cin = strtolower(pathinfo($file_cin,PATHINFO_EXTENSION));
+    $Namefile = md5($ClientEmail);
+    $Namefile_recto = md5($ClientEmail)."_recto";
+    $Namefile_verso = md5($ClientEmail)."_verso";
 
-    if($type_cin != "jpg" && $type_cin != "png" && $type_cin != "jpeg" && $type_cin != "gif" ) {
-        echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
-        $uploadOk_cin = 0;
-    }  
-    if ($uploadOk_cin != 0) {
-      if (move_uploaded_file($_FILES["ClientCIN"]["tmp_name"], $emplacement_cin .$Namefile.".".$type_cin)) {
-        $ClientCIN = $Namefile.".".$type_cin;
-      } else {
-        echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
-      }
+    // CIN
+    $uploadOk_cin_recto = 1;
+    $uploadOk_cin_verso = 1;
+    if($ClientRectoCin != "" && $ClientVersoCin != ""){
+        $emplacement_cin = "uploadfile/client/cin/";
+        $size_cin_recto = $_FILES["ClientRectoCin"]["size"];
+        $size_cin_verso = $_FILES["ClientVersoCin"]["size"];
+        $file_cin_recto = $emplacement_cin . basename($_FILES["ClientRectoCin"]["name"]);
+        $file_cin_verso = $emplacement_cin . basename($_FILES["ClientVersoCin"]["name"]);
+        $type_cin_recto = strtolower(pathinfo($file_cin_recto,PATHINFO_EXTENSION));
+        $type_cin_verso = strtolower(pathinfo($file_cin_verso,PATHINFO_EXTENSION));
+        
+        if($type_cin_recto != "jpg" && $type_cin_recto != "png" && $type_cin_recto != "jpeg" && $type_cin_recto != "gif" ) {
+            echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+            $uploadOk_cin_recto = 0;
+        }  
+        if ($uploadOk_cin_recto != 0) {
+            if($size_cin_recto >= 500){
+                compressImage($_FILES["ClientRectoCin"]["tmp_name"], $emplacement_cin .$Namefile_recto.".".$type_cin_recto, 60);
+            }else{
+                move_uploaded_file($_FILES["ClientRectoCin"]["tmp_name"], $emplacement_cin .$Namefile_recto.".".$type_cin_recto);
+            }
+            $ClientRectoCin = $Namefile_recto.".".$type_cin_recto;
+        }
+
+        if($type_cin_verso != "jpg" && $type_cin_verso != "png" && $type_cin_verso != "jpeg" && $type_cin_verso != "gif" ) {
+            echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+            $uploadOk_cin_verso = 0;
+        }  
+        if ($uploadOk_cin_verso != 0) {
+            if($size_cin_verso >= 500){
+                compressImage($_FILES["ClientVersoCin"]["tmp_name"], $emplacement_cin .$Namefile_verso.".".$type_cin_verso, 60);
+            }else{
+                move_uploaded_file($_FILES["ClientVersoCin"]["tmp_name"], $emplacement_cin .$Namefile_verso.".".$type_cin_verso);
+            }
+            $ClientVersoCin = $Namefile_verso.".".$type_cin_verso;
+        }
     }
+    
+    //Passport
+    $uploadOk_passport = 1;
+    if($ClientPassport != ""){
+        $emplacement_passport = "uploadfile/client/passport/";
+        $size_passport = $_FILES["ClientPassport"]["size"];
+        $file_passport = $emplacement_passport . basename($_FILES["ClientPassport"]["name"]);
+        $type_passport = strtolower(pathinfo($file_passport,PATHINFO_EXTENSION));
 
+        if($type_passport != "jpg" && $type_passport != "png" && $type_passport != "jpeg" && $type_passport != "gif" ) {
+            echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+            $uploadOk_passport = 0;
+        }  
+        if ($uploadOk_passport != 0) {
+            if($size_passport >= 500){
+                compressImage($_FILES["ClientPassport"]["tmp_name"], $emplacement_passport .$Namefile.".".$type_passport, 60);
+            }else{
+                move_uploaded_file($_FILES["ClientPassport"]["tmp_name"], $emplacement_passport .$Namefile.".".$type_passport);
+            }
+            $ClientPassport = $Namefile.".".$type_passport;
+        }
+    }
+    
+    //Permis
     $emplacement_permis = "uploadfile/client/permis/";
+    $size_permis = $_FILES["ClientPermis"]["size"];
     $file_permis = $emplacement_permis . basename($_FILES["ClientPermis"]["name"]);
     $uploadOk_permis = 1;
     $type_permis = strtolower(pathinfo($file_permis,PATHINFO_EXTENSION));
@@ -1571,21 +1673,28 @@ function InsertClient()
         $uploadOk_permis = 0;
     }  
     if ($uploadOk_permis != 0) {
-      if (move_uploaded_file($_FILES["ClientPermis"]["tmp_name"], $emplacement_permis .$Namefile.".".$type_permis)) {
+        if($size_permis >= 500){
+            compressImage($_FILES["ClientPermis"]["tmp_name"], $emplacement_permis .$Namefile.".".$type_permis, 60);
+        }else{
+            move_uploaded_file($_FILES["ClientPermis"]["tmp_name"], $emplacement_permis .$Namefile.".".$type_permis);
+        }
         $ClientPermis = $Namefile.".".$type_permis;
-      } else {
-        echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
-      }
     }
-    if ($uploadOk_cin == 1 && $uploadOk_permis == 1) {
+
+    if ($uploadOk_cin_recto == 1 && $uploadOk_cin_verso == 1 && $uploadOk_passport == 1 && $uploadOk_permis == 1) {
         $sql_e = "SELECT * FROM client WHERE email_client = '$ClientEmail' AND action_client = '1'";
         $res_e = mysqli_query($conn, $sql_e);
         if (mysqli_num_rows($res_e) > 0) {
             echo '<div class="text-echec">Désolé ... Email est déjà pris!</div>';
         } else {
             $date = date('Y-m-d H:i:s');
-            $query = "INSERT INTO client(nom_client,email_client,tel_client,adresse_client,cin_client,permis_client,date_created_client,date_updated_client) 
-                VALUES ('$ClientName','$ClientEmail','$ClientPhone','$ClientAdresse','$ClientCIN','$ClientPermis','$date','$date') ";
+            $query = "INSERT INTO 
+                client(nom_client,prenom_client,datenaissance_client,lieunaissance_client,email_client,tel_client,adresse_client,
+                    numcin_client,datecin_client,numpassport_client,datepassport_client,numpermis_client,datepermis_client,lieupermis_client,
+                    cin_client,cin_verso_client,passport_client,permis_client,date_created_client,date_updated_client) 
+                VALUES ('$clientNom','$clientPrenom','$ClientDateNaissance','$ClientLieuNaissance','$ClientEmail','$ClientPhone','$ClientAdresse',
+                    '$ClientNumCin','$ClientDateCin','$ClientNumPassport','$ClientDatePassport','$ClientNumPermis','$ClientDatePermis','$clientLieuPermis',
+                    '$ClientRectoCin','$ClientVersoCin','$ClientPassport','$ClientPermis','$date','$date') ";
 
             $result = mysqli_query($conn, $query);
             if ($result) {
@@ -1607,11 +1716,19 @@ function get_client_record()
         $client_data = [];
         $client_data[0] = $row['id_client'];
         $client_data[1] = $row['nom_client'];
-        $client_data[2] = $row['email_client'];
-        $client_data[3] = $row['tel_client'];
-        $client_data[4] = $row['adresse_client'];  
-        $client_data[5] = $row['cin_client'];
-        $client_data[6] = $row['permis_client'];
+        $client_data[2] = $row['prenom_client'];
+        $client_data[3] = $row['datenaissance_client'];
+        $client_data[4] = $row['lieunaissance_client'];
+        $client_data[5] = $row['email_client'];  
+        $client_data[6] = $row['tel_client'];
+        $client_data[7] = $row['adresse_client'];
+        $client_data[8] = $row['numcin_client'];  
+        $client_data[9] = $row['datecin_client'];
+        $client_data[10] = $row['numpassport_client'];
+        $client_data[11] = $row['datepassport_client'];
+        $client_data[12] = $row['numpermis_client'];  
+        $client_data[13] = $row['datepermis_client'];
+        $client_data[14] = $row['lieupermis_client'];
     }
     echo json_encode($client_data);
 }
@@ -1622,43 +1739,109 @@ function update_client_value()
     global $msg_update_succés;
     global $msg_update_echec;
 
+    //informations personnelles
     $up_idclient = $_POST["up_idclient"];
-    $up_clientName = $_POST["up_clientName"];
-    $up_clientEmail = $_POST["up_clientEmail"];
-    $Namefile = md5($up_clientEmail);
-    $up_clientPhone = $_POST["up_clientPhone"];
-    $up_clientAdresse = $_POST["up_clientAdresse"];
-    $up_clientCIN = isset($_FILES['up_clientCIN']) ? $_FILES['up_clientCIN'] : "";
+    $up_clientNom = $_POST['up_clientNom'];
+    $up_clientPrenom = $_POST['up_clientPrenom'];
+    $up_clientDateNaissance = $_POST['up_clientDateNaissance'];
+    $up_clientLieuNaissance = $_POST['up_clientLieuNaissance'];
+    $up_clientEmail = $_POST['up_clientEmail'];
+    $up_clientPhone = $_POST['up_clientPhone'];
+    $up_clientAdresse = $_POST['up_clientAdresse'];
+    // informations papiers
+    $up_clientNumCin = $_POST['up_clientNumCin'];
+    $up_clientDateCin = $_POST['up_clientDateCin'];
+    $up_clientRectoCin = isset($_FILES['up_clientRectoCin']) ? $_FILES['up_clientRectoCin'] : "";
+    $up_clientVersoCin = isset($_FILES['up_clientVersoCin']) ? $_FILES['up_clientVersoCin'] : "";
+    $up_clientNumPassport = $_POST['up_clientNumPassport'];
+    $up_clientDatePassport = $_POST['up_clientDatePassport'];
+    $up_clientPassport = isset($_FILES['up_clientPassport']) ? $_FILES['up_clientPassport'] : "";
+    $up_clientNumPermis = $_POST['up_clientNumPermis'];
+    $up_clientDatePermis = $_POST['up_clientDatePermis'];
+    $up_clientLieuPermis = $_POST['up_clientLieuPermis'];
     $up_clientPermis = isset($_FILES['up_clientPermis']) ? $_FILES['up_clientPermis'] : "";
+
+    $Namefile = md5($up_clientEmail);
+    $Namefile_recto = md5($up_clientEmail)."_recto";
+    $Namefile_verso = md5($up_clientEmail)."_verso";
 
     $client_query = "SELECT * FROM  client where id_client = $up_idclient";
     $client_result = mysqli_query($conn, $client_query);
     $client = mysqli_fetch_assoc($client_result);
     
-    if($up_clientCIN != ""){
+    if($up_clientRectoCin != ""){
         $emplacement_cin = "uploadfile/client/cin/";
-        $file_cin = $emplacement_cin . basename($_FILES["up_clientCIN"]["name"]);
-        $uploadOk_cin = 1;
-        $type_cin = strtolower(pathinfo($file_cin,PATHINFO_EXTENSION));
-        if($type_cin != "jpg" && $type_cin != "png" && $type_cin != "jpeg" && $type_cin != "gif" ) {
-            $up_clientCIN = $client["cin_client"];
+        $size_cin_recto = $_FILES["up_clientRectoCin"]["size"];
+        $file_cin_recto = $emplacement_cin . basename($_FILES["up_clientRectoCin"]["name"]);
+        $uploadOk_cin_recto = 1;
+        $type_cin_recto = strtolower(pathinfo($file_cin_recto,PATHINFO_EXTENSION));
+        if($type_cin_recto != "jpg" && $type_cin_recto != "png" && $type_cin_recto != "jpeg" && $type_cin_recto != "gif" ) {
+            $up_clientRectoCin = $client["cin_client"];
             echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
-            $uploadOk_cin = 0;
+            $uploadOk_cin_recto = 0;
         }  
-        if ($uploadOk_cin != 0) {
-          if (move_uploaded_file($_FILES["up_clientCIN"]["tmp_name"], $emplacement_cin .$Namefile.".".$type_cin)) {
-            $up_clientCIN = $Namefile.".".$type_cin;
-          } else {
-            $up_clientCIN = $client["cin_client"];
-            echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
-          }
+        if ($uploadOk_cin_recto != 0) {
+            if($size_cin_recto >= 500){
+                compressImage($_FILES["up_clientRectoCin"]["tmp_name"], $emplacement_cin .$Namefile_recto.".".$type_cin_recto, 60);
+            }else{
+                move_uploaded_file($_FILES["up_clientRectoCin"]["tmp_name"], $emplacement_cin .$Namefile_recto.".".$type_cin_recto);
+            }
+            $up_clientRectoCin = $Namefile_recto.".".$type_cin_recto;
         }
     }else{
-        $up_clientCIN = $client["cin_client"];
+        $up_clientRectoCin = $client["cin_client"];
+    }
+
+    if($up_clientVersoCin != ""){
+        $emplacement_cin = "uploadfile/client/cin/";
+        $size_cin_verso = $_FILES["up_clientVersoCin"]["size"];
+        $file_cin_verso = $emplacement_cin . basename($_FILES["up_clientVersoCin"]["name"]);
+        $uploadOk_cin_verso = 1;
+        $type_cin_verso = strtolower(pathinfo($file_cin_verso,PATHINFO_EXTENSION));
+        if($type_cin_verso != "jpg" && $type_cin_verso != "png" && $type_cin_verso != "jpeg" && $type_cin_verso != "gif" ) {
+            $up_clientVersoCin = $client["cin_verso_client"];
+            echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+            $uploadOk_cin_verso = 0;
+        }  
+        if ($uploadOk_cin_verso != 0) {
+            if($size_cin_verso >= 500){
+                compressImage($_FILES["up_clientVersoCin"]["tmp_name"], $emplacement_cin .$Namefile_verso.".".$type_cin_verso, 60);
+            }else{
+                move_uploaded_file($_FILES["up_clientVersoCin"]["tmp_name"], $emplacement_cin .$Namefile_verso.".".$type_cin_verso);
+            }
+            $up_clientVersoCin = $Namefile_verso.".".$type_cin_verso;
+        }
+    }else{
+        $up_clientVersoCin = $client["cin_verso_client"];
+    }
+
+    if($up_clientPassport != ""){
+        $emplacement_passport = "uploadfile/client/permis/";
+        $size_passport = $_FILES["up_clientPassport"]["size"];
+        $file_passport = $emplacement_passport . basename($_FILES["up_clientPassport"]["name"]);
+        $uploadOk_passport = 1;
+        $type_passport = strtolower(pathinfo($file_passport,PATHINFO_EXTENSION));
+
+        if($type_passport != "jpg" && $type_passport != "png" && $type_passport != "jpeg" && $type_passport != "gif" ) {
+            $up_clientPassport = $client["passport_client"];
+            echo "<div class='text-echec'>Désolé ... seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés</div>"; 
+            $uploadOk_passport = 0;
+        }  
+        if ($uploadOk_passport != 0) {
+            if($size_passport >= 500){
+                compressImage($_FILES["up_clientPassport"]["tmp_name"], $emplacement_passport .$Namefile.".".$type_passport, 60);
+            }else{
+                move_uploaded_file($_FILES["up_clientPassport"]["tmp_name"], $emplacement_passport .$Namefile.".".$type_passport);
+            }
+            $up_clientPassport = $Namefile.".".$type_passport;
+        }
+    }else{
+        $up_clientPassport = $client["passport_client"];
     }
     
     if($up_clientPermis != ""){
         $emplacement_permis = "uploadfile/client/permis/";
+        $size_permis = $_FILES["up_clientPermis"]["size"];
         $file_permis = $emplacement_permis . basename($_FILES["up_clientPermis"]["name"]);
         $uploadOk_permis = 1;
         $type_permis = strtolower(pathinfo($file_permis,PATHINFO_EXTENSION));
@@ -1669,12 +1852,12 @@ function update_client_value()
             $uploadOk_permis = 0;
         }  
         if ($uploadOk_permis != 0) {
-          if (move_uploaded_file($_FILES["up_clientPermis"]["tmp_name"], $emplacement_permis .$Namefile.".".$type_permis)) {
+            if($size_permis >= 500){
+                compressImage($_FILES["up_clientPermis"]["tmp_name"], $emplacement_permis .$Namefile.".".$type_permis, 60);
+            }else{
+                move_uploaded_file($_FILES["up_clientPermis"]["tmp_name"], $emplacement_permis .$Namefile.".".$type_permis);
+            }
             $up_clientPermis = $Namefile.".".$type_permis;
-          } else {
-            $up_clientPermis = $client["permis_client"];
-            echo "<div class='text-echec'>Désolé ... une erreur s'est produite lors du téléchargement de votre fichier</div>"; 
-          }
         }
     }else{
         $up_clientPermis = $client["permis_client"];
@@ -1689,11 +1872,23 @@ function update_client_value()
         $date = date('Y-m-d H:i:s');
         $update_query = "UPDATE client 
                         SET 
-                            nom_client='$up_clientName',
+                            nom_client='$up_clientNom',
+                            prenom_client='$up_clientPrenom',
+                            datenaissance_client='$up_clientDateNaissance',	
+                            lieunaissance_client='$up_clientLieuNaissance',
                             email_client='$up_clientEmail',
                             tel_client='$up_clientPhone',
                             adresse_client='$up_clientAdresse',
-                            cin_client='$up_clientCIN',
+                            numcin_client='$up_clientNumCin',
+                            datecin_client='$up_clientDateCin',
+                            numpassport_client='$up_clientNumPassport',
+                            datepassport_client='$up_clientDatePassport',
+                            numpermis_client='$up_clientNumPermis',
+                            datepermis_client='$up_clientDatePermis',
+                            lieupermis_client='$up_clientLieuPermis',
+                            cin_client='$up_clientRectoCin',
+                            cin_verso_client='$up_clientVersoCin',
+                            passport_client='$up_clientPassport',
                             permis_client='$up_clientPermis',
                             date_updated_client='$date'
                         WHERE id_client = $up_idclient";
@@ -1767,20 +1962,17 @@ function testPapier($idVoiture, &$modalNumb){
         AND id_visitevoiture = '$Visit_lastid'";
     $resultVisit = mysqli_query($conn, $queryVisit);
 
-    if (mysqli_num_rows($resultAssur) > 0 && mysqli_num_rows($resultVisit) > 0 ) 
-    {
-    return true;
-    }else if(mysqli_num_rows($resultAssur) > 0){
+    if(mysqli_num_rows($resultAssur) > 0 && mysqli_num_rows($resultVisit) > 0 ) {
+        return true;
+    } else if(mysqli_num_rows($resultAssur) > 0){
         $modalNumb=1;
         return true;
-     
-    }
-    else if(mysqli_num_rows($resultVisit) > 0){
-    $modalNumb=2;
-    return true;
- 
-}
-    else return false;
+    } else if(mysqli_num_rows($resultVisit) > 0){
+        $modalNumb=2;
+        return true;
+    } else{
+        return false;
+    } 
 }
 
 function display_voiture_record()

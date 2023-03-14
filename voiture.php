@@ -75,7 +75,6 @@ if (!isset($_SESSION['Login'])) {
     font-size: 16px;
     line-height: 20px;
     color: rgba(191, 22, 22, 1);
-    ;
 }
 #papier {
     display: grid !important;
@@ -103,11 +102,11 @@ if (!isset($_SESSION['Login'])) {
 #btn-edit-papier{
     margin-right:18px !important;
     border-radius: 0.25rem;
-    style="font-size: 2px;
+    font-size: 2px;
     background: #FDA6A6;
     padding: 0% 0% 0% 0% !important;
     height: 28px;
-    padding-left: 7px !important;"
+    padding-left: 7px !important;
 }
 #btn-edit-papier:hover{
     background:#BF1616 !important ;
